@@ -1,0 +1,17 @@
+@media screen and (max-width: 768px) {
+    /*  Small screen  */
+    div.full-view {display: none}
+    div.mobile-view {display: block}
+}
+
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    /*  Medium screen  */
+    div.full-view {display: block}
+    div.mobile-view {display: none}
+}
+
+@media screen and (min-width: 1024px) {
+    /*  Large screen  */
+    div.full-view {display: block}
+    div.mobile-view {display: none}
+}
