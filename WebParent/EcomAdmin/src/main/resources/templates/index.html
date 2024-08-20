@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" >
-<head th:replace="fragments :: page_head('Home')"></head>
+<head th:replace="~{fragments :: page_head('Home')}"></head>
 <body>
 <div class="container-fluid">
-    <div th:replace="navigation :: menu"></div>
+    <div th:replace="~{navigation :: menu}"></div>
 
     <div>
         <h1>Welcome to my E-com Admin Control Panel</h1>
     </div>
 
-    <div th:replace="navigation :: footer"></div>
+    <div th:replace="~{navigation :: footer}"></div>
 </div>
 </body>
 </html>

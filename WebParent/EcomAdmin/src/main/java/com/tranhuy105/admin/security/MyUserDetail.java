@@ -11,9 +11,17 @@ import java.util.List;
 import java.util.Set;
 
 public class MyUserDetail implements UserDetails {
-    private final User user;
+    private User user;
 
     public MyUserDetail(User user) {
+        this.user = user;
+    }
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -40,5 +48,9 @@ public class MyUserDetail implements UserDetails {
 
     public String getFullName(){
         return user.getFirstName() + " " + user.getLastName();
+    }
+
+    public String getAvatarPath() {
+        return user.getAvatarPath();
     }
 }

@@ -1,5 +1,6 @@
 package com.tranhuy105.admin.user;
 
+import com.tranhuy105.admin.utils.AuthUtil;
 import com.tranhuy105.admin.utils.FileUploadUtil;
 import com.tranhuy105.common.entity.Role;
 import com.tranhuy105.common.entity.User;
@@ -7,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +87,32 @@ public class UserService {
 
         handleAvatarUpload(user, avatar);
         userRepository.save(user);
+    }
+
+    public User updateAccount(Authentication authentication, User userUpdate, MultipartFile file) throws IOException {
+        User userDB = AuthUtil.extractUserFromAuthentication(authentication);
+        if (!userDB.getId().equals(userUpdate.getId())) {
+            throw new IllegalArgumentException("Access Denied");
+        }
+
+        // prevent from update these field
+        userUpdate.setId(userDB.getId());
+        userUpdate.setEmail(userDB.getEmail());
+        userUpdate.setRoles(userDB.getRoles());
+        userUpdate.setEnabled(userDB.isEnabled());
+        userUpdate.setPassword(userUpdate.getPassword().trim());
+
+        if (!userUpdate.getPassword().isEmpty()) {
+            if (userUpdate.getPassword().length() < 6) {
+                throw new IllegalArgumentException("Invalid Password Length");
+            }
+            handleEncodePassword(userUpdate);
+        } else {
+            userUpdate.setPassword(userDB.getPassword());
+        }
+
+        handleAvatarUpload(userUpdate, file);
+        return userRepository.save(userUpdate);
     }
 
     public boolean isEmailUnique(Integer id, String email) {

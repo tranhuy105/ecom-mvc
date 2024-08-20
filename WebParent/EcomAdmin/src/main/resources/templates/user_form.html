@@ -1,17 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta http-equiv="content-type" content="text/html" charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
-    <title>[[${pageTitle}]]</title>
-
-    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
-    <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
-    <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
-</head>
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
 <body>
     <div class="container-fluid">
-        <div th:replace="navigation :: menu"></div>
+        <div th:replace="~{navigation :: menu}"></div>
 
         <div>
             <h2>Manage Users | [[${pageTitle}]]</h2>
@@ -81,14 +73,19 @@
                     <div class="col-sm-8">
                         <input type="hidden" th:field="*{avatar}">
                         <input type="file" id="fileImage" name="image" accept="image/png, image/jpeg" class="form-control-file mb-2">
-                        <img id="thumbnail" alt="avatar preview" class="w-50 img-fluid" th:src="@{${user.avatarPath}}" />
                     </div>
                 </div>
 
-                <div class="text-center">
-                    <input type="submit" value="Save" class="btn btn-primary mr-3" />
-                    <input type="button" value="Cancel" class="btn btn-secondary" id="btnCancel"/>
-                </div>
+                <div class="mt-3 text-center">
+                <img id="thumbnail" alt="avatar preview" class="img-thumbnail"
+                     style="width: 250px; height: 250px; object-fit: cover; border-radius: 75%;" th:src="@{${user.avatarPath}}"
+                />
+            </div>
+
+            <div class="text-center mt-3">
+                <input type="submit" value="Save" class="btn btn-primary mr-3" />
+                <input type="button" value="Cancel" class="btn btn-secondary" id="btnCancel"/>
+            </div>
             </div>
         </form>
 
@@ -111,7 +108,7 @@
             </div>
         </div>
 
-        <div th:replace="navigation :: footer"></div>
+        <div th:replace="~{navigation :: footer}"></div>
     </div>
 </body>
 
