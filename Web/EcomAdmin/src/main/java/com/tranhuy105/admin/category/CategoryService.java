@@ -3,20 +3,19 @@ package com.tranhuy105.admin.category;
 import com.tranhuy105.admin.utils.FileUploadUtil;
 import com.tranhuy105.common.entity.Category;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private static final int PAGE_SIZE = 30;
@@ -45,7 +44,7 @@ public class CategoryService {
     }
 
     public List<Category> findAllWithHierarchy() {
-        return cache.computeIfAbsent("categoryList", key -> {
+        return cache.computeIfAbsent(getCacheKey(), key -> {
             List<Category> categories = categoryRepository.findAllWithChildrenAndParent();
 
             return getSortedRootCategoriesWithChildren(categories);
@@ -67,7 +66,7 @@ public class CategoryService {
     }
 
     public void updateCategoryInCache(Category newCategory) {
-        List<Category> cachedCategories = cache.get("categoryList");
+        List<Category> cachedCategories = cache.get(getCacheKey());
         if (cachedCategories == null) {
             cachedCategories = findAllWithHierarchy();
         } else {
@@ -87,7 +86,7 @@ public class CategoryService {
 
 
         List<Category> sortedCategories = getSortedRootCategoriesWithChildren(cachedCategories);
-        cache.put("categoryList", sortedCategories);
+        cache.put(getCacheKey(), sortedCategories);
     }
 
     private List<Category> getSortedRootCategoriesWithChildren(List<Category> cachedCategories) {
@@ -146,5 +145,24 @@ public class CategoryService {
 
     private boolean isUrlFriendly(String alias) {
         return alias.matches("^[a-z0-9-_]+$");
+    }
+
+    public boolean delete(Integer id) {
+        Category deleted = findById(id);
+        if (deleted == null) {
+            return false;
+        }
+        try {
+            categoryRepository.delete(deleted.getId());
+        } catch (Exception exception) {
+            log.error("error deleting category", exception);
+            return false;
+        }
+        cache.remove(getCacheKey());
+        return true;
+    }
+
+    private String getCacheKey() {
+        return "categoryList";
     }
 }

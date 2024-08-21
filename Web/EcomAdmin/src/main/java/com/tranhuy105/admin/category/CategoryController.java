@@ -61,4 +61,15 @@ public class CategoryController {
         }
         return "redirect:/categories";
     }
+
+    // delete
+    @PostMapping("/categories/{id}")
+    public String deleteCategory(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        if (categoryService.delete(id)) {
+            redirectAttributes.addFlashAttribute("message", "Category deleted");
+        } else {
+            redirectAttributes.addFlashAttribute("message", "Fail to delete category with id "+id);
+        }
+        return "redirect:/categories";
+    }
 }
