@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tranhuy105</groupId>
-    <artifactId>EcomRoot</artifactId>
+    <artifactId>Root</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>Common</module>
-        <module>WebParent</module>
+        <module>Web</module>
     </modules>
 
     <properties>

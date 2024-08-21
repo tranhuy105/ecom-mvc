@@ -40,14 +40,8 @@ public class AccountController {
             User user = userService.updateAccount(authentication, updatedUser, avatar);
 
             MyUserDetail currentUserDetail = (MyUserDetail) authentication.getPrincipal();
+            // update user object in session
             currentUserDetail.setUser(user);
-            UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
-                            currentUserDetail,
-                            authentication.getCredentials(),
-                            authentication.getAuthorities()
-                    );
-
-            SecurityContextHolder.getContext().setAuthentication(newAuth);
             redirectAttributes.addFlashAttribute("message", "Update Successfully");
         } catch (IOException | IllegalArgumentException ex) {
             redirectAttributes.addFlashAttribute("message", ex.getMessage());
