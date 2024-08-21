@@ -26,8 +26,6 @@ public class CategoryService {
     private final Map<String, List<Category>> cache = new ConcurrentHashMap<>();
 
     public Page<Category> findAll(Integer page, String search) {
-        page = page != null ? page : 1;
-        page = page < 1 ? 1 : page;
         Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE);
 
         List<Category> allCategories = findAllWithHierarchy();
@@ -89,6 +87,8 @@ public class CategoryService {
                         break;
                     }
                 }
+            } else {
+                cachedCategories.add(0, newCategory);
             }
         }
 

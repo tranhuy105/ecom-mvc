@@ -22,7 +22,7 @@ public class CategoryController {
     public String viewCategoriesList(Model model,
                                      @RequestParam(value = "page", required = false) Integer page,
                                      @RequestParam(value = "q", required = false) String search) {
-        page = (page == null || page < 1) ? 1 : page;
+        page = PaginationUtil.sanitizePage(page);
         Page<Category> categories = categoryService.findAll(page, search);
 
         PaginationUtil.setPaginationAttributes(page, CategoryService.PAGE_SIZE,search, model, categories);

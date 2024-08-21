@@ -26,7 +26,7 @@ public class UserController {
     public String listAll(Model model,
                           @RequestParam(value = "page", required = false) Integer page,
                           @RequestParam(value = "q", required = false) String search) {
-        page = (page == null || page < 1) ? 1 : page;
+        page = PaginationUtil.sanitizePage(page);
         Page<User> user = userService.findByPage(page, search);
 
         PaginationUtil.setPaginationAttributes(page, UserService.PAGE_SIZE, search, model, user);
