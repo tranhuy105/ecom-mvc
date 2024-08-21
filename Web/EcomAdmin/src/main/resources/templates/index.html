@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{fragments :: page_head('Home')}"></head>
 <body>
 <div class="container-fluid">
     <div th:replace="~{navigation :: menu}"></div>
 
     <div>
-        <h1>Welcome to my E-com Admin Control Panel</h1>
+        <h2>Welcome to my E-com Admin Control Panel</h2>
+        Welcome <a th:href="@{/account}" sec:authentication="principal.fullName"></a>
+        <span sec:authentication="principal.authorities"></span>
     </div>
 
     <div th:replace="~{navigation :: footer}"></div>

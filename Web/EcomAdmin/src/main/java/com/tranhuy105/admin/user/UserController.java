@@ -1,5 +1,6 @@
 package com.tranhuy105.admin.user;
 
+import com.tranhuy105.admin.exception.DuplicateEmailException;
 import com.tranhuy105.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class UserController {
         model.addAttribute("currentPage", page);
         model.addAttribute("listUsers", userService.findAllWithRole(user.getContent()));
         model.addAttribute("q", search);
-        return "users";
+        return "users/users";
     }
 
     @GetMapping("/users/new")
@@ -48,7 +49,7 @@ public class UserController {
         model.addAttribute("user", new User());
         model.addAttribute("listRoles", userService.findAllRole());
         model.addAttribute("pageTitle", "Create New User");
-        return "user_form";
+        return "users/user_form";
     }
 
     @GetMapping("/users/edit/{id}")
@@ -60,7 +61,7 @@ public class UserController {
             model.addAttribute("user", user.get());
             model.addAttribute("listRoles", userService.findAllRole());
             model.addAttribute("pageTitle", "Edit User "+id);
-            return "user_form";
+            return "users/user_form";
         } else {
             redirectAttributes.addFlashAttribute("message", "Couldn't found user with id " +id);
             return "redirect:/users";
@@ -75,10 +76,10 @@ public class UserController {
         try {
             userService.save(user, avatar);
             redirectAttributes.addFlashAttribute("message", "User has been saved successfully.");
+        } catch (DuplicateEmailException | IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
         } catch (IOException e) {
             redirectAttributes.addFlashAttribute("message", "IOException when saving user: " + e.getMessage());
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:/users";
     }

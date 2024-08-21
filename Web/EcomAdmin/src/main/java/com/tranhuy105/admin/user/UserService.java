@@ -1,5 +1,6 @@
 package com.tranhuy105.admin.user;
 
+import com.tranhuy105.admin.exception.DuplicateEmailException;
 import com.tranhuy105.admin.utils.AuthUtil;
 import com.tranhuy105.admin.utils.FileUploadUtil;
 import com.tranhuy105.common.entity.Role;
@@ -65,6 +66,9 @@ public class UserService {
 
     @Transactional
     public void save(User user, MultipartFile avatar) throws IOException {
+        if (!isEmailUnique(user.getId(), user.getEmail())) {
+            throw new DuplicateEmailException();
+        }
         boolean isUpdatingUser = (user.getId() != null);
 
         if (isUpdatingUser) {
