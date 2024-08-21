@@ -15,7 +15,6 @@
                 <input type="search" th:value="${q}" name="q" class="form-control mb-2" required/>
                 &nbsp;&nbsp;
                 <input type="submit" value="Search" class="btn btn-primary mb-2" />
-                &nbsp;&nbsp;
                 <input type="button" value="Clear" id="clearButton" class="btn btn-secondary mb-2"/>
             </form>
         </div>
@@ -53,34 +52,59 @@
                         <td>[[${user.roles}]]</td>
                         <td>[[${user.enabled}]]</td>
                         <td>
-                           <a class="fas fa-edit fa-2x" th:href="@{'/users/edit/' + ${user.id}}" title="Edit this user"></a>
-                            &nbsp;
-                            <form th:action="@{/users/{id}(id=${user.id})}" method="post" onsubmit="return confirmDelete()" style="display:inline;">
-                                <input type="hidden" name="_method" value="delete" />
-                                <button type="submit" class="fas fa-trash fa-2x" style="border: none; background: none; color: inherit; cursor: pointer;" title="Delete this user"></button>
-                            </form>
+                            <div class="d-flex justify-content-center">
+                                <a class="btn btn-outline-primary mr-2" th:href="@{'/users/edit/' + ${user.id}}" title="Edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form th:action="@{/users/{id}(id=${user.id})}" method="post" onsubmit="return confirmDelete()">
+                                    <input type="hidden" name="_method" value="delete" />
+                                    <button type="submit" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="mobile-view">
-            <div th:each="user : ${listUsers}" class="row m-1">
-                <div class="col-3">
-                    <img th:src="@{${user.avatarPath}}"
-                         alt="avatar"
-                         style="width: 75px; height: 75px; object-fit: cover; border-radius: 25%;"
-                    />
+        <div class="mobile-view d-block d-md-none">
+            <div th:each="user : ${listUsers}" class="card mb-3 shadow-sm">
+                <div class="row no-gutters">
+                    <div class="col-4 d-flex justify-content-center align-items-center">
+                        <img th:src="@{${user.avatarPath}}"
+                             alt="avatar"
+                             class="img-fluid rounded-circle"
+                             style="width: 120px; height: 120px; object-fit: cover;"
+                        />
+                    </div>
+                    <div class="col-8">
+                        <div class="card-body">
+                            <h5 class="card-title mb-1">[[${user.email}]]</h5>
+                            <p class="card-text mb-1">[[${user.firstName}]] [[${user.lastName}]]</p>
+                            <p class="card-text">
+                                <small class="text-muted">Roles: [[${user.roles}]]</small>
+                                <small class="text-muted">Enabled: [[${user.enabled}]]</small>
+                            </p>
+                            <div class="d-flex">
+                                <a class="btn btn-outline-primary btn-sm mr-2" th:href="@{'/users/edit/' + ${user.id}}" title="Edit">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <form th:action="@{/users/{id}(id=${user.id})}" method="post" onsubmit="return confirmDelete()">
+                                    <input type="hidden" name="_method" value="delete" />
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="col-8">
-                    <div>[[${user.email}]]</div>
-                     <div>[[${user.roles}]]</div>
-                </div>
-
-                <div>&nbsp;</div>
             </div>
         </div>
+
+
 
         <div th:replace="~{navigation :: pagination(totalItems=${totalItems}, currentPage=${currentPage}, totalPages=${totalPages}, startCount=${startCount}, endCount=${endCount}, q=${q}, baseUrl=${'/users'})}"></div>
         <div th:replace="~{navigation :: footer}"></div>
@@ -89,7 +113,9 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#clearButton').on('click', function() {
-            $('input[name="q"]').val('');
+            let url = new URL(window.location.href);
+            url.searchParams.delete('q');
+            window.location.href = url.toString();
         });
     });
 

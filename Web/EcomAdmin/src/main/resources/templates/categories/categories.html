@@ -75,12 +75,17 @@
                     [[${cat.enabled}]]
                 </td>
                 <td>
-                    <a class="fas fa-edit fa-2x" th:href="@{'/categories/edit/' + ${cat.id}}" title="Edit"></a>
-                    &nbsp;
-                    <form th:action="@{/categories/{id}(id=${cat.id})}" method="post" onsubmit="return confirmDelete()" style="display:inline;">
-                        <input type="hidden" name="_method" value="delete" />
-                        <button type="submit" class="fas fa-trash fa-2x" style="border: none; background: none; color: inherit; cursor: pointer;" title="Delete"></button>
-                    </form>
+                    <div class="d-flex justify-content-center">
+                        <a class="btn btn-outline-primary mr-2" th:href="@{'/categories/edit/' + ${cat.id}}" title="Edit">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <form th:action="@{/categories/{id}(id=${cat.id})}" method="post" onsubmit="return confirmDelete()">
+                            <input type="hidden" name="_method" value="delete" />
+                            <button type="submit" class="btn btn-outline-danger">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             </tbody>
@@ -95,7 +100,9 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#clearButton').on('click', function() {
-            $('input[name="q"]').val('');
+            let url = new URL(window.location.href);
+            url.searchParams.delete('q');
+            window.location.href = url.toString();
         });
     });
 
