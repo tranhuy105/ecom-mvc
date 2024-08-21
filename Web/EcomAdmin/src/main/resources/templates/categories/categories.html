@@ -12,7 +12,6 @@
     <div>
         <form th:action="@{/categories}" class="form-inline m-3">
             <input type="search" th:value="${q}" name="q" class="form-control mb-2" required/>
-            &nbsp;&nbsp;
             <input type="submit" value="Search" class="btn btn-primary mb-2" />
             &nbsp;&nbsp;
             <input type="button" value="Clear" id="clearButton" class="btn btn-secondary mb-2"/>
@@ -23,7 +22,33 @@
         [[${message}]]
     </div>
 
-    <div class="full-details">
+    <div class="mobile-view d-block d-md-none p-3">
+        <div th:each="cat : ${listCategories}" class="category-item mb-3 p-3 border rounded bg-light">
+            <div class="d-flex align-items-center mb-2">
+                <img th:src="@{${cat.imagePath}}" alt="category image" class="img-thumbnail mr-3" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+                <div>
+                    <h4 class="mb-1">[[${cat.name}]]</h4>
+                    <p class="mb-1"><strong>ID:</strong> [[${cat.id}]]</p>
+                    <p class="mb-1"><strong>Alias:</strong> [[${cat.alias}]]</p>
+                    <p class="mb-1"><strong>Enabled:</strong> [[${cat.enabled}]]</p>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <a class="btn btn-outline-primary mr-2" th:href="@{'/categories/edit/' + ${cat.id}}" title="Edit">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+                <form th:action="@{/categories/{id}(id=${cat.id})}" method="post" onsubmit="return confirmDelete()">
+                    <input type="hidden" name="_method" value="delete" />
+                    <button type="submit" class="btn btn-outline-danger">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="full-view">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
             <thead class="thead-dark">
             <tr class="text-center">
