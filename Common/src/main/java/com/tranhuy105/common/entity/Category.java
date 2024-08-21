@@ -3,7 +3,9 @@ package com.tranhuy105.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,7 +43,7 @@ public class Category {
     private Category parent;
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Category> children = new HashSet<>();
+    private List<Category> children = new ArrayList<>();
 
     public void addChild(Category child) {
         child.setParent(this);
