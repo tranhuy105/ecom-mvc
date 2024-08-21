@@ -3,6 +3,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 user-avatars
+category-images
 
 ### IntelliJ IDEA ###
 .idea

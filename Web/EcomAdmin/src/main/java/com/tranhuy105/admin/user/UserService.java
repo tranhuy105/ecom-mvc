@@ -48,7 +48,7 @@ public class UserService {
 
     private void handleAvatarUpload(User user, MultipartFile avatar) throws IOException {
         if (avatar != null && !avatar.isEmpty()) {
-            String fileName = validateAndGetFilename(avatar);
+            String fileName = FileUploadUtil.validateAndGetImageFilename(avatar);
             user.setAvatar(fileName);
             // if is creating new user
             if (user.getId() == null) {
@@ -154,25 +154,5 @@ public class UserService {
     private void handleEncodePassword(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
-    }
-
-    private String validateAndGetFilename(MultipartFile avatar) {
-        String originalFilename = avatar.getOriginalFilename();
-        if (originalFilename == null || originalFilename.isEmpty()) {
-            throw new IllegalArgumentException("Filename cannot be null or empty");
-        }
-        if (originalFilename.length() > 60) {
-            throw new IllegalArgumentException("Invalid filename, accept maximum 60 characters");
-        }
-        int lastDotIndex = originalFilename.lastIndexOf('.');
-        if (lastDotIndex == -1 || lastDotIndex == originalFilename.length() - 1) {
-            throw new IllegalArgumentException("File extension cannot be determined");
-        }
-
-        String fileExtension = originalFilename.substring(lastDotIndex + 1).toLowerCase();
-        if (!fileExtension.matches("jpg|jpeg|png")) {
-            throw new IllegalArgumentException("Invalid file type. Only jpg, jpeg, and png are allowed.");
-        }
-        return UUID.randomUUID() + "." + fileExtension;
     }
 }
