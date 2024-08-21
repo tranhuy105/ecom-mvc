@@ -1,8 +1,10 @@
 package com.tranhuy105.admin.category;
 
 
+import com.tranhuy105.admin.utils.PaginationUtil;
 import com.tranhuy105.common.entity.Category;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +19,14 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping("/categories")
-    public String viewCategoriesList(Model model) {
-        model.addAttribute("listCategories", categoryService.findAll(1));
+    public String viewCategoriesList(Model model,
+                                     @RequestParam(value = "page", required = false) Integer page,
+                                     @RequestParam(value = "q", required = false) String search) {
+        page = (page == null || page < 1) ? 1 : page;
+        Page<Category> categories = categoryService.findAll(page, search);
+
+        PaginationUtil.setPaginationAttributes(page, CategoryService.PAGE_SIZE,search, model, categories);
+        model.addAttribute("listCategories", categories.getContent());
         return "categories/categories";
     }
 

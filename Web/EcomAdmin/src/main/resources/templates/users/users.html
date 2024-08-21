@@ -82,57 +82,7 @@
             </div>
         </div>
 
-        <div class="text-center" th:if="${totalItems > 0}">
-            <span class="mb-1">Showing users # [[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
-            <div class="pt-2">
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        <!-- Previous Button -->
-                        <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
-                            <a class="page-link" th:href="@{'/users?page=' + ${currentPage - 1} + ${q != null && q != '' ? '&q=' + q : ''}}" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-
-                        <!-- First Page Link -->
-                        <li class="page-item" th:if="${currentPage > 3}">
-                            <a class="page-link" th:href="@{'/users?page=1' + ${q != null && q != '' ? '&q=' + q : ''}}">1</a>
-                        </li>
-
-                        <!-- Ellipsis before the current page range if needed -->
-                        <li class="page-item disabled" th:if="${currentPage > 3}">
-                            <a class="page-link">...</a>
-                        </li>
-
-                        <!-- Page Numbers -->
-                        <li class="page-item"
-                            th:each="i : ${#numbers.sequence(
-                            (currentPage <= 2 ? 1 : currentPage - 2),
-                            (currentPage >= totalPages - 2 ? totalPages : currentPage + 2))}"
-                            th:classappend="${i == currentPage} ? 'active'">
-                            <a class="page-link" th:href="@{'/users?page=' + ${i} + ${q != null && q != '' ? '&q=' + q : ''}}">[[${i}]]</a>
-                        </li>
-
-                        <!-- Ellipsis after the current page range if needed -->
-                        <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
-                            <a class="page-link">...</a>
-                        </li>
-
-                        <!-- Last Page Link -->
-                        <li class="page-item" th:if="${currentPage < totalPages - 2}">
-                            <a class="page-link" th:href="@{'/users?page=' + ${totalPages}}">[[${totalPages}]]</a>
-                        </li>
-
-                        <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
-                            <a class="page-link" th:href="@{'/users?page=' + ${currentPage + 1} + ${q != null && q != '' ? '&q=' + q : ''}}" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-
+        <div th:replace="~{navigation :: pagination(totalItems=${totalItems}, currentPage=${currentPage}, totalPages=${totalPages}, startCount=${startCount}, endCount=${endCount}, q=${q}, baseUrl=${'/users'})}"></div>
         <div th:replace="~{navigation :: footer}"></div>
     </div>
 </body>

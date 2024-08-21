@@ -1,6 +1,7 @@
 package com.tranhuy105.admin.user;
 
 import com.tranhuy105.admin.exception.DuplicateEmailException;
+import com.tranhuy105.admin.utils.PaginationUtil;
 import com.tranhuy105.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,19 +29,8 @@ public class UserController {
         page = (page == null || page < 1) ? 1 : page;
         Page<User> user = userService.findByPage(page, search);
 
-        long startCount = (long) (page - 1) * UserService.PAGE_SIZE + 1;
-        long endCount = startCount + UserService.PAGE_SIZE - 1;
-        if (endCount > user.getTotalElements()){
-            endCount = user.getTotalElements();
-        }
-
-        model.addAttribute("startCount", startCount);
-        model.addAttribute("endCount", endCount);
-        model.addAttribute("totalItems", user.getTotalElements());
-        model.addAttribute("totalPages", user.getTotalPages());
-        model.addAttribute("currentPage", page);
+        PaginationUtil.setPaginationAttributes(page, UserService.PAGE_SIZE, search, model, user);
         model.addAttribute("listUsers", userService.findAllWithRole(user.getContent()));
-        model.addAttribute("q", search);
         return "users/users";
     }
 

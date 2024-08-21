@@ -62,6 +62,7 @@
         </table>
     </div>
 
+    <div th:replace="~{navigation :: pagination(totalItems=${totalItems}, currentPage=${currentPage}, totalPages=${totalPages}, startCount=${startCount}, endCount=${endCount}, q=${q}, baseUrl=${'/categories'})}"></div>
     <div th:replace="~{navigation :: footer}"></div>
 
 </div>

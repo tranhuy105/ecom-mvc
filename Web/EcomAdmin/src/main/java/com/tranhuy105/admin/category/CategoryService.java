@@ -4,7 +4,10 @@ import com.tranhuy105.admin.utils.FileUploadUtil;
 import com.tranhuy105.common.entity.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,20 +21,25 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class CategoryService {
     private final CategoryRepository categoryRepository;
-    private static final int PAGE_SIZE = 30;
+    public static final int PAGE_SIZE = 30;
     private static final String CATEGORY_LEVEL_PREFIX = "--";
     private final Map<String, List<Category>> cache = new ConcurrentHashMap<>();
 
-    public List<Category> findAll(Integer page) {
+    public Page<Category> findAll(Integer page, String search) {
         page = page != null ? page : 1;
         page = page < 1 ? 1 : page;
+        Pageable pageable = PageRequest.of(page - 1, PAGE_SIZE);
 
-        return findAllWithHierarchy().stream()
-                .skip((long) (page - 1) * PAGE_SIZE)
-                .limit(PAGE_SIZE)
+        List<Category> allCategories = findAllWithHierarchy();
+        List<Category> filteredCategories = allCategories.stream()
+                .filter(category -> search == null || search.isEmpty() || category.getName().toLowerCase().contains(search.toLowerCase()))
                 .toList();
-    }
 
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), filteredCategories.size());
+
+        return new PageImpl<>(filteredCategories.subList(start, end), pageable, filteredCategories.size());
+    }
     public Category findById(Integer id) {
         return categoryRepository.findByIdWithChildrenAndParent(id).orElse(null);
     }
