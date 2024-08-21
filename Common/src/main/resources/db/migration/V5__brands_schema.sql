@@ -12,7 +12,5 @@ CREATE TABLE brand_categories (
     FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX idx_brands_name ON brands(name);
-
 CREATE INDEX idx_brand_categories_brand_id ON brand_categories(brand_id);
 CREATE INDEX idx_brand_categories_category_id ON brand_categories(category_id);
