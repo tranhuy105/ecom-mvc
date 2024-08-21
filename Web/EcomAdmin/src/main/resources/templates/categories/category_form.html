@@ -32,10 +32,10 @@
                 <div class="form-group row">
                     <label class="col-sm-4 col-form-label">Parent Category:</label>
                     <div class="col-sm-8">
-                        <select class="form-control" th:field="*{parent}">
+                        <select class="form-control" th:field="*{parentId}">
                             <option value="0">[No Parent]</option>
                             <th:block th:each="cat : ${listCategories}">
-                                <option th:value="${cat.id}">[[${cat.name}]]</option>
+                                <option th:value="${cat.id}" th:text="${cat.name}">Category Name</option>
                             </th:block>
                         </select>
                     </div>
@@ -58,7 +58,7 @@
 
                 <div class="mt-3 text-center">
                 <img id="thumbnail" alt="image preview" class="img-thumbnail"
-                     style="width: 250px; height: 250px; object-fit: cover; border-radius: 75%;" th:src="@{${category.image}}"
+                     style="width: 250px; height: 250px; object-fit: cover; border-radius: 75%;" th:src="@{${category.imagePath}}"
                 />
             </div>
 

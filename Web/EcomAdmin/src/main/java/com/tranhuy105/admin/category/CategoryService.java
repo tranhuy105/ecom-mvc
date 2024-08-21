@@ -23,9 +23,18 @@ public class CategoryService {
     private static final String CATEGORY_LEVEL_PREFIX = "--";
     private final Map<String, List<Category>> cache = new ConcurrentHashMap<>();
 
-    public List<Category> findPage() {
-        int page = 1;
-        return categoryRepository.findAll();
+    public List<Category> findAll(Integer page) {
+        page = page != null ? page : 1;
+        page = page < 1 ? 1 : page;
+
+        return findAllWithHierarchy().stream()
+                .skip((long) (page - 1) * PAGE_SIZE)
+                .limit(PAGE_SIZE)
+                .toList();
+    }
+
+    public Category findById(Integer id) {
+        return categoryRepository.findByIdWithChildrenAndParent(id).orElse(null);
     }
 
     @Transactional
@@ -36,7 +45,7 @@ public class CategoryService {
     }
 
     public List<Category> findAllWithHierarchy() {
-        return cache.computeIfAbsent("listCategoriesUsedInForm", key -> {
+        return cache.computeIfAbsent("categoryList", key -> {
             List<Category> categories = categoryRepository.findAllWithChildrenAndParent();
 
             return getSortedRootCategoriesWithChildren(categories);
@@ -58,7 +67,7 @@ public class CategoryService {
     }
 
     public void updateCategoryInCache(Category newCategory) {
-        List<Category> cachedCategories = cache.get("listCategoriesUsedInForm");
+        List<Category> cachedCategories = cache.get("categoryList");
         if (cachedCategories == null) {
             cachedCategories = findAllWithHierarchy();
         } else {
@@ -78,7 +87,7 @@ public class CategoryService {
 
 
         List<Category> sortedCategories = getSortedRootCategoriesWithChildren(cachedCategories);
-        cache.put("listCategoriesUsedInForm", sortedCategories);
+        cache.put("categoryList", sortedCategories);
     }
 
     private List<Category> getSortedRootCategoriesWithChildren(List<Category> cachedCategories) {

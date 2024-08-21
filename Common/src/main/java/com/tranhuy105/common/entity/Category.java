@@ -54,4 +54,12 @@ public class Category {
         child.setParent(null);
         this.children.remove(child);
     }
+
+    public String getImagePath() {
+        if (this.id == null || this.image == null) {
+            return "/images/default_user.jpg";
+        }
+//        return String.format("/category-images/%s/%s", this.id, this.image);
+        return "/images/default_user.jpg";
+    }
 }
