@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}" />
+    <script type="text/javascript" th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
 <body>
     <div class="container-fluid">
         <div th:replace="~{navigation :: menu}"></div>
 
-        <div>
+        <div class="mb-4 mt-2">
             <h2>Manage Products | [[${pageTitle}]]</h2>
         </div>
 
@@ -36,11 +40,13 @@
 
                 <!-- Tab panes -->
                 <div class="tab-content">
-                    <div class="tab-pane active p-3"  id="#basic" role="tabpanel" >
+                    <div class="tab-pane active p-3"  id="basic" role="tabpanel" >
                         <div th:replace="~{products/product_overview :: fragment}"></div>
                     </div>
                     <div class="tab-pane" id="sku" role="tabpanel">Stock-keeping Unit</div>
-                    <div class="tab-pane" id="desc" role="tabpanel">Description</div>
+                    <div class="tab-pane" id="desc" role="tabpanel">
+                        <div th:replace="~{products/product_description :: fragment}"></div>
+                    </div>
                     <div class="tab-pane" id="images" role="tabpanel">Images</div>
                     <div class="tab-pane" id="details" role="tabpanel">Details</div>
 
@@ -59,6 +65,11 @@
 
 <script>
     moduleURL = "[[@{/products}]]"
+
+    $(document).ready(function () {
+        $("#shortDescription").richText();
+        $("#fullDescription").richText();
+    })
 </script>
 <script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
 </html>

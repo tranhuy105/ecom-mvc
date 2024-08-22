@@ -59,6 +59,6 @@ public class ProductController {
     @PostMapping("/products")
     public String saveProduct(ProductDTO productDTO) {
         System.out.println(productDTO);
-        return "products/product_form";
+        return "redirect:/products";
     }
 }
