@@ -57,6 +57,10 @@ public class CategoryService {
         });
     }
 
+    public List<Category> findAllById(List<Integer> ids) {
+        return categoryRepository.findAllById(ids);
+    }
+
     private void handleSaveImage(Category category, MultipartFile image) throws IOException {
         if (image != null && !image.isEmpty() && category.getImage() != null) {
             String fileName = FileUploadUtil.validateAndGetImageFilename(image);

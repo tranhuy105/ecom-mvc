@@ -75,13 +75,13 @@
             <tr th:each="brand : ${listBrands}">
                 <td>[[${brand.id}]]</td>
                 <td class="text-center">
-                    <img th:src="@{${brand.logo}}"
+                    <img th:src="@{${brand.logoPath}}"
                          alt="avatar"
                          style="width: 75px; height: 75px; object-fit: cover; border-radius: 25%;"
                     />
                 </td>
-                <td class="text-center">
-                    <span class="badge badge-pill badge-info text-white p-2" style="font-size: 1.2rem;">
+                <td>
+                    <span class="badge badge-info text-white" style="font-size: 1.2rem;">
                         [[${brand.name}]]
                     </span>
                 </td>

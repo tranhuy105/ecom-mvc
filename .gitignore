@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 user-avatars
 category-images
+brand_logos
 
 ### IntelliJ IDEA ###
 .idea
