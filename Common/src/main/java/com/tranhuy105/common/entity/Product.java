@@ -8,7 +8,9 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -48,8 +50,11 @@ public class Product {
     private Brand brand;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ProductDetail> additionalDetails = new ArrayList<>();
+    private Set<ProductDetail> additionalDetails = new HashSet<>();
 
     @OneToMany(mappedBy = "product",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ProductImage> images = new ArrayList<>();
+    private Set<ProductImage> images = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<Sku> skus = new HashSet<>();
 }

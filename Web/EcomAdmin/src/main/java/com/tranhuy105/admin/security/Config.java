@@ -31,6 +31,8 @@ public class Config {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/users/**").hasAuthority("Admin")
                 .requestMatchers("/categories/**", "/brands/**").hasAnyAuthority("Admin", "Editor")
+                .requestMatchers("/products/**").hasAnyAuthority("Admin", "Salesperson", "Editor", "Shipper")
+                .requestMatchers("/images/**", "/js/**", "/webjars/**").permitAll()
                 .anyRequest()
                 .authenticated()
         ).formLogin(form-> form
@@ -43,10 +45,5 @@ public class Config {
         );
 
         return http.build();
-    }
-
-    @Bean
-    WebSecurityCustomizer webSecurityCustomizer() {
-        return (web -> web.ignoring().requestMatchers("/images/**", "/js/**", "/webjars/**"));
     }
 }
