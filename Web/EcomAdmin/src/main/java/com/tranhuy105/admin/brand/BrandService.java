@@ -33,6 +33,10 @@ public class BrandService {
         return new PageImpl<>(brandsWithCategories, pageable, brandPage.getTotalElements());
     }
 
+    public List<Brand> findAllMin() {
+        return brandRepository.findAllMin();
+    }
+
     public Brand findById(Integer id) {
         return brandRepository.findById(id).orElse(null);
     }

@@ -1,6 +1,8 @@
 package com.tranhuy105.admin.product;
 
+import com.tranhuy105.admin.brand.BrandService;
 import com.tranhuy105.admin.category.CategoryService;
+import com.tranhuy105.admin.product.DTO.ProductDTO;
 import com.tranhuy105.admin.product.service.ProductService;
 import com.tranhuy105.admin.utils.PaginationUtil;
 import com.tranhuy105.common.entity.Product;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final BrandService brandService;
 
     @GetMapping("/products")
     public String productListingView(Model model,
@@ -41,5 +45,20 @@ public class ProductController {
             model.addAttribute("categoryId", categoryId);
         }
         return "products/products";
+    }
+
+    @GetMapping("/products/new")
+    public String createProductView(Model model) {
+        model.addAttribute("productDTO", new ProductDTO());
+        model.addAttribute("pageTitle", "Create New Product");
+        model.addAttribute("listBrands", brandService.findAllMin());
+        model.addAttribute("listCategories", categoryService.findAllWithHierarchy());
+        return "products/product_form";
+    }
+
+    @PostMapping("/products")
+    public String saveProduct(ProductDTO productDTO) {
+        System.out.println(productDTO);
+        return "products/product_form";
     }
 }

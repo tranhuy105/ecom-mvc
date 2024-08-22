@@ -34,4 +34,7 @@ public interface BrandRepository extends JpaRepository<Brand, Integer> {
     @Transactional
     @Query(nativeQuery = true, value = "DELETE FROM brands WHERE id = :id")
     void delete(Integer id);
+
+    @Query("SELECT NEW Brand(b.id, b.name) FROM Brand b ORDER BY b.name")
+    List<Brand> findAllMin();
 }

@@ -40,4 +40,9 @@ public class Brand {
 //        return String.format("/category-images/%s/%s", this.id, this.logo);
         return "/images/default_user.jpg";
     }
+
+    public Brand(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

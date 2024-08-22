@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<body>
+    <div class="container-fluid">
+        <div th:replace="~{navigation :: menu}"></div>
+
+        <div>
+            <h2>Manage Products | [[${pageTitle}]]</h2>
+        </div>
+
+        <form th:action="@{/products}" method="post"
+              th:object="${productDTO}"
+              enctype="multipart/form-data"
+        >
+            <input type="hidden" th:field="*{id}" />
+            <div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" role="tab" href="#basic">Basic</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#sku">Stock-keeping Unit</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#desc">Description</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#images">Images</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#details">Details</a>
+                    </li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active p-3"  id="#basic" role="tabpanel" >
+                        <div th:replace="~{products/product_overview :: fragment}"></div>
+                    </div>
+                    <div class="tab-pane" id="sku" role="tabpanel">Stock-keeping Unit</div>
+                    <div class="tab-pane" id="desc" role="tabpanel">Description</div>
+                    <div class="tab-pane" id="images" role="tabpanel">Images</div>
+                    <div class="tab-pane" id="details" role="tabpanel">Details</div>
+
+                </div>
+            </div>
+
+            <div class="text-center mt-3">
+                <input type="submit" value="Save" class="btn btn-primary mr-3" />
+                <input type="button" value="Cancel" class="btn btn-secondary" id="btnCancel"/>
+            </div>
+        </form>
+
+        <div th:replace="~{navigation :: footer}"></div>
+    </div>
+</body>
+
+<script>
+    moduleURL = "[[@{/products}]]"
+</script>
+<script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
+</html>
