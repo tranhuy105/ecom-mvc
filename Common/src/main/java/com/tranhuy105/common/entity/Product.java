@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -40,6 +41,10 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
     private boolean enabled = true;
+    @Column(name = "default_price")
+    private BigDecimal price = BigDecimal.valueOf(0);
+    @Column(name = "default_discount")
+    private BigDecimal discountPercent = BigDecimal.valueOf(0);
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
