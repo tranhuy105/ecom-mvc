@@ -9,6 +9,7 @@ import com.tranhuy105.admin.utils.PaginationUtil;
 import com.tranhuy105.common.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ public class ProductController {
     private final ProductMapper productMapper;
 
     @GetMapping("/products")
+    @PreAuthorize("hasAnyAuthority('Admin', 'Salesperson', 'Editor', 'Shipper')")
     public String productListingView(Model model,
                                      @RequestParam(value = "page", required = false) Integer page,
                                      @RequestParam(value = "q", required = false) String search,
@@ -55,6 +57,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/edit/{id}")
+    @PreAuthorize("hasAnyAuthority('Admin', 'Editor')")
     public String editProductView(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
         ProductDTO productDTO = productMapper.toDTO(productService.findById(id));
         if (productDTO == null) {
@@ -69,6 +72,7 @@ public class ProductController {
     }
 
     @GetMapping("/products/new")
+    @PreAuthorize("hasAnyAuthority('Admin', 'Editor')")
     public String createProductView(Model model) {
         model.addAttribute("productDTO", productMapper.toDTO(productService.getMockProduct()));
         model.addAttribute("pageTitle", "Create New Product");
@@ -78,6 +82,7 @@ public class ProductController {
     }
 
     @PostMapping("/products")
+    @PreAuthorize("hasAnyAuthority('Admin', 'Editor')")
     public String saveProduct(ProductDTO productDTO,
                               @RequestParam("imageList") MultipartFile[] imageFiles,
                               @RequestParam(value = "detailID", required = false) Integer[] detailIds,
@@ -115,6 +120,7 @@ public class ProductController {
 
     // delete
     @PostMapping("/products/{id}")
+    @PreAuthorize("hasAuthority('Admin')")
     public String deleteProduct(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
         productService.delete(id);
         redirectAttributes.addFlashAttribute("message", "Product deleted");

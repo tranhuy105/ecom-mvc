@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <head th:replace="~{fragments :: page_head('Products')}"></head>
 <body>
 <div class="container-fluid">
@@ -7,7 +7,9 @@
 
     <div>
         <h2>Manage Products</h2>
-        <a th:href="@{/products/new}">Create New Product</a>
+        <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+            <a th:href="@{/products/new}">Create New Product</a>
+        </th:block>
     </div>
 
     <div>
@@ -67,8 +69,12 @@
                         </p>
                         <div class="d-flex justify-content-end">
                             <a th:href="@{'/products/' + ${product.alias}}" class="btn btn-info mr-3">Detail</a>
-                            <a th:href="@{'/products/edit/' + ${product.id}}" class="btn btn-primary mr-3">Edit</a>
-                            <a th:href="@{'/products/delete/' + ${product.id}}" onclick="return confirmDelete()" class="btn btn-danger">Delete</a>
+                            <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
+                                <a th:href="@{'/products/edit/' + ${product.id}}" class="btn btn-primary mr-3">Edit</a>
+                            </th:block>
+                            <th:block sec:authorize="hasAuthority('Admin')">
+                                <a th:href="@{'/products/delete/' + ${product.id}}" onclick="return confirmDelete()" class="btn btn-danger">Delete</a>
+                            </th:block>
                         </div>
 
                     </div>
