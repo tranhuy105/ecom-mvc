@@ -58,12 +58,4 @@ public class ProductDTO {
         sb.append("]");
         return sb.toString();
     }
-
-    public void setSkusFromJson(String jsonString, ObjectMapper objectMapper) {
-        try {
-            this.skus = objectMapper.readValue(jsonString, new TypeReference<>() {});
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Invalid JSON string for skus: " + jsonString, e);
-        }
-    }
 }

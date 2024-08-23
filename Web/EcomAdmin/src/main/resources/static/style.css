@@ -20,3 +20,17 @@
     div.full-view {display: block}
     div.mobile-view {display: none}
 }
+
+.image-container {
+    transition: opacity 0.3s, border 0.3s;
+}
+.image-container.remove {
+    opacity: 0.5;
+    border: 2px dashed red;
+}
+.image-container.add {
+    border: 2px solid green;
+}
+.image-container.keep {
+    border: 2px solid blue;
+}

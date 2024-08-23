@@ -44,7 +44,9 @@
                     <div class="tab-pane" id="sku" role="tabpanel">
                         <div th:replace="~{products/product_skus :: fragment}"></div>
                     </div>
-                    <div class="tab-pane" id="images" role="tabpanel">Images</div>
+                    <div class="tab-pane" id="images" role="tabpanel">
+                        <div th:replace="~{products/product_images :: fragment}"></div>
+                    </div>
                     <div class="tab-pane text-center m-3" id="details" role="tabpanel">
                         <div id="productDetailContainer" class="card text-left">
                             <div th:replace="~{products/product_details :: fragment}"></div>
@@ -101,6 +103,7 @@
         $(button).closest('.card-body').remove();
     }
 </script>
+<script type="text/javascript" th:src="@{/js/product_form_images.js}"></script>
 <script type="text/javascript" th:src="@{/js/product_form_skus.js}"></script>
 <script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
 </html>

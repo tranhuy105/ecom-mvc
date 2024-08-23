@@ -1,17 +1,14 @@
 package com.tranhuy105.admin.product.DTO;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter@NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ProductDetailDTO {
     private Integer id;
     private String name;
     private String value;
-    private Integer productId;
 }

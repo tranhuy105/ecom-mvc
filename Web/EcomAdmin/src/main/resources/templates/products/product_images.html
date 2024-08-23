@@ -5,6 +5,28 @@
     <title>Title</title>
 </head>
 <body>
-
+<div th:fragment="fragment" th:remove="tag">
+    <div id="imageContainer" class="row m-3">
+        <div th:each="image, iterStat : *{images}" class="col-md-3 mb-3" th:id="'imageSection' + ${iterStat.index}">
+            <div class="card image-container keep" th:data-id="${image.id}" th:data-name="${image.name}" th:data-instruction="'keep'">
+                <img th:src="@{${image.path}}" class="card-img-top img-fluid" alt="Image">
+                <div class="card-body text-center">
+                    <button type="button" class="btn btn-danger removeImageButton">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                    <button type="button" class="btn btn-secondary undoImageButton" style="display: none;">
+                        <i class="fas fa-undo"></i> Undo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-3">
+        <button type="button" class="btn btn-secondary" id="addImageButton">Add More Images</button>
+    </div>
+    <input type="file" id="imageInput" accept="image/png, image/jpeg" style="display: none;" multiple>
+    <input type="file" id="imageList" name="imageList" accept="image/png, image/jpeg" style="display: none;" multiple>
+    <input type="hidden" id="imageInstructions" name="imageInstructions">
+</div>
 </body>
 </html>

@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
 
@@ -24,7 +25,6 @@ public class ProductController {
     private final CategoryService categoryService;
     private final BrandService brandService;
     private final ProductMapper productMapper;
-    private final ObjectMapper objectMapper;
 
     @GetMapping("/products")
     public String productListingView(Model model,
@@ -55,7 +55,6 @@ public class ProductController {
     @GetMapping("/products/new")
     public String createProductView(Model model) {
         ProductDTO productDTO = productMapper.toDTO(productService.findById(1));
-        System.out.println(productDTO.getShortDescription());
         model.addAttribute("productDTO", productDTO);
         model.addAttribute("pageTitle", "Create New Product");
         model.addAttribute("listBrands", brandService.findAllMin());
@@ -65,15 +64,22 @@ public class ProductController {
 
     @PostMapping("/products")
     public String saveProduct(ProductDTO productDTO,
-                              @RequestParam("skusJson") String skusJson,
+                              @RequestParam("imageList") MultipartFile[] imageFiles,
+                              @RequestParam("detailID") Integer[] detailIds,
                               @RequestParam("detailName") String[] detailNames,
-                              @RequestParam("detailVal") String[] detailValues) {
-        productDTO.setSkusFromJson(skusJson, objectMapper);
-        productDTO.getSkus().forEach(System.out::println);
+                              @RequestParam("detailVal") String [] detailValues,
+                              @RequestParam("skusJson") String skusJson,
+                              @RequestParam("imageInstructions") String instructionJson) {
+        productDTO.setSkus(productMapper.mapSkuDTOFromJson(skusJson));
+        productDTO.setAdditionalDetails(productMapper.mapDetailDTO(detailIds, detailNames, detailValues));
+        productDTO.setImages(productMapper.mapImageFromInstruction(instructionJson));
         System.out.println(productDTO);
-        Arrays.stream(detailNames).forEach(System.out::println);
-        System.out.println("---");
-        Arrays.stream(detailValues).forEach(System.out::println);
+        System.out.println("Received "+imageFiles.length+" new files.");
+        for (MultipartFile file : imageFiles) {
+            System.out.println("-----");
+            System.out.println(file.getOriginalFilename());
+            System.out.println("----");
+        }
         return "redirect:/products";
     }
 }
