@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tranhuy105.admin.brand.BrandService;
 import com.tranhuy105.admin.category.CategoryService;
-import com.tranhuy105.admin.product.DTO.ProductDTO;
-import com.tranhuy105.admin.product.DTO.ProductDetailDTO;
-import com.tranhuy105.admin.product.DTO.ProductImageDTO;
-import com.tranhuy105.admin.product.DTO.SkuDTO;
+import com.tranhuy105.admin.product.DTO.*;
 import com.tranhuy105.common.entity.Product;
 import com.tranhuy105.common.entity.ProductDetail;
 import com.tranhuy105.common.entity.ProductImage;
@@ -141,34 +138,11 @@ public class ProductMapper {
         return detailDTOList;
     }
 
-    public List<ProductImageDTO> mapImageFromInstruction(String instructionJson) {
-        List<ProductImageDTO> updatedImages = new ArrayList<>();
-
+    public List<ImageInstructionDTO> mapImageInstruction(String instructionJson) {
         try {
-            List<Map<String, Object>> instructions = objectMapper.readValue(instructionJson, new TypeReference<>() {});
-
-            for (Map<String, Object> instruction : instructions) {
-                String instructionType = (String) instruction.get("instruction");
-                Integer id = (Integer) instruction.get("id");
-                String name = (String) instruction.get("name");
-
-                if ("remove".equalsIgnoreCase(instructionType)) {
-                    if (id != null) {
-//                  productImageRepository.deleteById(id);
-                    }
-                } else if ("add".equalsIgnoreCase(instructionType) || "keep".equalsIgnoreCase(instructionType)) {
-                    // Handle add or keep instructions
-                    ProductImageDTO imageDTO = new ProductImageDTO();
-                    imageDTO.setId(id);
-                    imageDTO.setName(name);
-                    updatedImages.add(imageDTO);
-                }
-            }
+            return objectMapper.readValue(instructionJson, new TypeReference<>() {});
         } catch (IOException e) {
             throw new IllegalArgumentException("Invalid JSON string for instructions: " + instructionJson, e);
         }
-
-
-        return updatedImages;
     }
 }

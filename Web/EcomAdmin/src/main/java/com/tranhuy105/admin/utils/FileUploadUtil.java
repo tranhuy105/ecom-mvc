@@ -14,13 +14,10 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class FileUploadUtil {
-    public static String validateAndGetImageFilename(MultipartFile avatar) {
-        String originalFilename = avatar.getOriginalFilename();
+    public static String validateAndGetImageFilename(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
         if (originalFilename == null || originalFilename.isEmpty()) {
-            throw new IllegalArgumentException("Filename cannot be null or empty");
-        }
-        if (originalFilename.length() > 60) {
-            throw new IllegalArgumentException("Invalid filename, accept maximum 60 characters");
+            throw new IllegalArgumentException("Original filename cannot be null or empty");
         }
         int lastDotIndex = originalFilename.lastIndexOf('.');
         if (lastDotIndex == -1 || lastDotIndex == originalFilename.length() - 1) {
@@ -46,6 +43,15 @@ public class FileUploadUtil {
             Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ioe) {
             throw new IOException("Could not save the file: ", ioe);
+        }
+    }
+
+    public static void deleteFile(String dir, String fileName) {
+        Path filePath = Paths.get(dir).resolve(fileName);
+        try {
+            Files.deleteIfExists(filePath);
+        } catch (IOException ex) {
+            log.warn("Couldn't delete file: " + filePath.toAbsolutePath());
         }
     }
 

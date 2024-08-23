@@ -108,13 +108,11 @@ $(document).ready(function() {
         const imageInstructions = [];
         $('.image-container').each(function() {
             const instruction = $(this).data('instruction');
-            if (instruction !== 'remove') {
                 imageInstructions.push({
                     id: $(this).data('id'),
                     name: $(this).data('name'),
                     instruction: instruction
                 });
-            }
         });
         $('#imageInstructions').val(JSON.stringify(imageInstructions));
     });

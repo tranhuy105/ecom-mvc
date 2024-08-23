@@ -32,15 +32,19 @@
         [[${message}]]
     </div>
 
+    <div th:if="${error != null}" class="alert alert-danger text-center">
+        [[${error}]]
+    </div>
+
     <!-- Full View for Desktop -->
     <div class="full-view">
         <div class="row">
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="product : ${listProducts}">
                 <div class="card border-light shadow-sm bg-white">
-                    <div th:id="'carouselExampleControlsTh_' + ${product.id}" class="carousel slide">
+                    <div th:if="${product.images.size() > 0}" th:id="'carouselExampleControlsTh_' + ${product.id}" class="carousel slide">
                         <div class="carousel-inner">
                             <div th:each="image, iterStat : ${product.images}" class="carousel-item" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
-                                <img th:src="@{${image.path}}" class="d-block w-100" alt="Product Image">
+                                <img th:src="@{${image.path}}" class="d-block w-100" style="aspect-ratio: 7/8; object-fit: cover" alt="Product Image">
                             </div>
                         </div>
                         <a class="carousel-control-prev" th:href="'#carouselExampleControlsTh_' + ${product.id}" role="button" data-slide="prev">
@@ -51,6 +55,9 @@
                             <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             <span class="sr-only">Next</span>
                         </a>
+                    </div>
+                    <div th:if="${product.images.size() == 0}">
+                        <img th:src="@{/images/default_user.jpg}" class="d-block w-100" style="aspect-ratio: 7/8; object-fit: cover" alt="Product Image">
                     </div>
                     <div class="card-body">
                         <h4 class="card-title" th:text="${product.name} + ' (' + ${product.id} + ')'" style="color: #007bff; font-size: 1.25rem; font-weight: bold;">Product Name</h4>

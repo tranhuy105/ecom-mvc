@@ -1,6 +1,7 @@
 package com.tranhuy105.admin.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,17 +11,17 @@ import java.nio.file.Paths;
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
     @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        Path avatarDir = Paths.get("user-avatars");
-        String userAvatarPath = avatarDir.toFile().getAbsolutePath();
+    public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
+        addResourceHandler(registry, "user-avatars", "/user-avatars/**");
+        addResourceHandler(registry, "category-images", "/category-images/**");
+        addResourceHandler(registry, "product-images", "/product-images/**");
+    }
 
-        Path categoryImageDir = Paths.get("category-images");
-        String categoryImagePath = categoryImageDir.toFile().getAbsolutePath();
+    private void addResourceHandler(ResourceHandlerRegistry registry, String directory, String urlPattern) {
+        Path dirPath = Paths.get(directory);
+        String absolutePath = dirPath.toFile().getAbsolutePath();
 
-        registry.addResourceHandler("/user-avatars/**")
-                .addResourceLocations("file:/"+userAvatarPath+"/");
-
-        registry.addResourceHandler("/category-images/**")
-                .addResourceLocations("file:/"+categoryImagePath+"/");
+        registry.addResourceHandler(urlPattern)
+                .addResourceLocations("file:" + absolutePath + "/");
     }
 }

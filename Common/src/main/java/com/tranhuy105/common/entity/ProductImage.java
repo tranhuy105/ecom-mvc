@@ -23,6 +23,9 @@ public class ProductImage {
     private Product product;
 
     public String getPath() {
+        if (id != null && id > 10 && name != null) {
+            return "/product-images/"+this.name;
+        }
         return "/images/default_user.jpg";
     }
 }

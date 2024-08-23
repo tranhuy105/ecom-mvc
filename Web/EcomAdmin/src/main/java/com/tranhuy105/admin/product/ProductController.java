@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
+
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
@@ -68,7 +70,7 @@ public class ProductController {
 
     @GetMapping("/products/new")
     public String createProductView(Model model) {
-        model.addAttribute("productDTO", new ProductDTO());
+        model.addAttribute("productDTO", productMapper.toDTO(productService.getMockProduct()));
         model.addAttribute("pageTitle", "Create New Product");
         model.addAttribute("listBrands", brandService.findAllMin());
         model.addAttribute("listCategories", categoryService.findAllWithHierarchy());
@@ -82,20 +84,40 @@ public class ProductController {
                               @RequestParam(value = "detailName", required = false) String[] detailNames,
                               @RequestParam(value = "detailVal", required = false) String [] detailValues,
                               @RequestParam("skusJson") String skusJson,
-                              @RequestParam("imageInstructions") String instructionJson) {
-        productDTO.setSkus(productMapper.mapSkuDTOFromJson(skusJson));
-        productDTO.setAdditionalDetails(productMapper.mapDetailDTO(detailIds, detailNames, detailValues));
-        productDTO.setImages(productMapper.mapImageFromInstruction(instructionJson));
-        System.out.println(productDTO);
-        System.out.println("Received "+imageFiles.length+" new files.");
-        for (MultipartFile file : imageFiles) {
-            if (file.isEmpty()) {
-                System.out.println("Empty file, skip");
-                continue;
+                              @RequestParam("imageInstructions") String instructionJson,
+                              RedirectAttributes redirectAttributes) {
+
+        try {
+            productDTO.setSkus(productMapper.mapSkuDTOFromJson(skusJson));
+            productDTO.setAdditionalDetails(productMapper.mapDetailDTO(detailIds, detailNames, detailValues));
+
+            System.out.println("Received " + imageFiles.length + " new files.");
+            for (MultipartFile file : imageFiles) {
+                if (file.isEmpty()) {
+                    System.out.println("Empty file, skip");
+                    continue;
+                }
+                System.out.println("-----");
+                System.out.println(file.getOriginalFilename());
             }
-            System.out.println("-----");
-            System.out.println(file.getOriginalFilename());
+
+            productService.save(productMapper.toEntity(productDTO), imageFiles, productMapper.mapImageInstruction(instructionJson));
+            redirectAttributes.addFlashAttribute("message","product save success");
+        } catch (IOException exception) {
+            redirectAttributes.addFlashAttribute("error", "Something went wrong, please try again later.");
+        } catch (IllegalArgumentException exception) {
+            redirectAttributes.addFlashAttribute("error", exception.getMessage());
+        } catch (Exception runtimeException) {
+            redirectAttributes.addFlashAttribute("error", "Internal Server Error. Please Contact Admin");
         }
+        return "redirect:/products";
+    }
+
+    // delete
+    @PostMapping("/products/{id}")
+    public String deleteProduct(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        productService.delete(id);
+        redirectAttributes.addFlashAttribute("message", "Product deleted");
         return "redirect:/products";
     }
 }
