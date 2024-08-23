@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,8 @@ public class ProductDTO {
     private boolean enabled = true;
     private Integer categoryId;
     private Integer brandId;
+    private BigDecimal price;
+    private BigDecimal discountPercent;
     private List<ProductDetailDTO> additionalDetails = new ArrayList<>();
     private List<ProductImageDTO> images = new ArrayList<>();
     private List<SkuDTO> skus = new ArrayList<>();

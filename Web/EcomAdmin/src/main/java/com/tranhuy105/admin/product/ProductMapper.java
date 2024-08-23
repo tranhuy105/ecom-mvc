@@ -40,6 +40,8 @@ public class ProductMapper {
         dto.setFullDescription(product.getFullDescription());
         dto.setCreatedAt(product.getCreatedAt());
         dto.setUpdatedAt(product.getUpdatedAt());
+        dto.setPrice(product.getPrice());
+        dto.setDiscountPercent(product.getDiscountPercent());
         dto.setEnabled(product.isEnabled());
         dto.setCategoryId(product.getCategory() != null ? product.getCategory().getId() : null);
         dto.setBrandId(product.getBrand() != null ? product.getBrand().getId() : null);
@@ -70,6 +72,8 @@ public class ProductMapper {
         product.setCreatedAt(dto.getCreatedAt());
         product.setUpdatedAt(dto.getUpdatedAt());
         product.setEnabled(dto.isEnabled());
+        product.setDiscountPercent(dto.getDiscountPercent());
+        product.setPrice(dto.getPrice());
         product.setCategory(dto.getCategoryId() != null ? categoryService.findById(dto.getCategoryId()) : null);
         product.setBrand(dto.getBrandId() != null ? brandService.findById(dto.getBrandId()) : null);
 
