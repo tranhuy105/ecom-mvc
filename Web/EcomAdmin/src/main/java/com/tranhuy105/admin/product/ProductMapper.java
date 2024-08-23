@@ -126,11 +126,14 @@ public class ProductMapper {
     }
 
     public List<ProductDetailDTO> mapDetailDTO(Integer[] ids, String[] names, String[] values) {
+        List<ProductDetailDTO> detailDTOList = new ArrayList<>();
+        if (ids == null || names == null || values == null) {
+            return detailDTOList;
+        }
         if (ids.length != names.length || names.length != values.length) {
             throw new IllegalArgumentException("Arrays must be of the same length");
         }
 
-        List<ProductDetailDTO> detailDTOList = new ArrayList<>();
         for (int i = 0; i < ids.length; i++) {
             ProductDetailDTO detailDTO = new ProductDetailDTO(ids[i], names[i], values[i]);
             detailDTOList.add(detailDTO);

@@ -12,11 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -52,10 +52,23 @@ public class ProductController {
         return "products/products";
     }
 
+    @GetMapping("/products/edit/{id}")
+    public String editProductView(Model model, @PathVariable Integer id, RedirectAttributes redirectAttributes) {
+        ProductDTO productDTO = productMapper.toDTO(productService.findById(id));
+        if (productDTO == null) {
+            redirectAttributes.addFlashAttribute("message", "Couldn't find product with id "+id);
+            return "redirect:/products";
+        }
+        model.addAttribute("productDTO", productDTO);
+        model.addAttribute("pageTitle", "Create New Product");
+        model.addAttribute("listBrands", brandService.findAllMin());
+        model.addAttribute("listCategories", categoryService.findAllWithHierarchy());
+        return "products/product_form";
+    }
+
     @GetMapping("/products/new")
     public String createProductView(Model model) {
-        ProductDTO productDTO = productMapper.toDTO(productService.findById(1));
-        model.addAttribute("productDTO", productDTO);
+        model.addAttribute("productDTO", new ProductDTO());
         model.addAttribute("pageTitle", "Create New Product");
         model.addAttribute("listBrands", brandService.findAllMin());
         model.addAttribute("listCategories", categoryService.findAllWithHierarchy());
@@ -65,9 +78,9 @@ public class ProductController {
     @PostMapping("/products")
     public String saveProduct(ProductDTO productDTO,
                               @RequestParam("imageList") MultipartFile[] imageFiles,
-                              @RequestParam("detailID") Integer[] detailIds,
-                              @RequestParam("detailName") String[] detailNames,
-                              @RequestParam("detailVal") String [] detailValues,
+                              @RequestParam(value = "detailID", required = false) Integer[] detailIds,
+                              @RequestParam(value = "detailName", required = false) String[] detailNames,
+                              @RequestParam(value = "detailVal", required = false) String [] detailValues,
                               @RequestParam("skusJson") String skusJson,
                               @RequestParam("imageInstructions") String instructionJson) {
         productDTO.setSkus(productMapper.mapSkuDTOFromJson(skusJson));
@@ -76,9 +89,12 @@ public class ProductController {
         System.out.println(productDTO);
         System.out.println("Received "+imageFiles.length+" new files.");
         for (MultipartFile file : imageFiles) {
+            if (file.isEmpty()) {
+                System.out.println("Empty file, skip");
+                continue;
+            }
             System.out.println("-----");
             System.out.println(file.getOriginalFilename());
-            System.out.println("----");
         }
         return "redirect:/products";
     }

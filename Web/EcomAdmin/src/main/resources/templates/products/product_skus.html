@@ -1,8 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <body>
-<div th:fragment="fragment">
-    <table class="table table-bordered mt-3">
+<div th:fragment="fragment" class="mx-4 mt-3">
+    <h2>SKU Management</h2>
+    <p class="lead">Manage your stock-keeping units (SKUs) with the following table. Add new SKUs using the form below.</p>
+
+    <div class="info">
+        <h5>What is an SKU?</h5>
+        <p>A Stock Keeping Unit (SKU) is a unique identifier for each distinct product and service that can be purchased.
+            It is typically used to track inventory and is essential for managing stock levels, pricing, and product details.</p>
+    </div>
+
+    <table class="table table-bordered my-3">
         <thead>
         <tr>
             <th>SKU Code</th>
@@ -19,30 +28,39 @@
     </table>
 
     <h4>Add New SKU</h4>
-    <div class="row g-3 align-items-center py-3 bg-dark">
-        <div class="col-auto">
+    <p class="text-muted">Fill out the details for the new SKU you want to add.</p>
+    <div class="row row-inputs align-items-center py-3 border border-secondary rounded">
+        <div class="col-md-6 col-lg-3">
+            <label for="newSkuCode" class="form-label">SKU Code</label>
             <input type="text" id="newSkuCode" class="form-control" placeholder="SKU Code"/>
         </div>
-        <div class="col-auto">
-            <input type="text" id="newPrice" class="form-control" placeholder="Price"/>
+        <div class="col-md-6 col-lg-3">
+            <label for="newPrice" class="form-label">Price</label>
+            <input type="number" step="0.01" id="newPrice" class="form-control" placeholder="Price"/>
         </div>
-        <div class="col-auto">
-            <input type="text" id="newDiscountPercent" class="form-control" placeholder="Discount %"/>
+        <div class="col-md-6 col-lg-3">
+            <label for="newDiscountPercent" class="form-label">Discount %</label>
+            <input type="number" step="0.01" id="newDiscountPercent" class="form-control" placeholder="Discount %"/>
         </div>
-        <div class="col-auto">
-            <input type="text" id="newStockQuantity" class="form-control" placeholder="Stock Quantity"/>
+        <div class="col-md-6 col-lg-3">
+            <label for="newStockQuantity" class="form-label">Stock Quantity</label>
+            <input type="number" step="0.01" id="newStockQuantity" class="form-control" placeholder="Stock Quantity"/>
         </div>
-        <div class="col-auto">
-            <input type="text" id="newLength" class="form-control mb-1" placeholder="Length"/>
-            <input type="text" id="newWidth" class="form-control mb-1" placeholder="Width"/>
-            <input type="text" id="newHeight" class="form-control" placeholder="Height"/>
+        <div class="col-md-6 col-lg-3">
+            <label for="newLength" class="form-label">Dimensions</label>
+            <div class="input-group">
+                <input type="number" step="0.01" id="newLength" class="form-control" placeholder="Length"/>
+                <input type="number" step="0.01" id="newWidth" class="form-control" placeholder="Width"/>
+                <input type="number" step="0.01" id="newHeight" class="form-control" placeholder="Height"/>
+            </div>
         </div>
-        <div class="col-auto">
-            <input type="text" id="newWeight" class="form-control" placeholder="Weight"/>
+        <div class="col-md-6 col-lg-3">
+            <label for="newWeight" class="form-label">Weight</label>
+            <input type="number" step="0.01" id="newWeight" class="form-control" placeholder="Weight"/>
         </div>
-        <div class="col-auto">
-            <input type="button" class="btn btn-primary" onclick="addSku()" value="Add"/>
-        </div>
+    </div>
+    <div class="w-50 mx-auto py-3">
+        <input type="button" class="btn btn-primary w-100" onclick="addSku()" value="Add"/>
     </div>
 
     <input type="hidden" id="skusInput" th:field="*{skusJson}"/>

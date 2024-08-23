@@ -34,3 +34,16 @@
 .image-container.keep {
     border: 2px solid blue;
 }
+
+.info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-left: 4px solid #007bff;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #007bff;
+}

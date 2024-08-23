@@ -6,7 +6,16 @@
 </head>
 <body>
 <div th:fragment="fragment" th:remove="tag">
-    <div id="imageContainer" class="row m-3">
+    <div class="info mt-4">
+        <h4>Image Management</h4>
+        <p>
+            Use this section to manage your images. You can view the current images, remove unwanted ones, or add new images.
+            Simply click <span class="highlight">"Remove"</span> to delete an image or <span class="highlight">"Undo"</span> if you change your mind.
+            You can also add more images by clicking the <span class="highlight">"Add More Images"</span> button.
+        </p>
+    </div>
+
+    <div id="imageContainer" class="row">
         <div th:each="image, iterStat : *{images}" class="col-md-3 mb-3" th:id="'imageSection' + ${iterStat.index}">
             <div class="card image-container keep" th:data-id="${image.id}" th:data-name="${image.name}" th:data-instruction="'keep'">
                 <img th:src="@{${image.path}}" class="card-img-top img-fluid" alt="Image">

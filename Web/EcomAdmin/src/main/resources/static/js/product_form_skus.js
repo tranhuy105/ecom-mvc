@@ -85,9 +85,87 @@ $(document).ready(function () {
     }
     renderSkus();
     updateSkusInput();
+
+    $('#productForm').on('submit', function (event) {
+        updateSkusInput();
+        event.preventDefault()
+
+        try {
+            if (!validateForm()) {
+                return;
+            }
+        } catch (err) {
+            alert("something went wrong, please try again later.")
+            console.error(err)
+            return;
+        }
+
+        this.submit();
+    });
 });
 
-function submitForm() {
-    updateSkusInput();
-    $('#productForm').submit();
+function validateForm() {
+    if (!validateRichTextFields()) {
+        return false;
+    }
+
+    // Check if there is at least one SKU
+    if (skus.length === 0) {
+        alert("Please add at least one SKU before submitting.");
+        // Switch to the SKU tab
+        $('.nav-tabs a[href="#sku"]').tab('show');
+        return false;
+    }
+
+    for (let i = 0; i < skus.length; i++) {
+        if (!skus[i].skuCode) {
+            alert("skuCode can't be empty.");
+            // Switch to the SKU tab
+            $('.nav-tabs a[href="#sku"]').tab('show');
+            return false;
+        }
+
+        if (skus[i].price <= 0) {
+            alert("price can not be zero.");
+            // Switch to the SKU tab
+            $('.nav-tabs a[href="#sku"]').tab('show');
+            return false;
+        }
+    }
+
+    // Check if images are uploaded
+    const imageContainer = $("#imageContainer");
+    if (imageContainer && imageContainer.children().length === 0) {
+        alert("Please upload at least one image.");
+        // Switch to the Images tab
+        $('.nav-tabs a[href="#images"]').tab('show');
+        return false;
+    }
+
+    return true;
 }
+
+function validateRichTextFields() {
+    const short = $('#shortDescription');
+    const full = $('#fullDescription');
+    const shortDescriptionContent = short.val().trim();
+    const fullDescriptionContent = full.val().trim();
+    const emptyContentPattern = /^(\s*<div><br><\/div>\s*)$/;
+
+    if (!shortDescriptionContent || emptyContentPattern.test(shortDescriptionContent)) {
+        alert("Short Description cannot be empty.");
+        $('.nav-tabs a[href="#basic"]').tab('show');
+        short.focus();
+        return false;
+    }
+
+    if (!fullDescriptionContent || emptyContentPattern.test(fullDescriptionContent)) {
+        alert("Full Description cannot be empty.");
+        $('.nav-tabs a[href="#basic"]').tab('show');
+        full.focus();
+        return false;
+    }
+
+    return true;
+}
+

@@ -48,6 +48,15 @@
                         <div th:replace="~{products/product_images :: fragment}"></div>
                     </div>
                     <div class="tab-pane text-center m-3" id="details" role="tabpanel">
+                        <div class="info mt-4 text-left">
+                            <h4>Add additional detail to your product</h4>
+                            <p>
+                                Manage the additional details of your product below. Each detail consists of a <span class="highlight">"Name"</span> and a corresponding <span class="highlight">"Value"</span>.
+                                You can edit these fields directly or remove a detail by clicking the <span class="highlight">"Trash"</span> button.
+                                <br/>
+                                <strong>Example:</strong> If you're adding a product like a T-shirt, a detail might have the <mark>Name</mark> "Material" and the <mark>Value</mark> "100% Cotton".
+                            </p>
+                        </div>
                         <div id="productDetailContainer" class="card text-left">
                             <div th:replace="~{products/product_details :: fragment}"></div>
                         </div>
@@ -58,7 +67,7 @@
             </div>
 
             <div class="text-center mt-5">
-                <input type="submit" value="Save" class="btn btn-primary mr-3" onclick="submitForm()"/>
+                <input type="submit" value="Save" class="btn btn-primary mr-3"/>
                 <input type="button" value="Cancel" class="btn btn-secondary" id="btnCancel"/>
             </div>
         </form>
