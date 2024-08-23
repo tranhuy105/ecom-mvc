@@ -1,15 +1,13 @@
 package com.tranhuy105.admin.product.DTO;
 
-import com.tranhuy105.admin.brand.BrandService;
-import com.tranhuy105.admin.category.CategoryService;
-import com.tranhuy105.common.entity.Product;
-import com.tranhuy105.common.entity.ProductDetail;
-import com.tranhuy105.common.entity.ProductImage;
-import com.tranhuy105.common.entity.Sku;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,7 +26,44 @@ public class ProductDTO {
     private boolean enabled = true;
     private Integer categoryId;
     private Integer brandId;
-    private Set<ProductDetailDTO> additionalDetails;
-    private Set<ProductImageDTO> images;
-    private Set<SkuDTO> skus;
+    private List<ProductDetailDTO> additionalDetails = new ArrayList<>();
+    private List<ProductImageDTO> images = new ArrayList<>();
+    private List<SkuDTO> skus = new ArrayList<>();
+
+    public String getSkusJson() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+
+        boolean first = true;
+        for (SkuDTO sku : skus) {
+            if (!first) {
+                sb.append(",");
+            }
+            first = false;
+
+            sb.append("{")
+                    .append("\"id\":").append(sku.getId()).append(",")
+                    .append("\"skuCode\":\"").append(sku.getSkuCode()).append("\",")
+                    .append("\"price\":").append(sku.getPrice()).append(",")
+                    .append("\"discountPercent\":").append(sku.getDiscountPercent()).append(",")
+                    .append("\"stockQuantity\":").append(sku.getStockQuantity()).append(",")
+                    .append("\"length\":").append(sku.getLength()).append(",")
+                    .append("\"width\":").append(sku.getWidth()).append(",")
+                    .append("\"height\":").append(sku.getHeight()).append(",")
+                    .append("\"weight\":").append(sku.getWeight()).append(",")
+                    .append("\"productId\":").append(sku.getProductId())
+                    .append("}");
+        }
+
+        sb.append("]");
+        return sb.toString();
+    }
+
+    public void setSkusFromJson(String jsonString, ObjectMapper objectMapper) {
+        try {
+            this.skus = objectMapper.readValue(jsonString, new TypeReference<>() {});
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Invalid JSON string for skus: " + jsonString, e);
+        }
+    }
 }

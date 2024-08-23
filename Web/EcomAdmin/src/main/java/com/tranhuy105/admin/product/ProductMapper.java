@@ -43,14 +43,14 @@ public class ProductMapper {
         dto.setBrandId(product.getBrand() != null ? product.getBrand().getId() : null);
         dto.setAdditionalDetails(product.getAdditionalDetails().stream()
                 .map(detail -> new ProductDetailDTO(detail.getId(), detail.getName(), detail.getValue(), product.getId()))
-                .collect(Collectors.toSet()));
+                .toList());
         dto.setImages(product.getImages().stream()
                 .map(image -> new ProductImageDTO(image.getId(), image.getName(), product.getId()))
-                .collect(Collectors.toSet()));
+                .toList());
         dto.setSkus(product.getSkus().stream()
                 .map(sku -> new SkuDTO(sku.getId(), sku.getSkuCode(), sku.getPrice(), sku.getDiscountPercent(), sku.getStockQuantity(),
                         sku.getLength(), sku.getWidth(), sku.getHeight(), sku.getWeight(), product.getId()))
-                .collect(Collectors.toSet()));
+                .toList());
         return dto;
     }
 

@@ -1,15 +1,15 @@
 package com.tranhuy105.admin.product.DTO;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 
 @Getter
-@Setter@NoArgsConstructor
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class SkuDTO {
     private Integer id;
     private String skuCode;

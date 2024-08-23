@@ -16,25 +16,23 @@
         <form th:action="@{/products}" method="post"
               th:object="${productDTO}"
               enctype="multipart/form-data"
+              id="productForm"
         >
             <input type="hidden" th:field="*{id}" />
             <div>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" role="tab" href="#basic">Basic</a>
+                        <a class="nav-link active" data-toggle="tab" role="tab" href="#basic">Overview</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" role="tab" href="#sku">Stock-keeping Unit</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" role="tab" href="#desc">Description</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" role="tab" href="#images">Images</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" role="tab" href="#details">Details</a>
+                        <a class="nav-link" data-toggle="tab" role="tab" href="#details">Additional Details (Optional)</a>
                     </li>
                 </ul>
 
@@ -43,18 +41,22 @@
                     <div class="tab-pane active p-3"  id="basic" role="tabpanel" >
                         <div th:replace="~{products/product_overview :: fragment}"></div>
                     </div>
-                    <div class="tab-pane" id="sku" role="tabpanel">Stock-keeping Unit</div>
-                    <div class="tab-pane" id="desc" role="tabpanel">
-                        <div th:replace="~{products/product_description :: fragment}"></div>
+                    <div class="tab-pane" id="sku" role="tabpanel">
+                        <div th:replace="~{products/product_skus :: fragment}"></div>
                     </div>
                     <div class="tab-pane" id="images" role="tabpanel">Images</div>
-                    <div class="tab-pane" id="details" role="tabpanel">Details</div>
+                    <div class="tab-pane text-center m-3" id="details" role="tabpanel">
+                        <div id="productDetailContainer" class="card text-left">
+                            <div th:replace="~{products/product_details :: fragment}"></div>
+                        </div>
+                        <input type="button" class="btn btn-primary w-100 mt-3" value="Add More Detail" onclick="addNextDetailSection()">
+                    </div>
 
                 </div>
             </div>
 
-            <div class="text-center mt-3">
-                <input type="submit" value="Save" class="btn btn-primary mr-3" />
+            <div class="text-center mt-5">
+                <input type="submit" value="Save" class="btn btn-primary mr-3" onclick="submitForm()"/>
                 <input type="button" value="Cancel" class="btn btn-secondary" id="btnCancel"/>
             </div>
         </form>
@@ -62,7 +64,6 @@
         <div th:replace="~{navigation :: footer}"></div>
     </div>
 </body>
-
 <script>
     moduleURL = "[[@{/products}]]"
 
@@ -70,6 +71,36 @@
         $("#shortDescription").richText();
         $("#fullDescription").richText();
     })
+
+    function addNextDetailSection() {
+        const htmlDetailSection = `
+        <div class="card-body"">
+                <div class="form-row align-items-center">
+                    <input type="hidden" name="detailID" th:value="${null}" />
+                    <div class="col-5">
+                        <label class="col-form-label">Name:</label>
+                        <input type="text" class="form-control" name="detailName" placeholder="Detail Name"/>
+                    </div>
+                    <div class="col-5">
+                        <label class="col-form-label">Value:</label>
+                        <input type="text" class="form-control" name="detailVal" placeholder="Detail Value"/>
+                    </div>
+                    <div class="col-2 text-right">
+                        <button type="button" class="btn btn-danger mt-4" onclick="removeDetailSection(this)">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+            </div>
+        </div>
+        `
+
+        $("#productDetailContainer").append(htmlDetailSection)
+    }
+
+    function removeDetailSection(button) {
+        $(button).closest('.card-body').remove();
+    }
 </script>
+<script type="text/javascript" th:src="@{/js/product_form_skus.js}"></script>
 <script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
 </html>

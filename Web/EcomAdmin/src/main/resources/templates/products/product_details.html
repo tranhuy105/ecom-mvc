@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
 <body>
-
+    <div th:fragment="fragment" th:remove="tag">
+        <th:block th:each="detail : ${productDTO.additionalDetails}">
+            <div class="card-body">
+            <div class="form-row align-items-center">
+                <input type="hidden" name="detailID" th:value="${detail.id}" />
+                <div class="col-5">
+                    <label class="col-form-label">Name:</label>
+                    <input type="text" class="form-control" name="detailName" placeholder="Detail Name" th:value="${detail.name}"/>
+                </div>
+                <div class="col-5">
+                    <label class="col-form-label">Value:</label>
+                    <input type="text" class="form-control" name="detailVal" placeholder="Detail Value" th:value="${detail.value}"/>
+                </div>
+                <div class="col-2 text-right">
+                    <button type="button" class="btn btn-danger mt-4" onclick="removeDetailSection(this)">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        </th:block>
+    </div>
 </body>
 </html>

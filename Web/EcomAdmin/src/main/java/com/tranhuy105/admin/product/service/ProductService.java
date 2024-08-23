@@ -1,7 +1,6 @@
 package com.tranhuy105.admin.product.service;
 
 import com.tranhuy105.admin.product.repository.ProductRepository;
-import com.tranhuy105.common.entity.Category;
 import com.tranhuy105.common.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,7 +29,7 @@ public class ProductService implements IProductService {
 
     @Override
     public Product findById(Integer id) {
-        return null;
+        return productRepository.findByIdFull(id).orElse(null);
     }
 
     @Override

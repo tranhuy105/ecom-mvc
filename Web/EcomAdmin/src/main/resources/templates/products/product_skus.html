@@ -1,10 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
 <body>
+<div th:fragment="fragment">
+    <table class="table table-bordered mt-3">
+        <thead>
+        <tr>
+            <th>SKU Code</th>
+            <th>Price</th>
+            <th>Discount %</th>
+            <th>Stock Quantity</th>
+            <th>Dimensions (LxWxH)</th>
+            <th>Weight</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody id="skuList">
+        </tbody>
+    </table>
 
+    <h4>Add New SKU</h4>
+    <div class="row g-3 align-items-center py-3 bg-dark">
+        <div class="col-auto">
+            <input type="text" id="newSkuCode" class="form-control" placeholder="SKU Code"/>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="newPrice" class="form-control" placeholder="Price"/>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="newDiscountPercent" class="form-control" placeholder="Discount %"/>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="newStockQuantity" class="form-control" placeholder="Stock Quantity"/>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="newLength" class="form-control mb-1" placeholder="Length"/>
+            <input type="text" id="newWidth" class="form-control mb-1" placeholder="Width"/>
+            <input type="text" id="newHeight" class="form-control" placeholder="Height"/>
+        </div>
+        <div class="col-auto">
+            <input type="text" id="newWeight" class="form-control" placeholder="Weight"/>
+        </div>
+        <div class="col-auto">
+            <input type="button" class="btn btn-primary" onclick="addSku()" value="Add"/>
+        </div>
+    </div>
+
+    <input type="hidden" id="skusInput" th:field="*{skusJson}"/>
+</div>
 </body>
 </html>
