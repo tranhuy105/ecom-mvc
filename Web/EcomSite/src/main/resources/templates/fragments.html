@@ -25,6 +25,24 @@
     </style>
 </head>
 <body>
+    <div th:fragment="breadcrumb" th:if="${categoryParents != null && !categoryParents.isEmpty()}">
+        <div class="row">
+            <div class="col">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/categories}">Home</a>
+                        </li>
 
+                        <th:block th:each="parent : ${categoryParents}">
+                            <li class="breadcrumb-item">
+                                <a th:href="@{'/categories/' + ${parent.alias}}">[[${parent.name}]]</a>
+                            </li>
+                        </th:block>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

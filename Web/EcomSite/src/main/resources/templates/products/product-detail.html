@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<body>
+<div>
+  <div th:replace="~{navigation :: navbar}"></div>
+
+  <div class="content container-fluid px-lg-5 mt-1">
+    <div th:replace="~{fragments :: breadcrumb}"></div>
+
+    <div class="row mt-2">
+      <div class="col-sm-3">
+        <!-- Carousel for Main Image -->
+        <div id="mainImageCarousel" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-inner" id="mainImageContainer">
+            <th:block th:each="image, iterStat : ${product.images}">
+              <div th:classappend="${iterStat.index == 0} ? 'active' : ''"
+                   class="carousel-item">
+                <img th:src="@{${image.path}}" class="d-block w-100" style="height: 300px; object-fit: contain; border-radius: 30px;" alt="main image">
+              </div>
+            </th:block>
+          </div>
+          <a class="carousel-control-prev" href="#mainImageCarousel" role="button" data-slide="prev">
+            <span class="fas fa-arrow-left" style="color: black" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#mainImageCarousel" role="button" data-slide="next">
+            <span class="fas fa-arrow-right" style="color: black" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+
+        <!-- Thumbnails -->
+        <div class="row justify-content-center mt-3">
+          <th:block th:each="image : ${product.images}">
+            <div class="m-2 thumbnail-wrapper">
+              <img th:src="@{${image.path}}" class="image-preview" alt="product image"
+                   style="width: 64px; height: 64px; object-fit: cover; border-radius: 10px; cursor: pointer;" />
+            </div>
+          </th:block>
+        </div>
+      </div>
+      <div class="col-sm">
+        <div>
+          <h2>[[${product.name}]]</h2>
+        </div>
+        <div>
+          List Price:
+          <span th:if="${product.discountPercent <= 0}">$ [[${product.price}]]</span>
+          <del th:if="${product.discountPercent > 0}"><span>$ [[${product.price}]]</span></del>
+        </div>
+        <div th:if="${product.discountPercent > 0}">
+          Price:
+          <span style="font-size: larger; color: darkred">$ [[${product.price}]]</span>
+          ([[${product.discountPercent}]] % off)
+        </div>
+        <div>&nbsp;</div>
+        <div th:utext="${product.fullDescription}"></div>
+      </div>
+      <div class="col-sm-2">
+        <div>
+          <span th:if="${product.price > 0}" class="text-success"><b>In Stock</b></span>
+          <span th:if="${product.price <= 0}" class="text-danger"><b>Out of Stock</b></span>
+        </div>
+        <div class="mt-2">
+          <input type="text" size="5" value="1" />
+        </div>
+        <div class="mt-3">
+          <input type="button" value="Add to Cart" class="btn btn-primary" />
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12">
+        <div><hr/></div>
+        <div>
+          <h3>Product Details:</h3>
+        </div>
+        <th:block th:each="detail : ${product.additionalDetails}">
+          <div>
+            <b>[[${detail.name}]]</b>:
+            <span>[[${detail.value}]]</span>
+          </div>
+        </th:block>
+        <div>
+          <b>Brand:</b>
+          <span>[[${product.brand.name}]]</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div th:replace="~{navigation :: footer}"></div>
+</div>
+</body>
+<script>
+  $(document).ready(function () {
+    const mainImageCarousel = $('#mainImageCarousel');
+    const mainImageContainer = $('#mainImageContainer');
+
+    $('.image-preview').mouseover(function () {
+      const index = $(this).parent().index();
+      mainImageCarousel.carousel(index);
+      $('.image-preview').css('border', 'none'); // Remove border from all
+      $(this).css('border', '2px solid #007bff'); // Add border to current
+    }).first().css('border', '2px solid #007bff');
+  });
+</script>
+</html>

@@ -2,6 +2,7 @@ package com.tranhuy105.site.service;
 
 import com.tranhuy105.common.entity.Category;
 import com.tranhuy105.common.entity.Product;
+import com.tranhuy105.site.exception.NotFoundException;
 import com.tranhuy105.site.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -31,5 +32,11 @@ public class ProductServiceImpl implements ProductService{
         }
 
         return productRepository.findAllFull(rawProduct);
+    }
+
+    @Override
+    public Product findByAlias(String alias) {
+        return productRepository.findByAlias(alias)
+                .orElseThrow(() -> new NotFoundException("product not found"));
     }
 }

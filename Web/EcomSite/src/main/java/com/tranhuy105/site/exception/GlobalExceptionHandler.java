@@ -7,22 +7,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
-    @ExceptionHandler({NoHandlerFoundException.class, NotFoundException.class})
+    @ExceptionHandler({NoHandlerFoundException.class, NoResourceFoundException.class , NotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNotFound(Model model) {
         model.addAttribute("status", 404);
-        return "error";
-    }
-
-    @ExceptionHandler(Exception.class)
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public String handleServerError(Exception ex, Model model) {
-        log.error(ex.getMessage(),ex);
-        model.addAttribute("status", 500);
         return "error";
     }
 }

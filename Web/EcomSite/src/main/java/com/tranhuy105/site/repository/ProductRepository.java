@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query(nativeQuery = true, value = """
@@ -27,4 +28,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @Query("SELECT p FROM Product p WHERE p IN :products")
     List<Product> findAllFull(List<Product> products);
 
+    @EntityGraph(attributePaths = {"category", "brand", "skus", "additionalDetails", "images"})
+    @Query("SELECT p FROM Product p WHERE p.alias = :alias")
+    Optional<Product> findByAlias(String alias);
 }

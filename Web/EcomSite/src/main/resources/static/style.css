@@ -110,9 +110,14 @@ body {
 .card-hover:hover {
     transform: scale(1.01);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
 }
 
 .card-hover .card-body {
     position: relative;
     z-index: 2;
+}
+
+.strikethrough {
+    text-decoration: line-through;
 }

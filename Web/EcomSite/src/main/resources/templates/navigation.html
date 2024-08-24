@@ -2,18 +2,16 @@
 <html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 <body>
 <div th:fragment="navbar">
-    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1e1e">
         <div class="container py-1">
             <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
                 <img th:src="@{/images/logo.png}" width="30" height="30" alt="Logo" class="d-inline-block align-top mr-2">
                 Lorem ipsum
             </a>
-            <!-- Navbar Toggler for Mobile View -->
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <!-- Collapsible Navbar Content -->
             <div class="collapse navbar-collapse" id="navbarContent">
                 <form class="form-inline my-3 mx-lg-4 mx-0 my-lg-0 w-100">
                     <div class="input-group w-100">
@@ -65,7 +63,7 @@
 
 
 
-    <div class="navbar navbar-expand-lg bg-light navbar-light py-2 full-view">
+    <div class="navbar navbar-expand-lg bg-light navbar-light py-1 full-view">
         <div class="container">
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav mx-auto text-center">
