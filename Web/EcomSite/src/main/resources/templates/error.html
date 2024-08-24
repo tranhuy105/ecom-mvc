@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Oops')}"></head>
+<body>
+<style>
+    .error-page {
+        text-align: center;
+        padding: 60px 20px;
+    }
+    .error-page .error-code {
+        font-size: 120px;
+        font-weight: bold;
+        color: #dc3545;
+    }
+    .error-page .error-message {
+        font-size: 24px;
+        font-weight: bold;
+    }
+    .error-page .error-description {
+        margin-top: 20px;
+        font-size: 18px;
+        color: #6c757d;
+    }
+    .error-page .btn-primary {
+        margin-top: 20px;
+    }
+</style>
+<div th:replace="~{navigation :: navbar}"></div>
+<div class="error-page content">
+    <div class="container">
+        <div class="error-code" th:text="${status}">403</div>
+        <div class="error-message">
+            <p th:if="${status == 403}">Forbidden</p>
+            <p th:if="${status == 404}">Not Found</p>
+            <p th:if="${status == 500}">Internal Server Error</p>
+            <p th:if="${status == 400}">Bad Request</p>
+        </div>
+        <div class="error-description">
+            <p th:if="${status == 403}">You do not have permission to access this page. Please check your credentials or contact support if you believe this is a mistake.</p>
+            <p th:if="${status == 404}">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable. Please check the URL or go back to the home page.</p>
+            <p th:if="${status == 500}">An unexpected error occurred. Please try again later. If the problem persists, please contact support.</p>
+            <p th:if="${status == 400}">Your request is invalid. Please check the information you entered and try again. If you need assistance, contact support.</p>
+        </div>
+        <a th:href="@{/}" class="btn btn-primary">Go to Home</a>
+    </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+</html>

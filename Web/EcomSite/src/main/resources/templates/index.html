@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>My E-com Site</title>
-</head>
+<head th:replace="~{fragments :: page_head('My Ecom')}"></head>
 <body>
-        <h1>Welcome to my E-Com</h1>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="content">
+        <h1>Home</h1>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
 </body>
 </html>

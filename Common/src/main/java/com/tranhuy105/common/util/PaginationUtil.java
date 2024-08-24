@@ -1,4 +1,4 @@
-package com.tranhuy105.admin.utils;
+package com.tranhuy105.common.util;
 
 import org.springframework.data.domain.Page;
 import org.springframework.ui.Model;

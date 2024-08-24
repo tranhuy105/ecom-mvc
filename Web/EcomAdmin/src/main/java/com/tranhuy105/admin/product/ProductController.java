@@ -1,11 +1,10 @@
 package com.tranhuy105.admin.product;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tranhuy105.admin.brand.BrandService;
 import com.tranhuy105.admin.category.CategoryService;
 import com.tranhuy105.admin.product.DTO.ProductDTO;
 import com.tranhuy105.admin.product.service.ProductService;
-import com.tranhuy105.admin.utils.PaginationUtil;
+import com.tranhuy105.common.util.PaginationUtil;
 import com.tranhuy105.common.entity.Product;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

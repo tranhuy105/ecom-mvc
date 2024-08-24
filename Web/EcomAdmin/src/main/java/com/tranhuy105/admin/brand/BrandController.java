@@ -1,7 +1,7 @@
 package com.tranhuy105.admin.brand;
 
 import com.tranhuy105.admin.category.CategoryService;
-import com.tranhuy105.admin.utils.PaginationUtil;
+import com.tranhuy105.common.util.PaginationUtil;
 import com.tranhuy105.common.entity.Brand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

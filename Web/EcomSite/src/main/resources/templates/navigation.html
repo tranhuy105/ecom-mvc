@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<body>
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <div class="container py-1">
+            <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
+                <img th:src="@{/images/logo.png}" width="30" height="30" alt="Logo" class="d-inline-block align-top mr-2">
+                Lorem ipsum
+            </a>
+            <!-- Navbar Toggler for Mobile View -->
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Collapsible Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <form class="form-inline my-3 mx-lg-4 mx-0 my-lg-0 w-100">
+                    <div class="input-group w-100">
+                        <input class="form-control" type="search" placeholder="Nhập Tên Sản Phẩm Để Tìm Kiếm ..." aria-label="Search">
+                        <div class="input-group-append">
+                            <button class="btn btn-light bg-primary" type="submit" style="color: whitesmoke!important;">
+                                <span class="fas fa-search"></span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                <ul class="navbar-nav ml-auto mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><span class="fas fa-user"></span> Đăng nhập</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <span class="fas fa-shopping-cart"></span> Giỏ hàng <span class="badge badge-warning">0</span>
+                        </a>
+                    </li>
+                </ul>
+                <div class="mobile-view">
+                    <ul class="navbar-nav mx-auto text-center">
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                                <i class="fas fa-th-large mr-2"></i> Danh mục sản phẩm
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                                <i class="fas fa-info-circle mr-2"></i> Hướng dẫn mua hàng
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                                <i class="fas fa-credit-card mr-2"></i> Hình thức thanh toán
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                                <i class="fas fa-headset mr-2"></i> Hỗ trợ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+
+    <div class="navbar navbar-expand-lg bg-light navbar-light py-2 full-view">
+        <div class="container">
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav mx-auto text-center">
+                    <li class="nav-item mr-3">
+                        <a class="nav-link d-flex align-items-center justify-content-center" th:href="@{/categories}">
+                            <i class="fas fa-th-large mr-2"></i> Danh mục sản phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item mr-3">
+                        <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                            <i class="fas fa-info-circle mr-2"></i> Hướng dẫn mua hàng
+                        </a>
+                    </li>
+                    <li class="nav-item mr-3">
+                        <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                            <i class="fas fa-credit-card mr-2"></i> Hình thức thanh toán
+                        </a>
+                    </li>
+                    <li class="nav-item mr-3">
+                        <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                            <i class="fas fa-headset mr-2"></i> Hỗ trợ
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <div th:fragment="pagination(totalItems, currentPage, totalPages, startCount, endCount, q, baseUrl)"
+         class="text-center" th:if="${totalItems > 0}">
+        <span class="mb-1">Showing results #[[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
+        <div class="pt-2">
+            <nav>
+                <ul class="pagination justify-content-center">
+                    <!-- Previous Button -->
+                    <li class="page-item" th:classappend="${currentPage <= 1} ? 'disabled'">
+                        <a class="page-link" th:data-page="${currentPage - 1}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+
+                    <!-- First Page Link -->
+                    <li class="page-item" th:if="${currentPage > 3}">
+                        <a class="page-link" th:data-page="1">1</a>
+                    </li>
+
+                    <!-- Ellipsis before the current page range if needed -->
+                    <li class="page-item disabled" th:if="${currentPage > 3}">
+                        <a class="page-link">...</a>
+                    </li>
+
+                    <!-- Page Numbers -->
+                    <li class="page-item"
+                        th:each="i : ${#numbers.sequence(
+                    (currentPage <= 2 ? 1 : currentPage - 2),
+                    (currentPage >= totalPages - 2 ? totalPages : currentPage + 2))}"
+                        th:classappend="${i == currentPage} ? 'active'">
+                        <a class="page-link" th:data-page="${i}">[[${i}]]</a>
+                    </li>
+
+                    <!-- Ellipsis after the current page range if needed -->
+                    <li class="page-item disabled" th:if="${currentPage < totalPages - 2}">
+                        <a class="page-link">...</a>
+                    </li>
+
+                    <!-- Last Page Link -->
+                    <li class="page-item" th:if="${currentPage < totalPages - 2}">
+                        <a class="page-link" th:data-page="${totalPages}">[[${totalPages}]]</a>
+                    </li>
+
+                    <!-- Next Button -->
+                    <li class="page-item" th:classappend="${currentPage >= totalPages} ? 'disabled'">
+                        <a class="page-link" th:data-page="${currentPage + 1}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+<div th:fragment="footer" class="footer bg-dark text-white text-center py-3 mt-5">
+    <div class="container">
+        <div class="row mb-3">
+            <div class="col-md-4 mb-2 mb-md-0">
+                <h6>Contact Us</h6>
+                <p class="mb-1">Email: tranhuy105@example.com</p>
+                <p class="mb-0">Phone: +123 456 7890</p>
+            </div>
+            <div class="col-md-4 mb-2 mb-md-0">
+                <h6>Follow Us</h6>
+                <a href="#" class="text-white mr-2"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="text-white mr-2"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="text-white mr-2"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+            <div class="col-md-4 mb-2 mb-md-0">
+                <h6>Site Map</h6>
+                <ul class="list-unstyled mb-0">
+                    <li><a href="#" class="text-white">Contact</a></li>
+                    <li><a href="#" class="text-white">About Us</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="border-top pt-2">
+            <p class="mb-0 small">Copyright &copy; 2024 tranhuy105. All rights reserved.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 package com.tranhuy105.admin.user;
 
 import com.tranhuy105.admin.exception.DuplicateEmailException;
-import com.tranhuy105.admin.utils.PaginationUtil;
+import com.tranhuy105.common.util.PaginationUtil;
 import com.tranhuy105.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -2,8 +2,10 @@ package com.tranhuy105.site;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @SpringBootApplication
+@EntityScan({"com.tranhuy105.common.entity", "com.tranhuy105.site.*"})
 public class SiteApplication {
 
 	public static void main(String[] args) {
