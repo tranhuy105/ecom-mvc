@@ -23,4 +23,8 @@ public class Currency {
 
     @Column(nullable = false, length = 4)
     private String code;
+
+    public String getDisplay() {
+        return this.name + " - " + this.code + " - " + this.symbol;
+    }
 }
