@@ -29,7 +29,9 @@ public class ProductController {
                                     Model model) {
         Product product = productService.findByAlias(alias);
         model.addAttribute("product", product);
-        model.addAttribute("categoryParents", categoryService.getBreadcrumbTrail(product.getCategory()));
+        if (product.getCategory() != null) {
+            model.addAttribute("categoryParents", categoryService.getBreadcrumbTrail(product.getCategory()));
+        }
         model.addAttribute("pageTitle", product.getName());
         return "products/product-detail";
     }

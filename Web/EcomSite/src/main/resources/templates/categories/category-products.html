@@ -68,13 +68,7 @@
                                 <span class="text-muted ml-2" th:text="'(' + ${product.discountPercent.intValue()} + ')'">0 reviews</span>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center" th:classappend="${product.discountPercent == 0 ? 'mt-2' : ''}">
-                                    <span class="font-weight-normal">
-                                        <span th:classappend="${product.discountPercent > 0 ? 'strikethrough text-muted' : 'font-weight-bold'}" th:text="${product.price}">$0.00</span>
-                                        <span class="text-success italic" style="font-size: 24px!important;" th:if="${product.discountPercent > 0}" th:text="${product.price * (1 - product.discountPercent / 100)}">$0.00</span>
-                                    </span>
-                                <span th:if="${product.discountPercent > 0}" class="text-danger" th:text="'- ' + ${product.discountPercent} + '%'">0% Off</span>
-                            </div>
+                            <div th:replace="~{fragments :: product-price}"></div>
                         </div>
                         <div class="d-flex justify-content-between flex-column">
                             <p class="card-text text-info mb-0" th:text="${product.category.name}">Category</p>

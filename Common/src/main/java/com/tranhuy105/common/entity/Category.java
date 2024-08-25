@@ -38,7 +38,7 @@ public class Category {
 
     private boolean enabled = true;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "parent_id")
     private Category parent;
 

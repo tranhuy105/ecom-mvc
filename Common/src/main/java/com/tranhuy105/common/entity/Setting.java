@@ -3,6 +3,8 @@ package com.tranhuy105.common.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Table(name = "settings")
 @Entity
 @Getter
@@ -21,4 +23,17 @@ public class Setting {
     @Enumerated(EnumType.STRING)
     @Column(length = 45, nullable = false)
     private SettingCategory category;
+
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
+
+    @PrePersist
+    protected void onCreate() {
+        lastUpdated = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdated = LocalDateTime.now();
+    }
 }

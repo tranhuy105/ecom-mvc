@@ -36,9 +36,6 @@ public class CategoryServiceImpl implements CategoryService{
             return new ArrayList<>();
         }
 
-        if (category.getParent() == null) {
-            return List.of(category);
-        }
 
         List<Category> parentTrails = categoryRepository.findCategoryPathById(category.getId());
         if (parentTrails.isEmpty()) {

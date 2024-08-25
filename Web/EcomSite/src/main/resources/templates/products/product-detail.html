@@ -158,11 +158,26 @@
       </div>
     </div>
   </div>
+
+  <div id="settingDiv"
+       th:data-currency-symbol="${CURRENCY_SYMBOL}"
+       th:data-currency-position="${CURRENCY_SYMBOL_POSITION}"
+       th:data-decimal-digits="${DECIMAL_DIGITS}"
+       th:data-thousand-point-type="${THOUSAND_POINT_TYPE}"
+       th:data-decimal-point-type="${DECIMAL_POINT_TYPE}">
+  </div>
   <div th:replace="~{navigation :: footer}"></div>
 </div>
 </body>
 <script>
   $(document).ready(function () {
+    const setting = $("#settingDiv");
+    const currencySymbol = setting.data("currency-symbol") || "$";
+    const currencyPosition = setting.data("currency-position") || "before";
+    const decimalDigits = parseInt(setting.data("decimal-digits")) || 2;
+    const thousandPointType = setting.data("thousand-point-type") === "POINT" ? "." : ",";
+    const decimalPointType = setting.data("decimal-point-type") === "COMMA" ? "," : ".";
+
     const skuQuery = $('#skuOptions button');
     const firstSkuButton = skuQuery.first();
     firstSkuButton.addClass('btn-primary').removeClass('btn-outline-primary');
@@ -185,13 +200,13 @@
 
       if (discount > 0) {
         listPriceElement.addClass("strikethrough")
-        listPriceElement.text('List price: $' + price.toFixed(2));
-        $('#finalPrice').text('$' + discountedPrice);
+        listPriceElement.text('List price: '+formatCurrency(price));
+        $('#finalPrice').text(formatCurrency(discountedPrice));
         $('#discountPercent').text(discount);
         $('#discountContainer').removeClass('d-none');
       } else {
         listPriceElement.removeClass("strikethrough")
-        listPriceElement.text('$' + price.toFixed(2));
+        listPriceElement.text(currencySymbol + formatCurrency(price));
         $('#discountContainer').addClass('d-none');
       }
 
@@ -207,6 +222,19 @@
                 .addClass('text-danger')
                 .removeClass('text-success')
                 .text('Out of Stock');
+      }
+    }
+
+    function formatCurrency(amount) {
+      amount = parseFloat(amount).toFixed(decimalDigits);
+      amount = amount.replace('.', decimalPointType);
+      const parts = amount.split(decimalPointType);
+      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandPointType);
+      amount = parts.join(decimalPointType);
+      if (currencyPosition === "before") {
+        return currencySymbol + amount;
+      } else {
+        return amount + currencySymbol;
       }
     }
 
