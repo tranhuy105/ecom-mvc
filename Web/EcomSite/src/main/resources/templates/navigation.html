@@ -13,9 +13,9 @@
             </button>
 
             <div class="collapse navbar-collapse" id="navbarContent">
-                <form class="form-inline my-3 mx-lg-4 mx-0 my-lg-0 w-100">
+                <form class="form-inline my-3 mx-lg-4 mx-0 my-lg-0 w-100" id="mainSearchBar">
                     <div class="input-group w-100">
-                        <input class="form-control" type="search" placeholder="Nhập Tên Sản Phẩm Để Tìm Kiếm ..." aria-label="Search">
+                        <input class="form-control" id="searchInput" type="search" placeholder="Nhập Tên Sản Phẩm Để Tìm Kiếm ..." aria-label="Search">
                         <div class="input-group-append">
                             <button class="btn btn-light bg-primary" type="submit" style="color: whitesmoke!important;">
                                 <span class="fas fa-search"></span>
@@ -36,7 +36,7 @@
                 <div class="mobile-view">
                     <ul class="navbar-nav mx-auto text-center">
                         <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center justify-content-center" href="#">
+                            <a class="nav-link d-flex align-items-center justify-content-center" th:href="@{/categories}">
                                 <i class="fas fa-th-large mr-2"></i> Danh mục sản phẩm
                             </a>
                         </li>
@@ -95,7 +95,7 @@
 
 
     <div th:fragment="pagination(totalItems, currentPage, totalPages, startCount, endCount, q, baseUrl)"
-         class="text-center" th:if="${totalItems > 0}">
+         class="text-center" th:if="${totalItems > 0}" style="cursor: pointer">
         <span class="mb-1">Showing results #[[${startCount}]] to [[${endCount}]] of [[${totalItems}]]</span>
         <div class="pt-2">
             <nav>

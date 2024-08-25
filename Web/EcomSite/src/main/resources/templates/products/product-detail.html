@@ -43,7 +43,7 @@
 
       <div class="col-sm mt-2">
         <div>
-          <h2 class="font-weight-bold" style="font-size: xxx-large">[[${product.name}]]</h2>
+          <h2 class="font-weight-bold">[[${product.name}]]</h2>
         </div>
 
 
@@ -81,6 +81,7 @@
         </div>
 
         <div>&nbsp;</div>
+        <p class="text-info font-weight-bold" style="font-style: italic">Description</p>
         <div th:utext="${product.fullDescription}"></div>
       </div>
 
@@ -219,4 +220,5 @@
     }).first().css('border', '2px solid #007bff');
   });
 </script>
+<script th:src="@{/js/search.js}"></script>
 </html>

@@ -18,4 +18,11 @@ public class GlobalExceptionHandler {
         model.addAttribute("status", 404);
         return "error";
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String handleBadRequest(Model model) {
+        model.addAttribute("status", 400);
+        return "error";
+    }
 }

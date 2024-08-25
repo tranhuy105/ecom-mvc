@@ -82,6 +82,10 @@ public class Product {
     }
 
     public List<Sku> getAvailableSkus() {
-        return new ArrayList<>(this.skus).stream().sorted(Comparator.comparing(Sku::getSkuCode)).toList();
+        return this.skus.stream().sorted(Comparator.comparing(Sku::getSkuCode)).toList();
+    }
+
+    public List<ProductImage> getOrderedImages() {
+        return this.images.stream().sorted(Comparator.comparing(ProductImage::getId)).toList();
     }
 }
