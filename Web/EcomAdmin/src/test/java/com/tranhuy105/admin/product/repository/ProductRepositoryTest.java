@@ -2,6 +2,7 @@ package com.tranhuy105.admin.product.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.tranhuy105.admin.repository.ProductRepository;
 import com.tranhuy105.common.entity.Product;
 import com.tranhuy105.common.entity.ProductDetail;
 import com.tranhuy105.common.entity.ProductImage;

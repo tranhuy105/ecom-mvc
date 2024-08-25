@@ -1,5 +1,6 @@
 package com.tranhuy105.admin.category;
 
+import com.tranhuy105.admin.repository.CategoryRepository;
 import com.tranhuy105.common.entity.Category;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;

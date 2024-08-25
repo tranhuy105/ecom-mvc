@@ -1,6 +1,6 @@
 package com.tranhuy105.admin.utils;
 
-import com.tranhuy105.admin.security.MyUserDetail;
+import com.tranhuy105.admin.config.security.MyUserDetail;
 import com.tranhuy105.common.entity.User;
 import org.springframework.security.core.Authentication;
 

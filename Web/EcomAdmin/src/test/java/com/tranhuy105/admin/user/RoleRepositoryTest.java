@@ -1,6 +1,7 @@
 package com.tranhuy105.admin.user;
 
 
+import com.tranhuy105.admin.repository.RoleRepository;
 import com.tranhuy105.common.entity.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
