@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${'Settings'})}"></head>
+<head>
+    <link rel="stylesheet" th:href="@{/richtext/richtext.min.css}" />
+    <script type="text/javascript" th:src="@{/richtext/jquery.richtext.min.js}"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div th:replace="~{navigation :: menu}"></div>
+
+        <div class="mt-2">
+            <h2>Settings</h2>
+        </div>
+
+        <div th:if="${message != null}" class="alert alert-success text-center">
+            [[${message}]]
+        </div>
+
+        <div th:if="${error != null}" class="alert alert-danger text-center">
+            [[${error}]]
+        </div>
+
+
+        <div>
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" id="settingTab" role="tablist">
+                <li class="nav-item">
+                    <a class="nav-link active" data-toggle="tab" role="tab" href="#general">General</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" role="tab" href="#countries">Countries</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" role="tab" href="#states">States</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" role="tab" href="#smtp">SMTP</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" role="tab" href="#mailTemplate">Mail Template</a>
+                </li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active p-3"  id="general" role="tabpanel" >
+                    <div th:replace="~{settings/general :: fragment}"></div>
+                </div>
+                <div class="tab-pane" id="countries" role="tabpanel">
+
+                </div>
+                <div class="tab-pane" id="states" role="tabpanel">
+
+                </div>
+                <div class="tab-pane" id="smtp" role="tabpanel">
+
+                </div>
+                <div class="tab-pane" id="mailTemplate" role="tabpanel">
+
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{navigation :: footer}"></div>
+    </div>
+</body>
+<script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
+</html>
