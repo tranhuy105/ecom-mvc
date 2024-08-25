@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -72,5 +70,18 @@ public class Product {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public BigDecimal getDiscountedPrice() {
+        if (price == null || discountPercent == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal discountAmount = price.multiply(discountPercent).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+        return price.subtract(discountAmount);
+    }
+
+    public List<Sku> getAvailableSkus() {
+        return new ArrayList<>(this.skus).stream().sorted(Comparator.comparing(Sku::getSkuCode)).toList();
     }
 }

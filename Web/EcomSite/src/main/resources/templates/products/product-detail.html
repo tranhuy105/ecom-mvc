@@ -12,11 +12,11 @@
       <div class="col-sm-3">
         <!-- Carousel for Main Image -->
         <div id="mainImageCarousel" class="carousel slide" data-bs-ride="carousel">
-          <div class="carousel-inner" id="mainImageContainer">
+          <div class="carousel-inner">
             <th:block th:each="image, iterStat : ${product.images}">
               <div th:classappend="${iterStat.index == 0} ? 'active' : ''"
                    class="carousel-item">
-                <img th:src="@{${image.path}}" class="d-block w-100" style="height: 300px; object-fit: contain; border-radius: 30px;" alt="main image">
+                <img th:src="@{${image.path}}" class="d-block w-100" style="height: 360px; object-fit: contain; border-radius: 30px;" alt="main image">
               </div>
             </th:block>
           </div>
@@ -40,36 +40,103 @@
           </th:block>
         </div>
       </div>
-      <div class="col-sm">
+
+      <div class="col-sm mt-2">
         <div>
-          <h2>[[${product.name}]]</h2>
+          <h2 class="font-weight-bold" style="font-size: xxx-large">[[${product.name}]]</h2>
         </div>
-        <div>
-          List Price:
-          <span th:if="${product.discountPercent <= 0}">$ [[${product.price}]]</span>
-          <del th:if="${product.discountPercent > 0}"><span>$ [[${product.price}]]</span></del>
+
+
+        <!-- Reviews -->
+        <div class="d-flex align-items-center mt-2">
+          <div class="text-warning">
+            <i class="fa-star" th:classappend="${product.discountPercent >= 1 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.discountPercent >= 2 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.discountPercent >= 3 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.discountPercent >= 4 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.discountPercent >= 5 ? 'fas' : 'far'}"></i>
+          </div>
+          <span class="text-muted ml-2" th:text="'(' + ${product.discountPercent.intValue()} + ')'">0 reviews</span>
         </div>
-        <div th:if="${product.discountPercent > 0}">
-          Price:
-          <span style="font-size: larger; color: darkred">$ [[${product.price}]]</span>
-          ([[${product.discountPercent}]] % off)
+
+        <!-- SKU Selection -->
+        <div class="mt-2">
+          <label>This product has <strong>[[${product.availableSkus.size()}]]</strong> variations.</label>
+          <div id="skuOptions" class="d-flex">
+            <th:block th:each="sku, iterStat : ${product.availableSkus}">
+              <button
+                      th:id="'sku_' + ${sku.id}"
+                      th:data-id="${sku.id}"
+                      th:data-price="${sku.price}"
+                      th:data-discount="${sku.discountPercent}"
+                      th:data-discount-price="${sku.discountedPrice}"
+                      th:data-stock="${sku.stockQuantity}"
+                      th:data-shipping-cost="${sku.shippingCost}"
+                      th:text="${sku.skuCode}"
+                      th:classappend="${iterStat.index == 0} ? 'btn-primary' : 'btn-outline-primary'"
+                      class="btn m-1">
+              </button>
+            </th:block>
+          </div>
         </div>
+
         <div>&nbsp;</div>
         <div th:utext="${product.fullDescription}"></div>
       </div>
-      <div class="col-sm-2">
-        <div>
-          <span th:if="${product.price > 0}" class="text-success"><b>In Stock</b></span>
-          <span th:if="${product.price <= 0}" class="text-danger"><b>Out of Stock</b></span>
-        </div>
-        <div class="mt-2">
-          <input type="text" size="5" value="1" />
-        </div>
+
+      <div class="col-sm-2 border rounded d-flex flex-column justify-content-between" style="border: gray; max-height: 500px">
+        <!-- Price Display -->
         <div class="mt-3">
-          <input type="button" value="Add to Cart" class="btn btn-primary" />
+          <div>
+            <span id="listPrice" style="font-size: large" class="font-weight-bold text-dark">$0.00</span>
+          </div>
+          <div id="discountContainer" class="d-none " style="font-size: larger">
+            <span class="text-danger" style="font-size: small">(-<span id="discountPercent">0</span>%)</span>
+            <span id="finalPrice" style="font-size: large; font-weight: bold"></span>
+          </div>
+        </div>
+
+        <!-- Delivery Information -->
+        <div class="mt-3">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-map-marker-alt" style="font-size: 1.2rem;"></i>
+            <span class="ml-2">Delivered to Vietnam</span>
+          </div>
+        </div>
+
+        <div class="mt-3 text-left font-weight-bold">
+          <span id="stockStatus">
+          </span>
+          </div>
+        <div class="mt-3 flex-row d-flex align-items-center custom-select-wrapper">
+          <label for="quantity" class="form-label mt-2 mr-2">Quantity:</label>
+          <select id="quantity" class="custom-select flex-grow-1">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="mt-3">
+              <input type="button" value="Add to Cart" class="btn btn-block btn-lg shadow-sm rounded-pill" style="background: #ffd814"/>
+          </div>
+          <div class="mt-3">
+            <input type="button" value="Buy Now" class="btn btn-block btn-lg shadow-sm rounded-pill" style="background: #ffa41c"/>
+          </div>
+        </div>
+
+        <!-- Additional Information -->
+        <div class="my-4 text-muted small">
+          <div><span class="text-info font-weight-bold">Ships:</span> tranhuy105</div>
+          <div><span class="text-info font-weight-bold">Sold by:</span> tranhuy105</div>
+          <div><span class="text-info font-weight-bold">Returns:</span> 30-day refund/replacement</div>
+          <div><span class="text-info font-weight-bold">Payment:</span> Secure transaction</div>
         </div>
       </div>
-    </div>
+      </div>
 
     <div class="row">
       <div class="col-12">
@@ -95,14 +162,60 @@
 </body>
 <script>
   $(document).ready(function () {
+    const skuQuery = $('#skuOptions button');
+    const firstSkuButton = skuQuery.first();
+    firstSkuButton.addClass('btn-primary').removeClass('btn-outline-primary');
+    updateSkuInfo(firstSkuButton);
+
+    skuQuery.click(function () {
+      $('#skuOptions button').removeClass('btn-primary').addClass('btn-outline-primary');
+      $(this).addClass('btn-primary').removeClass('btn-outline-primary');
+
+      updateSkuInfo($(this));
+    });
+
+    function updateSkuInfo(skuButton) {
+      const price = skuButton.data('price');
+      const discount = skuButton.data('discount');
+      const stock = skuButton.data('stock');
+      const discountedPrice = skuButton.data("discount-price")
+
+      const listPriceElement = $('#listPrice');
+
+      if (discount > 0) {
+        listPriceElement.addClass("strikethrough")
+        listPriceElement.text('List price: $' + price.toFixed(2));
+        $('#finalPrice').text('$' + discountedPrice);
+        $('#discountPercent').text(discount);
+        $('#discountContainer').removeClass('d-none');
+      } else {
+        listPriceElement.removeClass("strikethrough")
+        listPriceElement.text('$' + price.toFixed(2));
+        $('#discountContainer').addClass('d-none');
+      }
+
+      // Update the stock status
+      const stockStatusElement = $('#stockStatus');
+      if (stock > 0) {
+        stockStatusElement
+                .removeClass('text-danger')
+                .addClass('text-success')
+                .html(`In Stock<br/><span class="text-danger">Only ${stock} left available in stock (more on the way)</span>`);
+      } else {
+        stockStatusElement
+                .addClass('text-danger')
+                .removeClass('text-success')
+                .text('Out of Stock');
+      }
+    }
+
     const mainImageCarousel = $('#mainImageCarousel');
-    const mainImageContainer = $('#mainImageContainer');
 
     $('.image-preview').mouseover(function () {
       const index = $(this).parent().index();
       mainImageCarousel.carousel(index);
-      $('.image-preview').css('border', 'none'); // Remove border from all
-      $(this).css('border', '2px solid #007bff'); // Add border to current
+      $('.image-preview').css('border', 'none');
+      $(this).css('border', '2px solid #007bff');
     }).first().css('border', '2px solid #007bff');
   });
 </script>

@@ -121,3 +121,46 @@ body {
 .strikethrough {
     text-decoration: line-through;
 }
+
+.custom-select-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 200px;
+}
+
+.custom-select {
+    appearance: none;
+    width: 100%;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #ced4da;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEyMCAxMDAiIHhtbG5zPSJodHRwOiovL3d3dy53My5vcmcvMjAwMy9zdmciIHdpZHRoPSIxMjAiIGhlaWdodD0iMTAwIj4KPHBhdGggZmlsbD0iI2YwZjBmMCIgZD0iTTEyMCA0LjI1M0w3LjU3OCAxMDAuMDI2TDEyMCAxLjI0M0wxMjAuMDA3IDEyMCAzLjU4MiIgLz48L3N2Zz4='); /* Dropdown arrow */
+    background-size: 1.5rem;
+    font-size: 1rem;
+    color: #495057;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.custom-select:focus {
+    border-color: #80bdff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+.custom-select-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 0.4rem solid transparent;
+    border-right: 0.4rem solid transparent;
+    border-top: 0.4rem solid #495057;
+    pointer-events: none;
+}
