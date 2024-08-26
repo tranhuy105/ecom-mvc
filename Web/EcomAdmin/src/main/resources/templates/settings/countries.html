@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<div th:fragment="fragment" th:remove="tag">
+  <div class="container-fluid">
+    <p class="text-info">
+      Use this page to manage the countries list which will be displayed on the customer registration page.
+    </p>
+  </div>
+  <div>
+    <input type="button" id="loadCountryButton" value="Load countries" class="my-1 btn btn-primary"/>
+  </div>
+  <div>
+    <select id="countriesSelect" class="form-control m-2" style="height: 300px;" size="3">
+    </select>
+  </div>
+
+  <div class="form-group row">
+    <label class="col-form-label" for="fieldCountryName">Country name:</label>
+    <div class="col-md">
+      <input type="text" class="form-control" id="fieldCountryName"/>
+    </div>
+    <label class="col-form-label" for="fieldCountryCode">Country code:</label>
+    <div class="col-md">
+      <input type="text" class="form-control" id="fieldCountryCode"/>
+    </div>
+    <div class="col-lg-4 mt-3 mt-md-0">
+      <input id="addCountryButton" type="button" value="Add" class="btn btn-secondary">
+      <input id="updateCountryButton" type="button" value="Update" class="btn btn-secondary" disabled>
+      <input id="deleteCountryButton" type="button" value="Delete" class="btn btn-secondary" disabled>
+    </div>
+  </div>
+</div>
+</body>
+</html>

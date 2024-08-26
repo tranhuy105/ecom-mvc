@@ -6,9 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Entity
 @Table(name = "countries")
 @Getter
@@ -25,7 +22,4 @@ public class Country {
 
     @Column(nullable = false, length = 5, unique = true)
     private String code;
-
-    @OneToMany(mappedBy = "country", fetch = FetchType.LAZY)
-    private Set<State> states = new HashSet<>();
 }

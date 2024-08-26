@@ -43,8 +43,8 @@ class CountryServiceTest {
     @Test
     public void findAllTest() {
         List<Country> countries = Arrays.asList(
-                new Country(1, "Country A", "CA", null),
-                new Country(2, "Country B", "CB", null)
+                new Country(1, "Country A", "CA"),
+                new Country(2, "Country B", "CB")
         );
 
         when(countryRepository.findAllOrderByName()).thenReturn(countries);
@@ -57,7 +57,7 @@ class CountryServiceTest {
 
     @Test
     public void saveTest() {
-        Country country = new Country(1, "Country A", "CA", null);
+        Country country = new Country(1, "Country A", "CA");
 
         when(countryRepository.save(any(Country.class))).thenReturn(country);
 

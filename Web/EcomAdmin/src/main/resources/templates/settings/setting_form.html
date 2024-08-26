@@ -47,11 +47,11 @@
                 <div class="tab-pane active p-3"  id="general" role="tabpanel" >
                     <div th:replace="~{settings/general :: fragment}"></div>
                 </div>
-                <div class="tab-pane" id="countries" role="tabpanel">
-
+                <div class="tab-pane p-3" id="countries" role="tabpanel">
+                    <div th:replace="~{settings/countries :: fragment}"></div>
                 </div>
                 <div class="tab-pane" id="states" role="tabpanel">
-
+                    <div th:replace="~{settings/states :: fragment}"></div>
                 </div>
                 <div class="tab-pane" id="smtp" role="tabpanel">
 
@@ -62,8 +62,24 @@
             </div>
         </div>
 
+
+        <div class="toast d-flex justify-content-center" role="alert" aria-live="polite" aria-atomic="true" data-delay="3000">
+            <div role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body">
+                    <span id="toastMessage"></span>
+                </div>
+            </div>
+        </div>
+
         <div th:replace="~{navigation :: footer}"></div>
     </div>
 </body>
+<script>
+    const contextPath = "[[@{/}]]"
+    const csrfHeader = "[[${_csrf.headerName}]]"
+    const csrfValue = "[[${_csrf.token}]]"
+</script>
 <script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
+<script type="text/javascript" th:src="@{/js/countries_setting.js}"></script>
+<script type="text/javascript" th:src="@{/js/states_setting.js}"></script>
 </html>

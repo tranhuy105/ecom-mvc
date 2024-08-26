@@ -10,4 +10,10 @@ public interface CountryService {
 
     @Transactional
     Country save(Country country);
+
+    @Transactional
+    void delete(Integer id);
+
+    Country findById(Integer id);
 }
+
