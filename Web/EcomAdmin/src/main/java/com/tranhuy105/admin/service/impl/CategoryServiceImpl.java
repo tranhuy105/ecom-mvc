@@ -154,15 +154,15 @@ public class CategoryServiceImpl implements CategoryService {
             throw new IllegalArgumentException("Alias is not URL-friendly. It should only contain lowercase letters, numbers, hyphens, and underscores.");
         }
 
-        Optional<Integer> idDB = categoryRepository.findByNameOrAlias(newCategory.getName(), newCategory.getAlias());
-        if (idDB.isPresent()) {
+        List<Integer> idDB = categoryRepository.findByNameOrAlias(newCategory.getName(), newCategory.getAlias());
+        if (idDB.size() > 1) {
             // create
             if (newCategory.getId() == null) {
                 throw new IllegalArgumentException("Name Or Alias Already exists.");
             }
 
             // update
-            if (!newCategory.getId().equals(idDB.get())) {
+            if (!idDB.contains(newCategory.getId())) {
                 throw new IllegalArgumentException("Name Or Alias Already exists.");
             }
         }

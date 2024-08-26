@@ -28,7 +28,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     List<Category> findAllWithChildrenAndParent();
 
     @Query("SELECT c.id FROM Category c WHERE c.name = :name OR c.alias = :alias")
-    Optional<Integer> findByNameOrAlias(String name, String alias);
+    List<Integer> findByNameOrAlias(String name, String alias);
 
     @Modifying
     @Transactional
