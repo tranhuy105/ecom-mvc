@@ -174,9 +174,12 @@
     const setting = $("#settingDiv");
     const currencySymbol = setting.data("currency-symbol") || "$";
     const currencyPosition = setting.data("currency-position") || "before";
-    const decimalDigits = parseInt(setting.data("decimal-digits")) || 2;
+    const decimalDigits = setting.data("decimal-digits");
+    const parsedDecimalDigits = decimalDigits !== undefined && decimalDigits !== null ? parseInt(decimalDigits) : 2;
     const thousandPointType = setting.data("thousand-point-type") === "POINT" ? "." : ",";
     const decimalPointType = setting.data("decimal-point-type") === "COMMA" ? "," : ".";
+
+    console.log(currencyPosition)
 
     const skuQuery = $('#skuOptions button');
     const firstSkuButton = skuQuery.first();
@@ -206,7 +209,7 @@
         $('#discountContainer').removeClass('d-none');
       } else {
         listPriceElement.removeClass("strikethrough")
-        listPriceElement.text(currencySymbol + formatCurrency(price));
+        listPriceElement.text(formatCurrency(price));
         $('#discountContainer').addClass('d-none');
       }
 
@@ -226,7 +229,7 @@
     }
 
     function formatCurrency(amount) {
-      amount = parseFloat(amount).toFixed(decimalDigits);
+      amount = parseFloat(amount).toFixed(parsedDecimalDigits);
       amount = amount.replace('.', decimalPointType);
       const parts = amount.split(decimalPointType);
       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandPointType);

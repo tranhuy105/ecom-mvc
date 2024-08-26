@@ -59,6 +59,21 @@ public class SettingServiceImpl implements SettingService {
             }
         }
 
+        Setting currencyIdSetting = existingSettingsMap.get("CURRENCY_ID");
+        if (currencyIdSetting != null) {
+                try {
+                    Integer currencyId = Integer.parseInt(currencyIdSetting.getValue());
+                    Currency currency = currencyRepository.findById(currencyId).orElseThrow(
+                            () -> new IllegalArgumentException("Unknown Currency")
+                    );
+
+                    settings.add(new Setting("CURRENCY_SYMBOL", currency.getSymbol() , SettingCategory.CURRENCY, null));
+                } catch (NumberFormatException exception) {
+                    throw new IllegalArgumentException("Invalid Currency Id");
+                }
+        }
+
+
         settingRepository.saveAll(settings);
     }
 
