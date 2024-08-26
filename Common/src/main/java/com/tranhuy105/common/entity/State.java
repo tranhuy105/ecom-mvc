@@ -7,22 +7,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "product_details")
+@Table(name = "states")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDetail {
+public class State {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 45)
     private String name;
-    @Column(nullable = false, name = "\"value\"")
-    private String value;
 
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private Country country;
 }
