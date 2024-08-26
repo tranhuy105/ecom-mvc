@@ -1,4 +1,4 @@
-package com.tranhuy105.admin.product.repository;
+package com.tranhuy105.admin.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
