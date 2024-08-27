@@ -75,12 +75,39 @@ public class MailServiceImpl implements MailService {
         content = content.replace("[[VERIFY_URL]]", verificationUrl);
         content = content.replace("[[FULLNAME]]", customer.getFullName());
 
+        prepareAndSendMimeMessage(from, customer.getEmail(), senderName, subject, content);
+    }
+
+    @Override
+    public void sendResetPasswordMail(Customer customer) throws MessagingException, UnsupportedEncodingException {
+        String from = settingService.getSettingByKey("MAIL_FROM");
+        String senderName = settingService.getSettingByKey("MAIL_SENDER_NAME");
+        String subject = "Here's the link to reset your password!";
+        String verificationUrl = getCurrentSiteDomain()+ "/account/reset?code=" + customer.getForgotPasswordCode();
+        String content = "<p>Hello " + customer.getFullName() + ",</p>" +
+                        "<p>You have requested to reset your password. Please click the link below to reset it:</p>" +
+                        "<p><a href=\"" + verificationUrl + "\">Reset your password</a></p>" +
+                        "<p>If you did not request this, please ignore this email and your password will remain unchanged.</p>" +
+                        "<p>Best regards,<br>" + senderName + "</p>";
+
+        validateEmailContentSettings(from, senderName, subject, content);
+
+
+        prepareAndSendMimeMessage(from, customer.getEmail(), senderName, subject, content);
+    }
+
+    @Override
+    public void prepareAndSendMimeMessage(String from,
+                                           String to,
+                                           String senderName,
+                                           String subject,
+                                           String content) throws MessagingException, UnsupportedEncodingException {
         JavaMailSender mailSender = prepareMailSender();
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "UTF-8");
 
         helper.setFrom(from, senderName);
-        helper.setTo(customer.getEmail());
+        helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(content, true);
 

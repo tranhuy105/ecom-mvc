@@ -7,7 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 public class CustomerDetails implements UserDetails {
-    private final Customer customer;
+    private Customer customer;
 
     public CustomerDetails(Customer customer) {
         this.customer = customer;
@@ -39,5 +39,9 @@ public class CustomerDetails implements UserDetails {
 
     public Customer getCustomer() {
         return this.customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

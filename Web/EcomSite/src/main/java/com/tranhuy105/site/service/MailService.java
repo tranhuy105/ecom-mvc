@@ -10,4 +10,6 @@ public interface MailService {
     String generateVerificationCode();
     JavaMailSender prepareMailSender();
     void sendVerificationEmail(Customer customer) throws MessagingException, UnsupportedEncodingException;
+    void sendResetPasswordMail(Customer customer) throws MessagingException, UnsupportedEncodingException;
+    void prepareAndSendMimeMessage(String from, String to, String senderName, String subject, String content) throws MessagingException, UnsupportedEncodingException;
 }

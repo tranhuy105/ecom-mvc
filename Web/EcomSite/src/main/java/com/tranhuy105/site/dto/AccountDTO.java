@@ -2,6 +2,9 @@ package com.tranhuy105.site.dto;
 
 import com.tranhuy105.common.entity.AuthenticationType;
 import com.tranhuy105.common.entity.Customer;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,11 +17,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountDTO {
+    @NotNull
     private Integer id;
     private String email;
+    @NotNull @NotEmpty
     private String firstName;
+    @NotNull @NotEmpty
     private String lastName;
-    private String password = "";
+    @NotNull
+    private String password;
+    @Size(max = 15)
     private String phoneNumber;
     private String profilePictureUrl;
     private LocalDateTime dateOfBirth;

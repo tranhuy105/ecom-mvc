@@ -10,7 +10,7 @@
     </div>
     <div>&nbsp;</div>
 
-    <form th:action="@{/update_account_details}" method="post" th:object="${account}"
+    <form th:action="@{/customer}" method="post" th:object="${account}"
           style="max-width: 600px; margin: 0 auto">
         <input type="hidden" th:field="*{id}" />
         <div th:if="${message != null}" class="alert alert-success text-center">

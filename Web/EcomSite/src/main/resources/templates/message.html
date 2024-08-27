@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content">
+    <div>&nbsp;</div>
+
+    <div th:if="${title != null}">
+        <h2>[[${title}]]</h2>
+    </div>
+
+    <div th:if="${message != null}">
+        <h3>[[${message}]]</h3>
+    </div>
+
+    <div>&nbsp;</div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+</html>

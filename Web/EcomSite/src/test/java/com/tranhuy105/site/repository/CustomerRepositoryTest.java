@@ -35,6 +35,7 @@ class CustomerRepositoryTest {
         customer.setLastName("Doe");
         customer.setEnabled(false);
         customer.setVerificationCode("1234567890abcdef");
+        customer.setForgotPasswordCode("forgot123");
 
         customer = customerRepository.save(customer);
     }
@@ -95,6 +96,13 @@ class CustomerRepositoryTest {
         Optional<Customer> foundCustomer = customerRepository.findByVerificationCode("1234567890abcdef");
         assertTrue(foundCustomer.isPresent());
         assertEquals(customer.getVerificationCode(), foundCustomer.get().getVerificationCode());
+    }
+
+    @Test
+    void testFindByForgotCode() {
+        Optional<Customer> foundCustomer = customerRepository.findByForgotPasswordCode("forgot123");
+        assertTrue(foundCustomer.isPresent());
+        assertEquals(customer.getForgotPasswordCode(), foundCustomer.get().getForgotPasswordCode());
     }
 
     @Test

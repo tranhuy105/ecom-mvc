@@ -37,6 +37,9 @@ public class Customer {
     @Column(name = "verification_code", length = 32, unique = true)
     private String verificationCode;
 
+    @Column(name = "forgot_password_code", length = 32, unique = true)
+    private String forgotPasswordCode;
+
     @Column(nullable = false)
     private boolean enabled;
 
