@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Registration')}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content mt-3">
+    <div class="text-center">
+        <h2 class="">Customer Registration</h2>
+        <div th:if="${error == null}">
+            <h4>[[${message}]]</h4>
+            <p class="text-info">Please check your email to verify your account.</p>
+            <p><a th:href="@{/login}">Login Here</a></p>
+        </div>
+        <div th:if="${error != null}">
+            <h4>Something went wrong. Please try to submit your form again.</h4>
+            <p class="text-danger">[[${error}]]</p>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+</html>

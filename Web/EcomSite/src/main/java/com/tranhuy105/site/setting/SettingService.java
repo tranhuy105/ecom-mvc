@@ -9,6 +9,4 @@ public interface SettingService {
     String getSettingByKey(String key);
 
     List<Setting> findAll();
-
-    SettingCategory getCategoryForKey(String key);
 }

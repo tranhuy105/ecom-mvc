@@ -13,7 +13,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -26,7 +28,7 @@ public class SettingServiceImpl implements SettingService {
     private final SettingRepository settingRepository;
     private static final long DEFAULT_REFRESH_INTERVAL = 1800000;
     private LocalDateTime lastCacheRefreshTime;
-    private final List<Setting> settingsCache = new ArrayList<>();
+    private final Map<String, Setting> settingsCache = new HashMap<>();
 
     private ScheduledExecutorService scheduler;
     private ScheduledFuture<?> scheduledFuture;
@@ -46,7 +48,9 @@ public class SettingServiceImpl implements SettingService {
             throw new RuntimeException("No settings found in the repository.");
         }
         settingsCache.clear();
-        settingsCache.addAll(settings);
+        for (Setting setting : settings) {
+            settingsCache.put(setting.getKey(), setting);
+        }
         lastCacheRefreshTime = getCurrentUTCDateTime();
         log.info("Settings loaded successfully");
     }
@@ -79,25 +83,13 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     public String getSettingByKey(String key) {
-        return this.settingsCache.stream()
-                .filter(setting -> setting.getKey().equals(key))
-                .map(Setting::getValue)
-                .findFirst()
-                .orElse(null);
+        Setting setting = settingsCache.get(key);
+        return setting != null ? setting.getValue() : null;
     }
 
     @Override
     public List<Setting> findAll() {
-        return new ArrayList<>(settingsCache);
-    }
-
-    @Override
-    public SettingCategory getCategoryForKey(String key) {
-        return this.settingsCache.stream()
-                .filter(setting -> setting.getKey().equals(key))
-                .map(Setting::getCategory)
-                .findFirst()
-                .orElse(null);
+        return new ArrayList<>(settingsCache.values());
     }
 
     private long getCacheRefreshInterval() {

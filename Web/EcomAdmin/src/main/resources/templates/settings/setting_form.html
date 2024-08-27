@@ -50,14 +50,14 @@
                 <div class="tab-pane p-3" id="countries" role="tabpanel">
                     <div th:replace="~{settings/countries :: fragment}"></div>
                 </div>
-                <div class="tab-pane" id="states" role="tabpanel">
+                <div class="tab-pane p-3" id="states" role="tabpanel">
                     <div th:replace="~{settings/states :: fragment}"></div>
                 </div>
-                <div class="tab-pane" id="smtp" role="tabpanel">
-
+                <div class="tab-pane p-3" id="smtp" role="tabpanel">
+                    <div th:replace="~{settings/mail_server :: fragment}"></div>
                 </div>
-                <div class="tab-pane" id="mailTemplate" role="tabpanel">
-
+                <div class="tab-pane p-3" id="mailTemplate" role="tabpanel">
+                    <div th:replace="~{settings/mail_templates/mail_templates :: fragment}"></div>
                 </div>
             </div>
         </div>
@@ -78,6 +78,10 @@
     const contextPath = "[[@{/}]]"
     const csrfHeader = "[[${_csrf.headerName}]]"
     const csrfValue = "[[${_csrf.token}]]"
+
+    $(document).ready(function() {
+        $("#customerVerificationContent").richText();
+    })
 </script>
 <script type="text/javascript" th:src="@{/js/common_user_form.js}"></script>
 <script type="text/javascript" th:src="@{/js/countries_setting.js}"></script>
