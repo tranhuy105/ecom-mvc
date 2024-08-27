@@ -3,6 +3,12 @@
 <body>
 <div th:fragment="navbar">
     <nav class="navbar navbar-expand-lg navbar-dark" style="background: #1e1e1e">
+        <th:block sec:authorize="isAuthenticated()">
+            <form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+                <input type="submit" value="Logout" />
+            </form>
+        </th:block>
+
         <div class="container py-1">
             <a class="navbar-brand d-flex align-items-center" th:href="@{/}">
                 <img th:src="@{/images/logo.png}" width="30" height="30" alt="Logo" class="d-inline-block align-top mr-2">
@@ -24,14 +30,28 @@
                     </div>
                 </form>
                 <ul class="navbar-nav ml-auto mt-3 mt-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" th:href="@{/register}"><span class="fas fa-user"></span> Đăng nhập</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">
-                            <span class="fas fa-shopping-cart"></span> Giỏ hàng <span class="badge badge-warning">0</span>
-                        </a>
-                    </li>
+                    <th:block sec:authorize="!isAuthenticated()">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/login}"><span class="fas fa-user"></span> Đăng nhập</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/register}"><span class="fas fa-key"></span> Đăng ký</a>
+                        </li>
+                    </th:block>
+                    <th:block sec:authorize="isAuthenticated()">
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/customer}"><span class="fas fa-user">&nbsp;</span>[[${#authentication.principal.fullName}]]</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript: document.logoutForm.submit()"><span class="fas fa-sign-out-alt">&nbsp;</span>Đăng xuất</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span class="fas fa-shopping-cart"></span> Giỏ hàng <span class="badge badge-warning">0</span>
+                            </a>
+                        </li>
+                    </th:block>
+
                 </ul>
                 <div class="mobile-view">
                     <ul class="navbar-nav mx-auto text-center">
