@@ -55,6 +55,10 @@ public class Customer {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "authentication_type", length = 10)
+    private AuthenticationType authenticationType = AuthenticationType.EMAIL;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude
     private Set<Address> addresses = new HashSet<>();

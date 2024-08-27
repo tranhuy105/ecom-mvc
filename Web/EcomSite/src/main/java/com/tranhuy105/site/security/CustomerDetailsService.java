@@ -1,6 +1,6 @@
-package com.tranhuy105.site.service;
+package com.tranhuy105.site.security;
 
-import com.tranhuy105.site.config.CustomerDetails;
+import com.tranhuy105.site.security.CustomerDetails;
 import com.tranhuy105.site.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

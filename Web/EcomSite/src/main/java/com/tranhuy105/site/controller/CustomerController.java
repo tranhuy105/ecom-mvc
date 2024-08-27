@@ -1,8 +1,16 @@
 package com.tranhuy105.site.controller;
 
+import com.tranhuy105.site.dto.AccountDTO;
 import com.tranhuy105.site.dto.RegisterFormDTO;
+import com.tranhuy105.site.exception.NotFoundException;
+import com.tranhuy105.site.security.CustomerDetails;
+import com.tranhuy105.site.security.CustomerOAuth2User;
 import com.tranhuy105.site.service.CustomerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,5 +55,26 @@ public class CustomerController {
         }
 
         return "register/verify";
+    }
+
+    @GetMapping("/customer")
+    public String accountView(Model model, Authentication authentication) {
+        AccountDTO accountDTO;
+        if (authentication instanceof UsernamePasswordAuthenticationToken ||
+        authentication instanceof RememberMeAuthenticationToken) {
+            accountDTO = new AccountDTO(((CustomerDetails) authentication.getPrincipal()).getCustomer());
+        } else if (authentication instanceof OAuth2AuthenticationToken oAuth2AuthenticationToken) {
+            accountDTO = new AccountDTO(
+                    customerService.findByEmail(
+                            ((CustomerOAuth2User)oAuth2AuthenticationToken.getPrincipal()).getEmail()
+                    )
+            );
+        } else {
+            throw new NotFoundException("");
+        }
+
+        model.addAttribute("account", accountDTO);
+
+        return "customer/account";
     }
 }

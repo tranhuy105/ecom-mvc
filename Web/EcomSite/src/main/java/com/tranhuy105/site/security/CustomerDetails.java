@@ -1,4 +1,4 @@
-package com.tranhuy105.site.config;
+package com.tranhuy105.site.security;
 
 import com.tranhuy105.common.entity.Customer;
 import org.springframework.security.core.GrantedAuthority;
@@ -35,5 +35,9 @@ public class CustomerDetails implements UserDetails {
 
     public String getFullName() {
         return customer.getFullName();
+    }
+
+    public Customer getCustomer() {
+        return this.customer;
     }
 }

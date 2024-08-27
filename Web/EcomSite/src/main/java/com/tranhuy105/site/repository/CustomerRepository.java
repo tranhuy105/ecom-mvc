@@ -1,5 +1,6 @@
 package com.tranhuy105.site.repository;
 
+import com.tranhuy105.common.entity.AuthenticationType;
 import com.tranhuy105.common.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,4 +20,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Transactional
     @Query("UPDATE Customer c SET c.enabled = TRUE, c.verificationCode = NULL WHERE c.id = :id")
     void enable(Integer id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Customer c SET c.authenticationType = :authenticationType WHERE c.id = :id")
+    void updateAuthenticationType(Integer id, AuthenticationType authenticationType);
 }

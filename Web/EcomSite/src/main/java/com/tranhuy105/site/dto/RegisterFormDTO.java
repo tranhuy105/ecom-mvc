@@ -19,6 +19,8 @@ public class RegisterFormDTO {
     private String email;
     @NotNull @NotEmpty @Size(min = 3)
     private String password;
+
+    @Size(max = 15)
     private String phoneNumber;
 
     // main address

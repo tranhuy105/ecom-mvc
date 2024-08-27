@@ -1,5 +1,6 @@
 package com.tranhuy105.site.repository;
 
+import com.tranhuy105.common.entity.AuthenticationType;
 import com.tranhuy105.common.entity.Customer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -107,4 +108,17 @@ class CustomerRepositoryTest {
         assertTrue(enabledCustomer.get().isEnabled());
         assertNull(enabledCustomer.get().getVerificationCode());
     }
+
+    @Test
+    void testUpdateAuthenticationType() {
+        AuthenticationType newAuthType = AuthenticationType.GOOGLE;
+
+        customerRepository.updateAuthenticationType(customer.getId(), newAuthType);
+        entityManager.clear();
+
+        Optional<Customer> updatedCustomer = customerRepository.findById(customer.getId());
+        assertTrue(updatedCustomer.isPresent());
+        assertEquals(newAuthType, updatedCustomer.get().getAuthenticationType());
+    }
+
 }

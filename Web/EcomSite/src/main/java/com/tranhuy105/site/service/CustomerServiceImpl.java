@@ -1,12 +1,16 @@
 package com.tranhuy105.site.service;
 
 import com.tranhuy105.common.entity.Address;
+import com.tranhuy105.common.entity.AuthenticationType;
 import com.tranhuy105.common.entity.Country;
 import com.tranhuy105.common.entity.Customer;
+import com.tranhuy105.site.security.CustomerOAuth2User;
 import com.tranhuy105.site.dto.RegisterFormDTO;
 import com.tranhuy105.site.exception.NotFoundException;
 import com.tranhuy105.site.repository.CountryRepository;
 import com.tranhuy105.site.repository.CustomerRepository;
+import com.tranhuy105.site.service.CustomerService;
+import com.tranhuy105.site.service.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +30,11 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public List<Country> findAvailableCountry() {
         return countryRepository.findAllOrderByName();
+    }
+
+    @Override
+    public Customer findByEmail(String email) {
+        return customerRepository.findByEmail(email).orElse(null);
     }
 
     @Transactional
@@ -44,6 +52,20 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public void registerOauth2User(CustomerOAuth2User oAuth2User) {
+        Customer customer = new Customer();
+        customer.setEmail(oAuth2User.getEmail());
+        customer.setFirstName(oAuth2User.getFirstName());
+        customer.setLastName(oAuth2User.getLastName());
+        customer.setEnabled(true);
+        customer.setPassword("");
+        customer.setAuthenticationType(AuthenticationType.GOOGLE);
+        customer.setProfilePictureUrl(oAuth2User.getProfilePicture());
+
+        customerRepository.save(customer);
+    }
+
+    @Override
     public void verifyAccount(@NonNull String code) {
         if (code.length() != 32) {
             throw new IllegalArgumentException("Invalid Code");
@@ -58,6 +80,15 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         customerRepository.enable(customerToVerify.getId());
+    }
+
+    @Override
+    public void updateAuthenticationType(Customer customer, AuthenticationType newAuthenticateType) {
+        if (customer.getId() == null || newAuthenticateType.equals(customer.getAuthenticationType())) {
+            return;
+        }
+
+        customerRepository.updateAuthenticationType(customer.getId(), newAuthenticateType);
     }
 
     private Customer extractCustomerFromRegisterDTO(RegisterFormDTO registerFormDTO) {
