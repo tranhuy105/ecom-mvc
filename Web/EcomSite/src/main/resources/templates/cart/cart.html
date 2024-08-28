@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${pageTitle})}">
+</head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content mt-3">
+    <h2 th:text="${pageTitle}" class="text-center mb-4">Shopping Cart</h2>
+
+    <div th:if="${message != null}">
+        <div class="alert alert-info" th:text="${message}"></div>
+    </div>
+
+    <div th:if="${cartItems != null and #lists.size(cartItems) > 0}">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered text-center">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Product</th>
+                    <th scope="col">SKU Code</th>
+                    <th scope="col">Price</th>
+                    <th scope="col" class="d-none d-md-table-cell">Description</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Total</th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cartItem : ${cartItems}" th:data-sku-id="${cartItem.sku.id}">
+                    <td class="align-middle" >
+                        <a th:href="@{/products/{alias}(alias=${cartItem.sku.product.alias})}"
+                           th:text="${cartItem.sku.product.name}" class="text-primary font-weight-bold"
+                           style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Product Name</a>
+                    </td>
+                    <td class="align-middle" th:text="${cartItem.sku.skuCode}">SKU Code</td>
+                    <td class="align-middle" th:text="${cartItem.sku.getDiscountedPrice()}">Product Price</td>
+                    <td class="align-middle d-none d-md-table-cell">
+                        <p th:text="${cartItem.sku.product.shortDescription}"
+                           style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; margin: auto 0"
+                        >
+                            Description
+                        </p>
+                    </td>
+                    <td class="align-middle">
+                        <select class="form-control quantity-selector">
+                            <option th:each="quantity : ${#numbers.sequence(1, 10)}"
+                                    th:value="${quantity}"
+                                    th:text="${quantity}"
+                                    th:selected="${quantity == cartItem.quantity}">Quantity</option>
+                        </select>
+                    </td>
+                    <td class="align-middle item-total" th:text="${cartItem.sku.getDiscountedPrice().multiply(cartItem.quantity)}">Total Price</td>
+                    <td class="align-middle">
+                        <button class="btn btn-danger btn-sm delete-item">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="total-amount-section bg-light p-3 rounded mt-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">Total Amount:</h4>
+                <h4 id="cart-total" th:text="${total}"></h4>
+            </div>
+        </div>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/checkout}" class="btn btn-primary">Proceed to Checkout</a>
+            <a th:href="@{/products}" class="btn btn-secondary">Continue Shopping</a>
+        </div>
+    </div>
+
+    <div th:if="${cartItems == null or #lists.size(cartItems) == 0}">
+        <h3 class="text-center mt-5">Your cart is empty.</h3>
+    </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+
+<script>
+    const contextPath = "[[@{/}]]";
+    const csrfHeader = "[[${_csrf.headerName}]]";
+    const csrfValue = "[[${_csrf.token}]]";
+
+    $(document).ready(function() {
+        function updateCartTotal() {
+            let cartTotal = 0;
+
+            $('.item-total').each(function() {
+                const itemTotal = parseFloat($(this).text().replace('$', ''));
+                cartTotal += itemTotal;
+            });
+
+            $('#cart-total').text('$' + cartTotal.toFixed(2));
+        }
+
+        $('.quantity-selector').on('change', function() {
+            const row = $(this).closest('tr');
+            const skuId = row.data('sku-id');
+            const newQuantity = $(this).val();
+            const price = parseFloat(row.find('td:nth-child(3)').text().replace('$', ''));
+            const itemTotalCell = row.find('.item-total');
+
+            if (newQuantity < 1) {
+                alert("Quantity cannot be less than 1");
+                return;
+            }
+
+            $.ajax({
+                url: contextPath + `cart?sku=${skuId}&quantity=${newQuantity}`,
+                type: 'PUT',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfValue);
+                },
+                success: function() {
+                    const newItemTotal = (price * newQuantity).toFixed(2);
+                    itemTotalCell.text('$' + newItemTotal);
+                    updateCartTotal();
+                },
+                error: function(jqXHR) {
+                    alert(jqXHR.responseText || "An error occurred while updating the cart.");
+                }
+            });
+        });
+
+        $(".delete-item").on('click', function() {
+            const row = $(this).closest('tr');
+            const skuId = row.data('sku-id');
+
+            $.ajax({
+                url: contextPath + `cart?sku=${skuId}&quantity=0`,
+                type: 'PUT',
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfValue);
+                },
+                success: function() {
+                    row.remove();
+                    updateCartTotal();
+                },
+                error: function(jqXHR) {
+                    alert(jqXHR.responseText || "An error occurred while deleting the item.");
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

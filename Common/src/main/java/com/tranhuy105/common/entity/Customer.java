@@ -66,6 +66,10 @@ public class Customer {
     @EqualsAndHashCode.Exclude
     private Set<Address> addresses = new HashSet<>();
 
+    @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @EqualsAndHashCode.Exclude
+    private ShoppingCart shoppingCart;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();

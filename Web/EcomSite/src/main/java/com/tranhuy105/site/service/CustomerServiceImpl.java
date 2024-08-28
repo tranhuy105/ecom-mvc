@@ -5,6 +5,7 @@ import com.tranhuy105.common.entity.AuthenticationType;
 import com.tranhuy105.common.entity.Country;
 import com.tranhuy105.common.entity.Customer;
 import com.tranhuy105.site.dto.AccountDTO;
+import com.tranhuy105.site.security.CustomerDetails;
 import com.tranhuy105.site.security.CustomerOAuth2User;
 import com.tranhuy105.site.dto.RegisterFormDTO;
 import com.tranhuy105.site.exception.NotFoundException;
@@ -13,7 +14,11 @@ import com.tranhuy105.site.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.RememberMeAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -147,6 +152,24 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer findByResetPasswordCode(String code) {
         return customerRepository.findByForgotPasswordCode(code).orElse(null);
+    }
+
+    @Override
+    public Customer getCustomerFromAuthentication(Authentication authentication) {
+        if (authentication instanceof UsernamePasswordAuthenticationToken ||
+                authentication instanceof RememberMeAuthenticationToken) {
+            CustomerDetails customerDetails = ((CustomerDetails) authentication.getPrincipal());
+            if (customerDetails != null) {
+                return customerDetails.getCustomer();
+            }
+        } else if (authentication instanceof OAuth2AuthenticationToken oauth2Token) {
+            CustomerOAuth2User oauth2User = (CustomerOAuth2User) oauth2Token.getPrincipal();
+            return customerRepository.findByEmail(oauth2User.getEmail())
+                    .orElse(null);
+        }
+
+        return null;
+
     }
 
     private Customer extractCustomerFromRegisterDTO(RegisterFormDTO registerFormDTO) {

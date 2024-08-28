@@ -6,6 +6,7 @@ import com.tranhuy105.common.entity.Customer;
 import com.tranhuy105.site.dto.AccountDTO;
 import com.tranhuy105.site.security.CustomerOAuth2User;
 import com.tranhuy105.site.dto.RegisterFormDTO;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -33,4 +34,6 @@ public interface CustomerService {
     void resetPassword(String resetPasswordToken, String newPassword);
 
     Customer findByResetPasswordCode(String code);
+
+    Customer getCustomerFromAuthentication(Authentication authentication);
 }
