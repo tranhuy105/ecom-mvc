@@ -1,5 +1,6 @@
 package com.tranhuy105.site.controller;
 
+import com.tranhuy105.common.entity.Address;
 import com.tranhuy105.common.entity.Customer;
 import com.tranhuy105.common.entity.ShoppingCart;
 import com.tranhuy105.site.dto.AccountDTO;
@@ -7,6 +8,7 @@ import com.tranhuy105.site.dto.RegisterFormDTO;
 import com.tranhuy105.site.exception.NotFoundException;
 import com.tranhuy105.site.security.CustomerDetails;
 import com.tranhuy105.site.security.CustomerOAuth2User;
+import com.tranhuy105.site.service.AddressService;
 import com.tranhuy105.site.service.CustomerService;
 import com.tranhuy105.site.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -166,7 +170,7 @@ public class CustomerController {
         return "redirect:/customer";
     }
 
-    @GetMapping("customer/cart")
+    @GetMapping("/customer/cart")
     public String customerCartView(Authentication authentication, Model model) {
         Customer customer = customerService.getCustomerFromAuthentication(authentication);
         if (customer == null) {

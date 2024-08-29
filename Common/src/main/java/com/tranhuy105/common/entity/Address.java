@@ -40,5 +40,5 @@ public class Address {
     private Country country;
 
     @Column(name = "is_main_address", nullable = false)
-    private boolean isMainAddress;
+    private boolean mainAddress;
 }

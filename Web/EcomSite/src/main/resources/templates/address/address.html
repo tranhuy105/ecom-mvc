@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Address')}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content mt-3">
+    <div class="mb-3">
+        <a href="/customer" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to My Account
+        </a>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center m-1">
+        [[${message}]]
+    </div>
+
+    <div class="row m-1">
+        <th:block th:each="address, status: ${addressList}">
+            <div class="col-sm-6 mt-2">
+                <div class="card" th:classappend="${address.mainAddress ? 'bg-warning' : ''}">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <b>Address #[[${status.count}]]</b>
+
+                                <th:block th:if="${address.mainAddress}">
+                                    <span class="text-danger">[Default]</span>
+                                </th:block>
+
+                                <th:block th:unless="${address.mainAddress}">
+                                    <a href="#" class="text-primary set-default" th:data-address-id="${address.id}">[Set default]</a>
+                                </th:block>
+
+                            </div>
+                            <div class="col">
+                                <div class="float-right">
+                                    <a class="fas fa-edit icon-dark" title="Edit this address"
+                                       th:href="@{'/customer/address/edit/' + ${address.id}}"></a>
+                                    &nbsp;
+                                    <a class="fas fa-trash icon-dark link-delete" title="Delete this address"
+                                       href="#" th:data-address-id="${address.id}"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Address Line 1:</strong> [[${address.addressLine1}]]</p>
+                        <p><strong>Address Line 2:</strong> [[${address.addressLine2}]]</p>
+                        <p><strong>City:</strong> [[${address.city}]]</p>
+                        <p><strong>State:</strong> [[${address.state}]]</p>
+                        <p><strong>Postal Code:</strong> [[${address.postalCode}]]</p>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+    </div>
+    <div>&nbsp;</div>
+    <div class="text-center mt-3">
+        <a th:href="@{/customer/address/new}" class="h4" style="text-decoration: underline">Add New Address</a>
+    </div>
+</div>
+
+<div class="modal fade" id="setDefaultModal" tabindex="-1" role="dialog" aria-labelledby="setDefaultModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="setDefaultModalLabel">Set as Default</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to set this address as the default?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmSetDefault" href="#" class="btn btn-primary">Confirm</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Address</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this address?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <a id="confirmDelete" href="#" class="btn btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+<script>
+    const contextPath = "[[@{/}]]"
+
+    $(document).ready(function() {
+        $('.set-default').on('click', function(event) {
+            event.preventDefault();
+            const addressId = $(this).data('address-id');
+            $('#confirmSetDefault').attr('href', contextPath + 'customer/address/' + addressId + '/default');
+            $('#setDefaultModal').modal('show');
+        });
+
+        $('.link-delete').on('click', function(event) {
+            event.preventDefault();
+            const addressId = $(this).data('address-id');
+            $('#confirmDelete').attr('href', contextPath + 'customer/address/' + addressId + '/delete');
+            $('#deleteModal').modal('show');
+        });
+    });
+</script>
+</body>
+</html>
