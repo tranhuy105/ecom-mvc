@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EntityScan({"com.tranhuy105.common.entity", "com.tranhuy105.site.*"})
+@EnableScheduling
 public class SiteApplication {
 
 	public static void main(String[] args) {

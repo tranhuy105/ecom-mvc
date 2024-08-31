@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 
 public interface ShoppingCartService {
 
+    BigDecimal calculateSubtotalPrice(ShoppingCart shoppingCart);
+
     BigDecimal calculateTotalPrice(ShoppingCart shoppingCart);
 
     @Transactional
@@ -20,4 +22,6 @@ public interface ShoppingCartService {
 
     @Transactional
     ShoppingCart getOrCreateCartForCustomer(Integer customerId);
+    @Transactional
+    void clearShoppingCart(Integer customerId);
 }

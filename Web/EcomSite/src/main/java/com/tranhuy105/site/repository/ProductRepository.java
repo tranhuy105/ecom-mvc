@@ -1,7 +1,9 @@
 package com.tranhuy105.site.repository;
 
 import com.tranhuy105.common.entity.Product;
+import com.tranhuy105.site.dto.ProductOverview;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,17 +29,29 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     @Query(nativeQuery = true, value = "SELECT * FROM products " +
             "WHERE (:keyword IS NULL OR MATCH(name, short_description) AGAINST (:keyword)) " +
-            "AND (:categoryId IS NULL OR category_id = :categoryId) " +
+            "AND (category_id IN :categoryIds) " +
+            "AND (:brandId IS NULL OR brand_id = :brandId) " +
+            "AND (:minPrice IS NULL OR products.default_price >= :minPrice) " +
+            "AND (:maxPrice IS NULL OR products.default_price <= :maxPrice) " +
+            "AND enabled = TRUE")
+    Page<Product> searchProductWithCategory(Pageable pageable,
+                                @Param("keyword") String keyword,
+                                @Param("categoryIds") List<Integer> categoryIds,
+                                @Param("brandId") Integer brandId,
+                                @Param("minPrice") BigDecimal minPrice,
+                                @Param("maxPrice") BigDecimal maxPrice);
+
+    @Query(nativeQuery = true, value = "SELECT * FROM products " +
+            "WHERE (:keyword IS NULL OR MATCH(name, short_description) AGAINST (:keyword)) " +
             "AND (:brandId IS NULL OR brand_id = :brandId) " +
             "AND (:minPrice IS NULL OR products.default_price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR products.default_price <= :maxPrice) " +
             "AND enabled = TRUE")
     Page<Product> searchProduct(Pageable pageable,
-                                @Param("keyword") String keyword,
-                                @Param("categoryId") Integer categoryId,
-                                @Param("brandId") Integer brandId,
-                                @Param("minPrice") BigDecimal minPrice,
-                                @Param("maxPrice") BigDecimal maxPrice);
+                                            @Param("keyword") String keyword,
+                                            @Param("brandId") Integer brandId,
+                                            @Param("minPrice") BigDecimal minPrice,
+                                            @Param("maxPrice") BigDecimal maxPrice);
 
     @EntityGraph(attributePaths = {"category", "brand", "images"})
     @Query("SELECT p FROM Product p WHERE p IN :products")
@@ -46,4 +60,30 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     @EntityGraph(attributePaths = {"category", "brand", "skus", "additionalDetails", "images"})
     @Query("SELECT p FROM Product p WHERE p.alias = :alias")
     Optional<Product> findByAlias(String alias);
+
+    @Query(value = "SELECT p.id AS id, " +
+            "       p.name AS name, " +
+            "       p.alias AS alias, " +
+            "       p.short_description AS shortDescription, " +
+            "       p.default_price AS price, " +
+            "       p.default_discount AS discountPercent, " +
+            "       pi.name AS imagePath " +
+            "FROM products p " +
+            "LEFT JOIN product_images pi ON p.id = pi.product_id " +
+            "WHERE pi.is_main = TRUE AND p.category_id = :categoryId",
+            nativeQuery = true)
+    List<ProductOverview> findProductOverviewsByCategory(Integer categoryId, PageRequest pageRequest);
+
+    @Query(value = "SELECT p.id AS id, " +
+            "       p.name AS name, " +
+            "       p.alias AS alias, " +
+            "       p.short_description AS shortDescription, " +
+            "       p.default_price AS price, " +
+            "       p.default_discount AS discountPercent, " +
+            "       pi.name AS imagePath " +
+            "FROM products p " +
+            "LEFT JOIN product_images pi ON p.id = pi.product_id " +
+            "WHERE pi.is_main = TRUE AND p.brand_id = :brandId",
+            nativeQuery = true)
+    List<ProductOverview> getBrandProduct(Integer brandId, PageRequest pageRequest);
 }

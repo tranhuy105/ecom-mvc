@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${'Check Out'})}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content mt-4">
+    <div class="text-center mb-4">
+        <h2>Đặt hàng</h2>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <div class="row">
+        <!-- Shipping Information -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Địa chỉ nhận hàng (cod)</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0">
+                        <b>Ship tới:</b> [[${address}]]
+                        <a class="btn btn-link p-0 ml-2" th:href="@{/customer/address}">
+                            <i class="fas fa-edit"></i> Ship tới địa chỉ khác?
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="card mt-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Phương thức thanh toán</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check">
+                        <input class="form-check-input custom-radio" type="radio" name="paymentChoice" id="payment-cod" value="COD" checked>
+                        <label class="form-check-label ms-2 text-dark font-weight-bold" for="payment-cod">
+                            Thanh toán khi nhận hàng (COD)
+                        </label>
+                    </div>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input custom-radio" type="radio" name="paymentChoice" id="payment-immediate" value="IMMEDIATE">
+                        <label class="form-check-label ms-2 text-dark font-weight-bold" for="payment-immediate">
+                            Thanh toán online
+                        </label>
+                    </div>
+
+                    <!-- Payment Options for Immediate Payment -->
+                    <div id="immediate-payment-options" class="d-none mt-3">
+                        <div class="payment-option text-dark p-3 mb-3" style="cursor: pointer;" id="payment-vnpay">
+                            <div class="text-center">
+                                <img th:src="@{/images/vnpay.png}" style="height: 30px; object-fit: cover" alt="VNPay" class="payment-logo mr-3">
+                            </div>
+                        </div>
+                        <div class="payment-option text-white p-3 mb-3" style="cursor: pointer;" id="payment-paypal">
+                            <div class="text-center">
+                                <img th:src="@{/images/paypal.png}" alt="PayPal" style="height: 30px; object-fit: cover" class="payment-logo mr-3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="payment-form" method="post" th:action="@{/checkout/initiate}">
+                <input type="hidden" name="paymentMethod" id="selected-payment-method">
+                <input type="hidden" name="shippingAddressId" id="hidden-shipping-address-id" th:value="${shippingAddressId}">
+            </form>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Giỏ hàng</h5>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <table class="table table-borderless">
+                            <thead>
+                            <tr>
+                                <th class="text-center" style="width: 100px;"></th>
+                                <th class="text-center">Số lượng</th>
+                                <th class="text-center" style="width: 200px;">Sản phẩm</th>
+                                <th class="text-center">Tổng Giá</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <th:block th:each="item : ${cartItems}">
+                                <tr th:with="sku = ${item.sku}">
+                                    <td class="align-middle" style="width: 100px;">
+                                        <img th:src="@{${sku.product.orderedImages[0].path}}" alt="Product Image" class="img-fluid rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                                    </td>
+                                    <td class="align-middle text-center font-weight-bold">
+                                        [[${item.quantity}]]
+                                    </td>
+                                    <td class="align-middle" style="max-width: 200px; overflow: hidden;">
+                                        <a th:href="@{'/products/' + ${sku.product.alias}}" target="_blank">
+                                            [[${sku.product.name}]]
+                                        </a>
+                                    </td>
+                                    <td class="align-middle text-right">
+                                        <b class="item-price">
+                                            <span th:replace="~{fragments :: format-price(${item.quantity * sku.discountedPrice})}"></span>
+                                        </b>
+                                    </td>
+                                </tr>
+                            </th:block>
+                            <tr><td colspan="4"><hr/></td></tr>
+                            <tr>
+                                <td colspan="2" class="text-left"><b>Tổng cộng:</b></td>
+                                <td colspan="3" class="text-right"><b id="finalPrice"></b></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <button type="button" class="btn btn-block btn-primary mt-4 btn-custom-width mx-auto" id="place-order-btn">
+            <i class="fas fa-check-circle"></i> Đặt hàng
+        </button>
+    </div>
+
+</div>
+
+<div class="modal fade" id="redirect-modal" tabindex="-1" role="dialog" aria-labelledby="redirect-modal-label" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="redirect-modal-label">Redirecting to Payment Gateway</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Please wait while we redirect you to the payment gateway...</p>
+                <div class="text-center">
+                    <i class="fas fa-spinner fa-spin fa-3x"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="settingDiv" th:data-currency-symbol="${CURRENCY_SYMBOL}"
+     th:data-currency-position="${CURRENCY_SYMBOL_POSITION}" th:data-decimal-digits="${DECIMAL_DIGITS}"
+     th:data-thousand-point-type="${THOUSAND_POINT_TYPE}" th:data-decimal-point-type="${DECIMAL_POINT_TYPE}">
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+<script>
+    let currencySymbol;
+    let currencyPosition;
+    let decimalDigits;
+    let parsedDecimalDigits;
+    let thousandPointType;
+    let decimalPointType;
+
+    function formatCurrency(amount) {
+        amount = parseFloat(amount).toFixed(parsedDecimalDigits);
+        amount = amount.replace('.', decimalPointType);
+        const parts = amount.split(decimalPointType);
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandPointType);
+        amount = parts.join(decimalPointType);
+        if (currencyPosition === "before") {
+            return currencySymbol + amount;
+        } else {
+            return amount + currencySymbol;
+        }
+    }
+
+    $(document).ready(function () {
+        const setting = $("#settingDiv");
+        currencySymbol = setting.data("currency-symbol") || "$";
+        currencyPosition = setting.data("currency-position") || "before";
+        decimalDigits = setting.data("decimal-digits");
+        parsedDecimalDigits = decimalDigits !== undefined && decimalDigits !== null ? parseInt(decimalDigits) : 2;
+        thousandPointType = setting.data("thousand-point-type") === "POINT" ? "." : ",";
+        decimalPointType = setting.data("decimal-point-type") === "COMMA" ? "," : ".";
+        $('#selected-payment-method').val("COD");
+
+        function calculateTotal() {
+            let total = 0;
+            $(".item-price").each(function () {
+                let priceText = $(this).text().replace(/,/g, '');
+                let price = parseFloat(priceText.replace(currencySymbol, '').trim());
+                total += isNaN(price) ? 0 : price;
+            });
+            return total;
+        }
+
+        function updateTotalPrice() {
+            let total = calculateTotal();
+            $("#finalPrice").text(formatCurrency(total));
+        }
+
+        updateTotalPrice();
+
+        $('input[name="paymentChoice"]').on('change', function () {
+            if ($(this).val() === 'IMMEDIATE') {
+                $('#immediate-payment-options').removeClass('d-none');
+            } else {
+                $('#immediate-payment-options').addClass('d-none');
+                $('.payment-option').removeClass('active border border-dark');
+                $('#selected-payment-method').val("COD");
+            }
+        });
+
+        $('.payment-option').on('click', function () {
+            $('.payment-option').removeClass('active border border-dark');
+            $(this).addClass('active border border-dark');
+            let selectedMethod = this.id.replace('payment-', '').toUpperCase();
+            $('#selected-payment-method').val(selectedMethod);
+        });
+
+        $('#place-order-btn').on('click', function () {
+            $('#redirect-modal').modal('show');
+            $('#payment-form').submit();
+        });
+    });
+</script>
+</html>

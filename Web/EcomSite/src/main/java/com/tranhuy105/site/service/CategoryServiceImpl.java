@@ -52,4 +52,9 @@ public class CategoryServiceImpl implements CategoryService{
         Collections.reverse(parentTrails);
         return parentTrails;
     }
+
+    @Override
+    public List<Integer> getDescendent(@NonNull Integer categoryId) {
+        return categoryRepository.findAllDescendent(categoryId);
+    }
 }

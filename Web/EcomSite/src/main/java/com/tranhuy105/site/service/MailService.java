@@ -1,6 +1,7 @@
 package com.tranhuy105.site.service;
 
 import com.tranhuy105.common.entity.Customer;
+import com.tranhuy105.common.entity.Order;
 import jakarta.mail.MessagingException;
 import org.springframework.mail.javamail.JavaMailSender;
 

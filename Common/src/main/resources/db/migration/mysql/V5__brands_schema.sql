@@ -1,7 +1,6 @@
 CREATE TABLE brands (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(45) NOT NULL UNIQUE,
-    logo VARCHAR(128) NOT NULL
+    name VARCHAR(45) NOT NULL UNIQUE
 );
 
 CREATE TABLE brand_categories (

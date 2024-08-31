@@ -43,6 +43,8 @@ public class Product {
     private BigDecimal price = BigDecimal.valueOf(0);
     @Column(name = "default_discount")
     private BigDecimal discountPercent = BigDecimal.valueOf(0);
+    @Column(nullable = false, name = "support_cod")
+    private boolean supportCod = true;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")

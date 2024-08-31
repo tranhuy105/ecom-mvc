@@ -25,8 +25,6 @@ public class BrandDTO {
     public BrandDTO(Brand brand) {
         this.id = brand.getId();
         this.name = brand.getName();
-        this.logoPath = brand.getImagePath();
-        this.logo = brand.getLogo();
         this.categories = brand.getCategories().stream()
                 .map(cat -> new CategoryDTO(cat.getId(), cat.getName()))
                 .toList();
@@ -42,7 +40,6 @@ public class BrandDTO {
         Brand brand = new Brand();
         brand.setId(this.id);
         brand.setName(this.name);
-        brand.setLogo(this.logo);
         brand.setCategories(validCategories);
         return brand;
     }

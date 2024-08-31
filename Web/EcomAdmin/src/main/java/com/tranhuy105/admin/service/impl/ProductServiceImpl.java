@@ -185,14 +185,14 @@ public class ProductServiceImpl implements ProductService {
                     throw new IllegalArgumentException("NULL instruction.");
                 }
                 switch (instruction.toLowerCase()) {
-                    case "remove" -> deleteImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product));
-                    case "add" -> newImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product));
-                    case "keep" -> keepImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product));
+                    case "remove" -> deleteImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false));
+                    case "add" -> newImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false));
+                    case "keep" -> keepImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false));
                     default -> throw new IllegalArgumentException("Illegal Instruction: "+imageInstructionDTO.getInstruction());
                 }
             });
         } else {
-            imageInstructionDTOs.forEach(imageInstructionDTO -> newImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product)));
+            imageInstructionDTOs.forEach(imageInstructionDTO -> newImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false)));
         }
     }
 

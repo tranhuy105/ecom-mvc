@@ -33,9 +33,6 @@ public class Category {
     @Column(length = 64, nullable = false, unique = true)
     private String alias;
 
-    @Column(length = 128, nullable = false)
-    private String image;
-
     private boolean enabled = true;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -53,13 +50,5 @@ public class Category {
     public void removeChild(Category child) {
         child.setParent(null);
         this.children.remove(child);
-    }
-
-    public String getImagePath() {
-        if (this.id == null || this.image == null) {
-            return "/images/default_user.jpg";
-        }
-//        return String.format("/category-images/%s/%s", this.id, this.image);
-        return "/images/default_user.jpg";
     }
 }

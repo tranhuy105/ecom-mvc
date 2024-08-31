@@ -11,4 +11,5 @@ public interface CategoryService {
     Category findByAlias(String alias);
 
     List<Category> getBreadcrumbTrail(@NonNull Category category);
+    List<Integer> getDescendent(@NonNull Integer categoryId);
 }

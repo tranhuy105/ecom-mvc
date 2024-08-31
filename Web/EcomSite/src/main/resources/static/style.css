@@ -164,3 +164,73 @@ body {
     border-top: 0.4rem solid #495057;
     pointer-events: none;
 }
+
+
+.payment-option {
+    border-radius: 8px;
+    transition: background-color 0.3s, transform 0.3s;
+    border: 2px solid transparent;
+    background-color: #f8f9fa;
+}
+
+.payment-option.active {
+    background-color: #e9f5ff;
+    border-color: #007bff;
+    transform: scale(1.02);
+}
+
+.payment-option:hover {
+    background-color: #f0f4f8;
+}
+
+ .btn-custom-width {
+     width: 100%;
+ }
+
+@media (min-width: 992px) {
+    .btn-custom-width {
+        width: 25%;
+    }
+}
+
+.custom-radio {
+    position: relative;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 2px solid #007bff;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: white;
+}
+
+.custom-radio:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.custom-radio:checked::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: #007bff;
+    transform: translate(-50%, -50%);
+}
+
+.custom-radio:focus {
+    outline: none;
+}
+
+.text-wrap-two-line {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

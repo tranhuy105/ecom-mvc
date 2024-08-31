@@ -41,4 +41,18 @@ public class Address {
 
     @Column(name = "is_main_address", nullable = false)
     private boolean mainAddress;
+
+    @Override
+    public String toString() {
+        StringBuilder addressString = new StringBuilder();
+        addressString.append(addressLine1);
+        if (addressLine2 != null && !addressLine2.isEmpty()) {
+            addressString.append(", ").append(addressLine2);
+        }
+        addressString.append(", ").append(city);
+        addressString.append(", ").append(state);
+        addressString.append(" ").append(postalCode);
+        return addressString.toString();
+    }
+
 }

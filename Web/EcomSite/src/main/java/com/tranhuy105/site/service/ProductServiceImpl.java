@@ -3,6 +3,7 @@ package com.tranhuy105.site.service;
 import com.tranhuy105.common.entity.Brand;
 import com.tranhuy105.common.entity.Category;
 import com.tranhuy105.common.entity.Product;
+import com.tranhuy105.site.dto.ProductOverview;
 import com.tranhuy105.site.exception.NotFoundException;
 import com.tranhuy105.site.repository.BrandRepository;
 import com.tranhuy105.site.repository.ProductRepository;
@@ -21,6 +22,7 @@ import java.util.*;
 public class ProductServiceImpl implements ProductService{
     private final ProductRepository productRepository;
     private final BrandRepository brandRepository;
+    private final CategoryService categoryService;
 
     private final Map<Integer, Brand> brandCache = new HashMap<>();
     private boolean isCacheLoaded = false;
@@ -31,6 +33,16 @@ public class ProductServiceImpl implements ProductService{
             loadCache();
         }
         return List.copyOf(brandCache.values());
+    }
+
+    @Override
+    public List<ProductOverview> getRelatedProducts(Integer productId, PageRequest pageRequest) {
+        return productRepository.findProductOverviewsByCategory(productId, pageRequest);
+    }
+
+    @Override
+    public List<ProductOverview> getProductsByBrand(Integer brandId, PageRequest pageRequest) {
+        return productRepository.getBrandProduct(brandId, pageRequest);
     }
 
     private synchronized void loadCache() {
@@ -84,7 +96,12 @@ public class ProductServiceImpl implements ProductService{
         } catch (Exception exception) {
             throw new IllegalArgumentException();
         }
-        return productRepository.searchProduct(pageable, keyword, categoryId, brandId, minPrice, maxPrice);
+        if (categoryId == null) {
+            return productRepository.searchProduct(pageable, keyword, brandId, minPrice, maxPrice);
+        } else {
+            List<Integer> categoryIds = categoryService.getDescendent(categoryId);
+            return productRepository.searchProductWithCategory(pageable, keyword, categoryIds, brandId, minPrice, maxPrice);
+        }
     }
 
     @Override

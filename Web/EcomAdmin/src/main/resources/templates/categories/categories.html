@@ -25,7 +25,6 @@
     <div class="mobile-view d-block d-md-none p-3">
         <div th:each="cat : ${listCategories}" class="category-item mb-3 p-3 border rounded bg-light">
             <div class="d-flex align-items-center mb-2">
-                <img th:src="@{${cat.imagePath}}" alt="category image" class="img-thumbnail mr-3" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
                 <div>
                     <h4 class="mb-1">[[${cat.name}]]</h4>
                     <p class="mb-1"><strong>ID:</strong> [[${cat.id}]]</p>

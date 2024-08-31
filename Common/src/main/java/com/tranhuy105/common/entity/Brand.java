@@ -21,9 +21,11 @@ public class Brand {
     @Column(nullable = false, length = 45, unique = true)
     private String name;
 
-    @Column(nullable = false, length = 128)
+    @Column(nullable = false)
     private String logo;
 
+    @Column(nullable = false, length = 512)
+    private String description;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name = "brand_categories",
@@ -34,11 +36,7 @@ public class Brand {
     private List<Category> categories = new ArrayList<>();
 
     public String getImagePath() {
-        if (this.id == null || this.logo == null) {
-            return "/images/default_user.jpg";
-        }
-//        return String.format("/category-images/%s/%s", this.id, this.logo);
-        return "/images/default_user.jpg";
+        return this.logo;
     }
 
     public Brand(Integer id, String name) {

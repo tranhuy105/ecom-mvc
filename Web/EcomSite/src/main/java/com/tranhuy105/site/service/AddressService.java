@@ -9,6 +9,7 @@ import java.util.List;
 public interface AddressService {
     List<Address> findByCustomerId(Integer customerId);
     Address findById(Integer id);
+    Address findMainAddressForCustomer(Customer customer);
     @Transactional
     void deleteAddress(Integer id, Customer customer);
     @Transactional

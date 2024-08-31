@@ -3,7 +3,9 @@ package com.tranhuy105.site.service;
 import com.tranhuy105.common.entity.Brand;
 import com.tranhuy105.common.entity.Category;
 import com.tranhuy105.common.entity.Product;
+import com.tranhuy105.site.dto.ProductOverview;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,4 +31,8 @@ public interface ProductService {
     List<Product> lazyFetchAttribute(List<Product> rawProducts, String sort, String sortDirection);
 
     List<Brand> findAllAvailableProductBrand();
+
+    List<ProductOverview> getRelatedProducts(Integer productId, PageRequest of);
+
+    List<ProductOverview> getProductsByBrand(Integer brandId, PageRequest of);
 }

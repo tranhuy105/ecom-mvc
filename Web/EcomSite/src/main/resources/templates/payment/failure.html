@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${'Payment Failure'})}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content">
+  <div class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">Payment Failed</h4>
+    <p>Unfortunately, the payment for your order <strong th:text="${paymentResponse.orderNumber}"></strong> was not successful.</p>
+    <p>Reason: <strong th:text="${paymentResponse.status}"></strong></p>
+    <hr>
+    <p class="mb-0">Please try again or contact our support team for assistance.</p>
+  </div>
+  <a th:href="@{/}" class="btn btn-primary">Return to Homepage</a>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+</html>

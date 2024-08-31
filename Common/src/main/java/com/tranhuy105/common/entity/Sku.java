@@ -12,8 +12,6 @@ import java.math.RoundingMode;
 @Getter
 @Setter
 public class Sku {
-    public static final BigDecimal RATE_PER_CUBIC_METER = BigDecimal.valueOf(10);
-    public static final BigDecimal RATE_PER_KG = BigDecimal.valueOf(5);
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,10 +49,6 @@ public class Sku {
     }
 
     public BigDecimal getShippingCost() {
-        BigDecimal volume = length.multiply(width).multiply(height).divide(BigDecimal.valueOf(1_000_000), RoundingMode.HALF_UP);
-        BigDecimal volumeCost = volume.multiply(RATE_PER_CUBIC_METER);
-        BigDecimal weightCost = weight.multiply(RATE_PER_KG);
-        return volumeCost.add(weightCost);
+       return BigDecimal.ZERO;
     }
-
 }

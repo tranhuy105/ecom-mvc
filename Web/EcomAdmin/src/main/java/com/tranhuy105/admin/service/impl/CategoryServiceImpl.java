@@ -56,7 +56,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public Category save(Category newCategory, MultipartFile image) throws IOException {
         validateCategoryNameAndAlias(newCategory);
-        handleSaveImage(newCategory, image);
         return categoryRepository.save(newCategory);
     }
     @Override
@@ -71,20 +70,6 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<Category> findAllById(List<Integer> ids) {
         return categoryRepository.findAllById(ids);
-    }
-
-    private void handleSaveImage(Category category, MultipartFile image) throws IOException {
-        if (image != null && !image.isEmpty() && category.getImage() != null) {
-            String fileName = FileUploadUtil.validateAndGetImageFilename(image);
-            category.setImage(fileName);
-            // if is creating new
-            if (category.getId() == null) {
-                category = categoryRepository.save(category);
-            }
-            String uploadDir = "category-images/" + category.getId();
-            FileUploadUtil.cleanDir(uploadDir);
-            FileUploadUtil.saveFile(uploadDir, fileName, image);
-        }
     }
 
     @Override

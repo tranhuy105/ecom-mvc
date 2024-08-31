@@ -6,7 +6,7 @@
 
 <div class="container-fluid content">
     <div class="text-center mt-3">
-        <h2>Your Account Details</h2>
+        <h2>Tài khoản của bạn</h2>
     </div>
     <div>&nbsp;</div>
 
@@ -91,9 +91,24 @@
         </div>
     </form>
 
-    <div class="text-center mt-4">
-        <a th:href="@{/customer/order}" class="btn btn-secondary mr-2">View My Orders</a>
-        <a th:href="@{/customer/address}" class="btn btn-secondary">View My Addresses</a>
+    <div class=" mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Manage Your Account</h5>
+                        <a class="nav-link" th:href="@{/orders/me}">
+                            <i class="fas fa-box"></i>
+                            View My Orders
+                        </a>
+                        <a class="nav-link" th:href="@{/customer/address}">
+                            <i class="fas fa-map-marker-alt"></i>
+                            View My Addresses
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

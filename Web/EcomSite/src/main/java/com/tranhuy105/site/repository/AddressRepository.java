@@ -9,7 +9,4 @@ import java.util.Optional;
 
 public interface AddressRepository extends JpaRepository<Address, Integer> {
     List<Address> findByCustomerId(Integer customerId);
-
-    @Query("SELECT a FROM Address a LEFT JOIN FETCH a.country WHERE a.id = :id")
-    Optional<Address> findByIdWithCountry(Integer id);
 }

@@ -1,6 +1,83 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+<style>
+  .btn-custom {
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    padding: 12px;
+    text-transform: uppercase;
+    border-radius: 30px;
+    transition: background-color 0.3s, transform 0.2s;
+  }
+
+  .btn-custom:hover {
+    transform: scale(1.05);
+  }
+
+  .btn-custom.love {
+    background-color: #ffa41c;
+    color: white;
+  }
+
+  .btn-custom.cart {
+    background-color: #ffd814;
+    color: black;
+  }
+
+  #related-products-container, #brand-products-container {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+
+  .card {
+    scroll-snap-align: start;
+  }
+
+  .card-img-top {
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .thumbnail-wrapper img {
+    cursor: pointer;
+  }
+
+  #related-products-container::-webkit-scrollbar, #brand-products-container::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  #related-products-container::-webkit-scrollbar-thumb, #brand-products-container::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+  }
+
+  #related-products-container::-webkit-scrollbar-thumb:hover, #brand-products-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+  #related-products-container, #brand-products-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  #related-products-container .card, #brand-products-container .card {
+    flex: 1 1 calc(25% - 1rem);
+    max-width: calc(25% - 1rem);
+  }
+
+  @media (max-width: 768px) {
+    #related-products-container .card, #brand-products-container .card {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+
+
+</style>
 <body>
 <div>
   <div th:replace="~{navigation :: navbar}"></div>
@@ -13,7 +90,7 @@
         <!-- Carousel for Main Image -->
         <div id="mainImageCarousel" class="carousel slide" data-bs-ride="carousel">
           <div class="carousel-inner">
-            <th:block th:each="image, iterStat : ${product.images}">
+            <th:block th:each="image, iterStat : ${product.orderedImages}">
               <div th:classappend="${iterStat.index == 0} ? 'active' : ''"
                    class="carousel-item">
                 <img th:src="@{${image.path}}" class="d-block w-100" style="height: 360px; object-fit: contain; border-radius: 30px;" alt="main image">
@@ -61,7 +138,7 @@
 
         <!-- SKU Selection -->
         <div class="mt-2">
-          <label>This product has <strong>[[${product.availableSkus.size()}]]</strong> variations.</label>
+          <label>Sản phẩm này có <strong>[[${product.availableSkus.size()}]]</strong> phân loại.</label>
           <div id="skuOptions" class="d-flex">
             <th:block th:each="sku, iterStat : ${product.availableSkus}">
               <button
@@ -81,11 +158,11 @@
         </div>
 
         <div>&nbsp;</div>
-        <p class="text-info font-weight-bold" style="font-style: italic">Description</p>
+        <p class="text-info font-weight-bold" style="font-style: italic">Mô tả</p>
         <div th:utext="${product.fullDescription}"></div>
       </div>
 
-      <div class="col-sm-2 border rounded d-flex flex-column justify-content-between" style="border: gray; max-height: 500px">
+      <div class="col-sm-2 border rounded d-flex flex-column justify-content-between" style="border: gray; max-height: 600px">
         <!-- Price Display -->
         <div class="mt-3">
           <div>
@@ -101,7 +178,7 @@
         <div class="mt-3">
           <div class="d-flex align-items-center">
             <i class="fas fa-map-marker-alt" style="font-size: 1.2rem;"></i>
-            <span class="ml-2">Delivered to Vietnam</span>
+            <span class="ml-2">Giao hàng đến Hà Nội</span>
           </div>
         </div>
 
@@ -110,7 +187,7 @@
           </span>
           </div>
         <div class="mt-3 flex-row d-flex align-items-center custom-select-wrapper">
-          <label for="quantity" class="form-label mt-2 mr-2">Quantity:</label>
+          <label for="quantity" class="form-label mt-2 mr-2">Số lượng:</label>
           <select id="quantity" class="custom-select flex-grow-1 purchase-button">
             <option value="1">1</option>
             <option value="2">2</option>
@@ -122,10 +199,10 @@
 
         <div>
           <div class="mt-3">
-              <input type="button" id="cartSubmitBtn" value="Add to Cart" class="btn btn-block btn-lg shadow-sm rounded-pill purchase-button" style="background: #ffd814"/>
+            <input type="button" id="cartSubmitBtn" value="Thêm vào giỏ hàng" class="btn btn-custom cart" />
           </div>
           <div class="mt-3">
-            <input type="button" value="Buy Now" class="btn btn-block btn-lg shadow-sm rounded-pill purchase-button" style="background: #ffa41c"/>
+            <input type="button" value="Thêm vào yêu thích" class="btn btn-custom love" />
           </div>
         </div>
 
@@ -141,23 +218,63 @@
 
     <div class="row">
       <div class="col-12">
-        <div><hr/></div>
-        <div>
-          <h3>Product Details:</h3>
-        </div>
-        <th:block th:each="detail : ${product.additionalDetails}">
-          <div>
-            <b>[[${detail.name}]]</b>:
-            <span>[[${detail.value}]]</span>
+        <div class="container-fluid mt-4">
+          <div class="card">
+            <div class="card-body">
+              <h3 class="card-title">Chi tiết sản phẩm:</h3>
+              <hr/>
+              <ul class="list-unstyled">
+                <th:block th:each="detail : ${product.additionalDetails}">
+                  <li class="mb-2">
+                    <strong>[[${detail.name}]]</strong>: <span>[[${detail.value}]]</span>
+                  </li>
+                </th:block>
+              </ul>
+            </div>
           </div>
-        </th:block>
+        </div>
+      </div>
+      </div>
+
+    <!-- Brand Information Section -->
+    <div id="brand-info" class="mt-4 p-4 border-top border-bottom container-fluid">
+      <h3 class="text-muted">Về thương hiệu</h3>
+      <div class="d-flex align-items-center mt-4" style="cursor: pointer">
+        <div class="mr-3">
+          <img th:src="@{${product.brand.logo}}" alt="brand" class="rounded-circle" style="width: 100px; height: 100px; object-fit: contain">
+        </div>
         <div>
-          <b>Brand:</b>
-          <span>[[${product.brand.name}]]</span>
+          <h5 class="text-info">[[${product.brand.name}]]</h5>
+          <p class="text-muted mb-1" th:text="${product.brand.description}"></p>
+          <button class="btn btn-outline-secondary btn-sm">Follow</button>
         </div>
       </div>
     </div>
+
+
+    <!-- Related Products Section -->
+    <div id="related-products" class="mt-4 mt-lg-8">
+      <h3 class="text-info font-weight-bold">Liên quan đến sản phẩm này</h3>
+      <div id="related-products-container" class="d-flex overflow-auto mt-4">
+      </div>
+      <div class="text-center">
+        <button id="loadMoreRelated" class="btn btn-outline-secondary mt-3 btn-custom-width">Xem thêm</button>
+      </div>
+    </div>
+
+    <!-- Products by the Same Brand Section -->
+    <div id="brand-products" class="mt-4 mt-lg-8">
+      <h3 class="text-info font-weight-bold">Sản phẩm khác của [[${product.brand.name}]]</h3>
+      <div id="brand-products-container" class="d-flex overflow-auto mt-4">
+      </div>
+      <div class="text-center">
+        <button id="loadMoreBrand" class="btn btn-outline-secondary mt-3 btn-custom-width">Xem thêm</button>
+      </div>
+    </div>
+
+
   </div>
+</div>
 
   <div id="settingDiv"
        th:data-currency-symbol="${CURRENCY_SYMBOL}"
@@ -166,24 +283,81 @@
        th:data-thousand-point-type="${THOUSAND_POINT_TYPE}"
        th:data-decimal-point-type="${DECIMAL_POINT_TYPE}">
   </div>
-  <div th:replace="~{navigation :: footer}"></div>
-</div>
-</body>
 
+<div class="modal fade" id="successModal" tabindex="-1" role="dialog" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Thành Công</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Sản phẩm đã được thêm vào giỏ hàng thành công.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Lỗi</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Có lỗi xảy ra. Vui lòng thử lại sau.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
 <script>
   let currentSelectedSkuId;
   const contextPath = "[[@{/}]]"
   const csrfHeader = "[[${_csrf.headerName}]]"
   const csrfValue = "[[${_csrf.token}]]"
 
+  let currencySymbol;
+  let currencyPosition;
+  let decimalDigits;
+  let parsedDecimalDigits;
+  let thousandPointType;
+  let decimalPointType;
+
+  function formatCurrency(amount) {
+    amount = parseFloat(amount).toFixed(parsedDecimalDigits);
+    amount = amount.replace('.', decimalPointType);
+    const parts = amount.split(decimalPointType);
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandPointType);
+    amount = parts.join(decimalPointType);
+    if (currencyPosition === "before") {
+      return currencySymbol + amount;
+    } else {
+      return amount + currencySymbol;
+    }
+  }
+
   $(document).ready(function () {
     const setting = $("#settingDiv");
-    const currencySymbol = setting.data("currency-symbol") || "$";
-    const currencyPosition = setting.data("currency-position") || "before";
-    const decimalDigits = setting.data("decimal-digits");
-    const parsedDecimalDigits = decimalDigits !== undefined && decimalDigits !== null ? parseInt(decimalDigits) : 2;
-    const thousandPointType = setting.data("thousand-point-type") === "POINT" ? "." : ",";
-    const decimalPointType = setting.data("decimal-point-type") === "COMMA" ? "," : ".";
+    currencySymbol = setting.data("currency-symbol") || "$";
+    currencyPosition = setting.data("currency-position") || "before";
+    decimalDigits = setting.data("decimal-digits");
+    parsedDecimalDigits = decimalDigits !== undefined && decimalDigits !== null ? parseInt(decimalDigits) : 2;
+    thousandPointType = setting.data("thousand-point-type") === "POINT" ? "." : ",";
+    decimalPointType = setting.data("decimal-point-type") === "COMMA" ? "," : ".";
 
 
     $("#cartSubmitBtn").on("click", function () {
@@ -199,12 +373,13 @@
           },
           contentType: "application/json"
         }).done(function (res) {
-          console.log(res)
+          $('#successModal').modal('show');
         }).fail(function (res) {
           if (res.status === 401) {
             window.location.href = contextPath+"login"
           } else {
-            console.log(res)
+            console.log(res);
+            $('#errorModal').modal('show');
           }
         })
       }
@@ -233,7 +408,7 @@
 
       if (discount > 0) {
         listPriceElement.addClass("strikethrough")
-        listPriceElement.text('List price: '+formatCurrency(price));
+        listPriceElement.text('Giá gốc: '+formatCurrency(price));
         $('#finalPrice').text(formatCurrency(discountedPrice));
         $('#discountPercent').text(discount);
         $('#discountContainer').removeClass('d-none');
@@ -249,7 +424,7 @@
         stockStatusElement
                 .removeClass('text-danger')
                 .addClass('text-success')
-                .html(`In Stock<br/><span class="text-danger">Only ${stock} left available in stock (more on the way)</span>`);
+                .html(`Còn hàng<br/><span class="text-danger">Chỉ còn ${stock} sản phẩm trong kho (more on the way)</span>`);
 
         $('.purchase-button').prop('disabled', false);
       } else {
@@ -262,19 +437,6 @@
       }
     }
 
-    function formatCurrency(amount) {
-      amount = parseFloat(amount).toFixed(parsedDecimalDigits);
-      amount = amount.replace('.', decimalPointType);
-      const parts = amount.split(decimalPointType);
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandPointType);
-      amount = parts.join(decimalPointType);
-      if (currencyPosition === "before") {
-        return currencySymbol + amount;
-      } else {
-        return amount + currencySymbol;
-      }
-    }
-
     const mainImageCarousel = $('#mainImageCarousel');
 
     $('.image-preview').mouseover(function () {
@@ -284,6 +446,85 @@
       $(this).css('border', '2px solid #007bff');
     }).first().css('border', '2px solid #007bff');
   });
+</script>
+<script>
+  $(document).ready(function () {
+    let relatedPage = 0;
+    let brandPage = 0;
+    const productId = [[${product.category.id}]];
+    const brandId = [[${product.brand.id}]];
+
+    function loadProducts(url, container, page, variable) {
+      if (page > 2) {
+        $(`#${container} ~ .text-center .btn`).hide();
+        return;
+      }
+
+      $.ajax({
+        url: contextPath + url,
+        data: { id: variable, page: page },
+        success: function (data) {
+          if (data.length === 0) {
+            $(`#${container}`).append('<p>No more products to load.</p>');
+            $(`#${container} ~ .text-center .btn`).hide();
+          } else {
+            const containerDiv = $(`#${container}`);
+            data.forEach(product => {
+              containerDiv.append(`
+              <div class="mx-auto card mr-3" style="width: 20vw; display: flex; flex-direction: column; border: 1px solid #ddd; border-radius: 0.25rem; overflow: hidden; transition: box-shadow 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <a href="${contextPath}products/${product.alias}" class="card-link" style="text-decoration: none; color: inherit; display: flex; flex-direction: column; height: 100%;">
+                  <img src="${product.imagePath}" class="card-img-top" alt="${product.name}" style="width: 100%; height: auto; object-fit: cover;">
+                  <div class="card-body" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 1rem;">
+                    <div>
+                      <h5 class="card-title text-wrap-two-line" style="font-size: 1.25rem; font-weight: bold; margin: 0; color: #dc3545;">${product.name}</h5>
+                      <div class="d-flex align-items-center my-2">
+                        <div class="text-warning">
+                          <i class="fa-star ${product.discountPercent >= 1 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
+                          <i class="fa-star ${product.discountPercent >= 2 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
+                          <i class="fa-star ${product.discountPercent >= 3 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
+                          <i class="fa-star ${product.discountPercent >= 4 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
+                          <i class="fa-star ${product.discountPercent >= 5 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
+                        </div>
+                        <span class="text-muted ml-2" style="font-size: 0.875rem;">0 đánh giá</span>
+                      </div>
+                      <p class="card-text text-wrap-two-line" style="margin: 0; color: #555; font-style: italic">${product.shortDescription}</p>
+                    </div>
+                    <div class="text-dark mt-1">
+                      <span class="${product.discountPercent > 0 ? 'strikethrough' : ''}">
+                        ${formatCurrency(product.price)}
+                      </span>
+                      <span class="discount${product.discountPercent > 0 ? '' : ' d-none'}">
+                        &nbsp;&nbsp;${product.discountPercent > 0 ? formatCurrency(product.price - (product.price * product.discountPercent / 100)) : ''}&nbsp;<span class="text-danger">(-${product.discountPercent}%)</span>
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              </div>`);
+            });
+
+            if (page === 2) {
+              $(`#${container} ~ .text-center .btn`).hide();
+            }
+          }
+        }
+      });
+    }
+
+
+    $('#loadMoreRelated').on('click', function () {
+      relatedPage++;
+      loadProducts('products/related', 'related-products-container', relatedPage, productId);
+    });
+
+    $('#loadMoreBrand').on('click', function () {
+      brandPage++;
+      loadProducts('products/by-brand', 'brand-products-container', brandPage, brandId);
+    });
+
+    loadProducts('products/related', 'related-products-container', relatedPage, productId);
+    loadProducts('products/by-brand', 'brand-products-container', brandPage, brandId);
+  });
+
 </script>
 <script th:src="@{/js/search.js}"></script>
 </html>

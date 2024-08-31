@@ -34,6 +34,11 @@ spring:
               - email
               - profile
 
+payment:
+  vnpay:
+    tmn: ${VNPAY_TMN_CODE}
+    secret: ${VNPAY_SECRET}
+
 logging:
   level:
     root: warn

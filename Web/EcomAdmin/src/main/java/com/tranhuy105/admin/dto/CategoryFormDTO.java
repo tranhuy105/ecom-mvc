@@ -23,7 +23,6 @@ public class CategoryFormDTO {
         this.id = category.getId();
         this.name = category.getName();
         this.alias = category.getAlias();
-        this.image = category.getImage();
         this.enabled = category.isEnabled();
         this.parentId = category.getParent() == null ? null : category.getParent().getId();
     }
@@ -33,7 +32,6 @@ public class CategoryFormDTO {
         category.setId(this.id);
         category.setName(this.name);
         category.setAlias(this.alias);
-        category.setImage(this.image);
         category.setEnabled(this.enabled);
 
         if (this.parentId != null && this.parentId != 0) {

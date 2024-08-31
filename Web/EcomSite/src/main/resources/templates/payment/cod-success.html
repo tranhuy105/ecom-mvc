@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head th:replace="~{fragments :: page_head(${'Thành công'})}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container content success-page">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header text-center bg-success text-white">
+                    <h1>Đặt Hàng Thành Công</h1>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Xin chào <span th:text="${customer.fullName}">Khách hàng</span>,</p>
+                    <p>Cảm ơn bạn đã đặt hàng! Đơn hàng của bạn đã được đặt thành công.</p>
+
+                    <div class="list-group mb-4">
+                        <div class="list-group-item">
+                            <strong>Số Đơn Hàng:</strong> <span th:text="${order.orderNumber}">123456</span>
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Tổng Số Tiền:</strong><span th:replace="~{fragments :: format-price(${order.finalAmount})}">99.99</span>
+                        </div>
+                        <div class="list-group-item">
+                            <strong>Địa Chỉ Giao Hàng:</strong> <span th:text="${order.shippingAddress.toString()}">123 Main St, Thành phố, Quốc gia</span>
+                        </div>
+                    </div>
+
+                    <p>Để xem chi tiết đơn hàng của bạn, hãy nhấp vào nút bên dưới:</p>
+                    <a href="#" class="btn btn-view btn-lg">Xem Đơn Hàng Của Bạn</a>
+
+                    <p class="mt-4">Đơn hàng của bạn sẽ được chúng tôi xem xét và xử lý trong vòng 3 ngày.</p>
+                    <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với đội hỗ trợ của chúng tôi.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+</html>

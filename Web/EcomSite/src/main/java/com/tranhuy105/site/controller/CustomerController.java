@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Controller
@@ -182,7 +183,11 @@ public class CustomerController {
         ShoppingCart cart = shoppingCartService.getOrCreateCartForCustomer(customer.getId());
         model.addAttribute("cartItems", cart.getCartItems());
         model.addAttribute("pageTitle", "Shopping Cart");
-        model.addAttribute("total", shoppingCartService.calculateTotalPrice(cart));
+        BigDecimal total =  shoppingCartService.calculateTotalPrice(cart);
+        BigDecimal subTotal = shoppingCartService.calculateSubtotalPrice(cart);
+        model.addAttribute("total", total);
+        model.addAttribute("subTotal", subTotal);
+        model.addAttribute("discount", subTotal.subtract(total));
         return "cart/cart";
     }
 }

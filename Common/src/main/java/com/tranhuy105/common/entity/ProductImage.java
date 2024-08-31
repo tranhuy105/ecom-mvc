@@ -22,10 +22,10 @@ public class ProductImage {
     @JoinColumn(name = "product_id")
     private Product product;
 
+    @Column(nullable = false, name = "is_main")
+    private boolean main;
+
     public String getPath() {
-        if (id != null && ((id >= 11 && id <= 13) || (id >= 187 && id <= 189)) && name != null) {
-            return "/product-images/"+this.name;
-        }
-        return "/images/default_user.jpg";
+        return this.name;
     }
 }

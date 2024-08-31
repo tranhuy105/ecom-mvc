@@ -26,6 +26,23 @@ public class AddressServiceImplement implements AddressService {
     }
 
     @Override
+    public Address findMainAddressForCustomer(Customer customer) {
+        List<Address> addresses = findByCustomerId(customer.getId());
+
+        if (addresses.isEmpty()) {
+            return null;
+        }
+
+        for (Address address : addresses) {
+            if (address.isMainAddress()) {
+                return address;
+            }
+        }
+
+        return addresses.get(0);
+    }
+
+    @Override
     @Transactional
     public void updateAddress(Address address, Customer customer) {
         List<Address> addressList = findByCustomerId(customer.getId());

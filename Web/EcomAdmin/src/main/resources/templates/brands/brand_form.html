@@ -31,10 +31,6 @@
 		</div>
 
         <div class="mt-3 text-center">
-            <img id="thumbnail" alt="image preview" class="img-thumbnail"
-                 style="width: 250px; height: 250px; object-fit: cover; border-radius: 75%;" th:src="@{${brand.logoPath}}"
-            />
-
             <div class="form-group row mt-3">
                 <label class="col-sm-4 col-form-label">Select one or more categories:</label>
                 <div class="col-sm-8">
@@ -90,8 +86,10 @@
 		showChosenCategories();
     })
 
+	$("#btnCancel").on("click", function () {
+		window.location = moduleURL;
+	})
 
 </script>
-<script th:src="@{/js/common_user_form.js}"></script>
 </body>
 </html>

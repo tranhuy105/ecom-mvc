@@ -21,6 +21,24 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
     private final CartItemRepository cartItemRepository;
 
     @Override
+    public BigDecimal calculateSubtotalPrice(ShoppingCart shoppingCart) {
+        if (shoppingCart == null || shoppingCart.getCartItems() == null) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal subTotal = BigDecimal.ZERO;
+
+        for (CartItem cartItem : shoppingCart.getCartItems()) {
+            BigDecimal itemPrice = cartItem.getSku().getPrice();
+            int quantity = cartItem.getQuantity();
+            BigDecimal itemTotal = itemPrice.multiply(BigDecimal.valueOf(quantity));
+            subTotal = subTotal.add(itemTotal);
+        }
+
+        return subTotal;
+    }
+
+    @Override
     public BigDecimal calculateTotalPrice(ShoppingCart shoppingCart) {
         if (shoppingCart == null || shoppingCart.getCartItems() == null) {
             return BigDecimal.ZERO;
@@ -127,5 +145,15 @@ public class ShoppingCartServiceImpl implements ShoppingCartService{
             return shoppingCartRepository.save(cart);
         }
         return cart;
+    }
+
+    @Override
+    public void clearShoppingCart(Integer customerId) {
+        Customer customer = customerRepository.findByIdWithShoppingCart(customerId).orElse(null);
+
+        if (customer != null) {
+            ShoppingCart cart = customer.getShoppingCart();
+            cartItemRepository.deleteByShoppingCartId(cart.getId());
+        }
     }
 }

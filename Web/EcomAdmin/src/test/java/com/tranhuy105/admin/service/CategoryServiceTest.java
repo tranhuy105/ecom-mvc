@@ -48,8 +48,8 @@ class CategoryServiceTest {
     @Test
     void testFindAllWithSearch() {
         List<Category> allCategories = List.of(
-                new Category(1, "Category1", "cat1",null, true, null, new ArrayList<>()),
-                new Category(2, "Category2", "cat2", null, true, null, new ArrayList<>())
+                new Category(1, "Category1", "cat1", true, null, new ArrayList<>()),
+                new Category(2, "Category2", "cat2", true, null, new ArrayList<>())
         );
         List<Category> filteredCategories = List.of(allCategories.get(0));
 
@@ -64,8 +64,8 @@ class CategoryServiceTest {
     @Test
     void testFindAllWithoutSearch() {
         List<Category> allCategories = List.of(
-                new Category(1, "Category1", "cat1",null, true, null, new ArrayList<>()),
-                new Category(2, "Category2", "cat2", null, true, null, new ArrayList<>())
+                new Category(1, "Category1", "cat1", true, null, new ArrayList<>()),
+                new Category(2, "Category2", "cat2", true, null, new ArrayList<>())
         );
 
         when(categoryRepository.findAllWithChildrenAndParent()).thenReturn(allCategories);
@@ -77,7 +77,7 @@ class CategoryServiceTest {
 
     @Test
     void testFindById() {
-        Category category = new Category(1, "Category1", "cat1", null, true, null, null);
+        Category category = new Category(1, "Category1", "cat1", true, null, null);
 
         when(categoryRepository.findByIdWithChildrenAndParent(1)).thenReturn(Optional.of(category));
 
@@ -143,8 +143,8 @@ class CategoryServiceTest {
     @Test
     void testFindAllWithHierarchy() {
         List<Category> categories = List.of(
-                new Category(1, "Category1", "cat1",null, true, null, new ArrayList<>()),
-                new Category(2, "Category2", "cat2", null, true, null, new ArrayList<>())
+                new Category(1, "Category1", "cat1", true, null, new ArrayList<>()),
+                new Category(2, "Category2", "cat2", true, null, new ArrayList<>())
         );
 
         when(categoryRepository.findAllWithChildrenAndParent()).thenReturn(categories);
@@ -158,8 +158,8 @@ class CategoryServiceTest {
     @Test
     void testFindAllById() {
         List<Category> categories = List.of(
-                new Category(1, "Category1", "cat1",null, true, null, new ArrayList<>()),
-                new Category(2, "Category2", "cat2", null, true, null, new ArrayList<>())
+                new Category(1, "Category1", "cat1", true, null, new ArrayList<>()),
+                new Category(2, "Category2", "cat2", true, null, new ArrayList<>())
         );
 
         when(categoryRepository.findAllById(List.of(1, 2))).thenReturn(categories);
@@ -173,7 +173,7 @@ class CategoryServiceTest {
 
     @Test
     void testUpdateCategoryInCache() {
-        Category category = new Category(1, "Category1", "cat1", null, true, null, new ArrayList<>());
+        Category category = new Category(1, "Category1", "cat1", true, null, new ArrayList<>());
 
         when(categoryService.findAllWithHierarchy()).thenReturn(List.of(category));
 

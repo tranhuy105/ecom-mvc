@@ -45,6 +45,19 @@
         </div>
     </div>
 
+    <span th:fragment="format-price(price)" th:remove="tag">
+        <span th:if="${CURRENCY_SYMBOL_POSITION != 'after'}">
+                <span>
+                    [[${CURRENCY_SYMBOL}]][[${#numbers.formatDecimal(price, 1, THOUSAND_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)}]]
+                </span>
+            </span>
+            <span th:if="${CURRENCY_SYMBOL_POSITION == 'after'}">
+                <span>
+                    [[${#numbers.formatDecimal(price, 1, THOUSAND_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)}]][[${CURRENCY_SYMBOL}]]
+                </span>
+            </span>
+    </span>
+
     <div th:fragment="product-price"
          class="d-flex justify-content-between align-items-center"
          th:classappend="${product.discountPercent == 0 ? 'mt-2' : ''}">
@@ -57,7 +70,7 @@
                 </span>
                 &nbsp;
                 <span th:if="${product.discountPercent > 0}"
-                      class="text-success italic"
+                      class="italic"
                       style="font-size: 24px!important;">
                     [[${CURRENCY_SYMBOL}]][[${#numbers.formatDecimal(product.discountedPrice, 1, THOUSAND_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)}]]
                 </span>
@@ -68,7 +81,7 @@
                 </span>
                 &nbsp;
                 <span th:if="${product.discountPercent > 0}"
-                      class="text-success italic"
+                      class="italic"
                       style="font-size: 24px!important;">
                     [[${#numbers.formatDecimal(product.discountedPrice, 1, THOUSAND_POINT_TYPE, DECIMAL_DIGITS, DECIMAL_POINT_TYPE)}]][[${CURRENCY_SYMBOL}]]
                 </span>

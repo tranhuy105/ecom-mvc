@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${'Payment Success'})}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+
+<div class="container-fluid content">
+    <div class="alert alert-success mt-3" role="alert">
+        <h4 class="alert-heading">Payment Successful!</h4>
+        <p>Your order <strong th:text="${paymentResponse.orderNumber}"></strong> has been processed successfully.</p>
+        <p>Transaction ID: <strong th:text="${paymentResponse.transactionId}"></strong></p>
+        <p>Payment Amount: <strong th:text="${paymentResponse.amount}"></strong></p>
+        <hr>
+    </div>
+    <a th:href="@{/}" class="btn btn-primary">Continue Shopping</a>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+</html>

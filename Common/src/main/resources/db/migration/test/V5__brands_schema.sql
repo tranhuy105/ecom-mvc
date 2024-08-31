@@ -1,7 +1,6 @@
 CREATE TABLE brands (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(45) NOT NULL UNIQUE,
-    logo VARCHAR(128) NOT NULL
+    name VARCHAR(45) NOT NULL UNIQUE
 );
 
 CREATE TABLE brand_categories (
@@ -15,22 +14,22 @@ CREATE TABLE brand_categories (
 CREATE INDEX idx_brand_categories_brand_id ON brand_categories(brand_id);
 CREATE INDEX idx_brand_categories_category_id ON brand_categories(category_id);
 
-INSERT INTO brands (id, name, logo) VALUES
-(1, 'Acer', 'acer.jpg'),
-(2, 'Apple', 'apple.jpg'),
-(3, 'Samsung', 'samsung.jpg'),
-(4, 'Dell', 'dell.jpg'),
-(5, 'HP', 'hp.jpg'),
-(6, 'Lenovo', 'lenovo.jpg'),
-(7, 'Sony', 'sony.jpg'),
-(8, 'LG', 'lg.jpg'),
-(9, 'Microsoft', 'microsoft.jpg'),
-(10, 'NVIDIA', 'nvidia.jpg'),
-(11, 'Intel', 'intel.jpg'),
-(12, 'Corsair', 'corsair.jpg'),
-(13, 'Asus', 'asus.jpg'),
-(14, 'MSI', 'msi.jpg'),
-(15, 'Razer', 'razer.jpg');
+INSERT INTO brands (id, name) VALUES
+(1, 'Acer'),
+(2, 'Apple'),
+(3, 'Samsung'),
+(4, 'Dell'),
+(5, 'HP'),
+(6, 'Lenovo'),
+(7, 'Sony'),
+(8, 'LG'),
+(9, 'Microsoft'),
+(10, 'NVIDIA'),
+(11, 'Intel'),
+(12, 'Corsair'),
+(13, 'Asus'),
+(14, 'MSI'),
+(15, 'Razer');
 
 INSERT INTO brand_categories (brand_id, category_id) VALUES
 (4, 2), (4, 3), (4, 4), (4, 5), (4, 6), (4, 7), (4, 8), (4, 9), (4, 10), (4, 11), (4, 12),

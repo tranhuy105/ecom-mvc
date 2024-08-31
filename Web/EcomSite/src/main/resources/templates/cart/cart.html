@@ -1,112 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
-<head th:replace="~{fragments :: page_head(${pageTitle})}">
-</head>
+
+<head th:replace="~{fragments :: page_head(${pageTitle})}"></head>
+
 <body>
 <div th:replace="~{navigation :: navbar}"></div>
 
-<div class="container-fluid content mt-3">
-    <h2 th:text="${pageTitle}" class="text-center mb-4">Shopping Cart</h2>
+<div class="container content mt-5">
+    <div class="row">
+        <div class="col-lg-8">
+            <h2 class="text-center mb-4">Giỏ hàng</h2>
 
-    <div th:if="${message != null}">
-        <div class="alert alert-info" th:text="${message}"></div>
-    </div>
+            <div th:if="${message != null}" class="alert alert-info" th:text="${message}"></div>
 
-    <div th:if="${cartItems != null and #lists.size(cartItems) > 0}">
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered text-center">
-                <thead class="thead-dark">
-                <tr>
-                    <th scope="col">Product</th>
-                    <th scope="col">SKU Code</th>
-                    <th scope="col">Price</th>
-                    <th scope="col" class="d-none d-md-table-cell">Description</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Total</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="cartItem : ${cartItems}" th:data-sku-id="${cartItem.sku.id}">
-                    <td class="align-middle" >
-                        <a th:href="@{/products/{alias}(alias=${cartItem.sku.product.alias})}"
-                           th:text="${cartItem.sku.product.name}" class="text-primary font-weight-bold"
-                           style="max-width: 150px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">Product Name</a>
-                    </td>
-                    <td class="align-middle" th:text="${cartItem.sku.skuCode}">SKU Code</td>
-                    <td class="align-middle" th:text="${cartItem.sku.getDiscountedPrice()}">Product Price</td>
-                    <td class="align-middle d-none d-md-table-cell">
-                        <p th:text="${cartItem.sku.product.shortDescription}"
-                           style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; margin: auto 0"
-                        >
-                            Description
-                        </p>
-                    </td>
-                    <td class="align-middle">
-                        <select class="form-control quantity-selector">
-                            <option th:each="quantity : ${#numbers.sequence(1, 10)}"
-                                    th:value="${quantity}"
-                                    th:text="${quantity}"
-                                    th:selected="${quantity == cartItem.quantity}">Quantity</option>
-                        </select>
-                    </td>
-                    <td class="align-middle item-total" th:text="${cartItem.sku.getDiscountedPrice().multiply(cartItem.quantity)}">Total Price</td>
-                    <td class="align-middle">
-                        <button class="btn btn-danger btn-sm delete-item">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+            <div th:if="${cartItems != null and #lists.size(cartItems) > 0}">
+                <div class="row g-4">
+                    <div class="col-12" th:each="cartItem : ${cartItems}">
+                        <div class="card mb-3 shadow-sm">
+                            <div class="row g-0 align-items-center">
+                                <div class="col-md-4">
+                                    <img th:src="@{${cartItem.sku.product.orderedImages[0].path}}"
+                                         class="img-fluid rounded-start" alt="Product Image">
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <a th:href="@{/products/{alias}(alias=${cartItem.sku.product.alias})}"
+                                               th:text="${cartItem.sku.product.name}" class="text-dark text-decoration-none">Product Name</a>
+                                        </h5>
+                                        <p class="card-text">
+                                            <small class="text-muted" th:text="${cartItem.sku.product.shortDescription}">Short description</small>
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong class="original-price strikethrough">Giá gốc: <span th:replace="~{fragments :: format-price(${cartItem.sku.price})}">Original Price</span></strong>
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong class="discount-price">Giá giảm: <span th:replace="~{fragments :: format-price(${cartItem.sku.getDiscountedPrice()})}">Discounted Price</span></strong>
+                                        </p>
+                                        <p class="card-text mb-1">
+                                            <strong>SKU:</strong> <span th:text="${cartItem.sku.skuCode}">SKU Code</span>
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <label for="quantity" class="form-label mb-0"><strong>Số lượng:</strong></label>
+                                                <select class="form-control quantity-selector w-auto d-inline-block"
+                                                        id="quantity" th:data-sku-id="${cartItem.sku.id}">
+                                                    <option th:each="quantity : ${#numbers.sequence(1, 10)}"
+                                                            th:value="${quantity}"
+                                                            th:text="${quantity}"
+                                                            th:selected="${quantity == cartItem.quantity}">Quantity</option>
+                                                </select>
+                                            </div>
+                                            <div>
+                                                <strong>Tổng:</strong>
+                                                <span class="item-total">
+                                                    <span th:replace="~{fragments :: format-price(${cartItem.sku.getDiscountedPrice().multiply(cartItem.quantity)})}">Total Price</span>
+                                                </span>
+                                            </div>
+                                            <button class="btn btn-outline-danger btn-sm delete-item">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        <div class="total-amount-section bg-light p-3 rounded mt-3">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="mb-0">Total Amount:</h4>
-                <h4 id="cart-total" th:text="${total}"></h4>
+            <div th:if="${cartItems == null or #lists.size(cartItems) == 0}" class="text-center mt-5">
+                <h3>Giỏ hàng của bạn đang trống.</h3>
             </div>
         </div>
 
-        <div class="text-center mt-3">
-            <a th:href="@{/checkout}" class="btn btn-primary">Proceed to Checkout</a>
-            <a th:href="@{/products}" class="btn btn-secondary">Continue Shopping</a>
+        <!-- Receipt Section -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title">Tóm tắt đơn hàng</h4>
+                    <hr>
+                    <p class="card-text d-flex justify-content-between">
+                        <span>Tổng phụ:</span>
+                        <span id="subtotal"><span th:replace="~{fragments:: format-price(${subTotal})}">Subtotal</span></span>
+                    </p>
+                    <p class="card-text d-flex justify-content-between">
+                        <span>Giảm giá:</span>
+                        <span id="discount"><span  th:replace="~{fragments:: format-price(${discount})}">Discount</span></span>
+                    </p>
+                    <p class="card-text d-flex justify-content-between">
+                        <span>Thuế:</span>
+                        <span id="tax"><span th:replace="~{fragments:: format-price(${0})}">Tax</span></span>
+                    </p>
+                    <hr>
+                    <p class="card-text d-flex justify-content-between font-weight-bold">
+                        <span>Tổng cộng:</span>
+                        <span id="cart-total"><span th:replace="~{fragments:: format-price(${total})}">Total</span></span>
+                    </p>
+                    <div>
+                        <a th:href="@{/checkout/review}" class="btn btn-primary btn-lg btn-block">Đi tới thanh toán</a>
+                        <a th:href="@{/products}" class="btn btn-secondary btn-lg mt-3 btn-block">Tiếp tục mua sắm</a>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div th:if="${cartItems == null or #lists.size(cartItems) == 0}">
-        <h3 class="text-center mt-5">Your cart is empty.</h3>
     </div>
 </div>
 
 <div th:replace="~{navigation :: footer}"></div>
 
+<div id="settingDiv" th:data-currency-symbol="${CURRENCY_SYMBOL}"
+     th:data-currency-position="${CURRENCY_SYMBOL_POSITION}" th:data-decimal-digits="${DECIMAL_DIGITS}"
+     th:data-thousand-point-type="${THOUSAND_POINT_TYPE}" th:data-decimal-point-type="${DECIMAL_POINT_TYPE}">
+</div>
+
 <script>
     const contextPath = "[[@{/}]]";
     const csrfHeader = "[[${_csrf.headerName}]]";
     const csrfValue = "[[${_csrf.token}]]";
+    let currencySymbol;
+    let currencyPosition;
+    let decimalDigits;
+    let parsedDecimalDigits;
+    let thousandPointType;
+    let decimalPointType;
 
-    $(document).ready(function() {
-        function updateCartTotal() {
-            let cartTotal = 0;
+    function formatCurrency(amount) {
+        amount = parseFloat(amount).toFixed(parsedDecimalDigits);
+        amount = amount.replace('.', decimalPointType);
+        const parts = amount.split(decimalPointType);
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandPointType);
+        amount = parts.join(decimalPointType);
+        if (currencyPosition === "before") {
+            return currencySymbol + amount;
+        } else {
+            return amount + currencySymbol;
+        }
+    }
 
-            $('.item-total').each(function() {
-                const itemTotal = parseFloat($(this).text().replace('$', ''));
-                cartTotal += itemTotal;
+    $(document).ready(function () {
+        const setting = $("#settingDiv");
+        currencySymbol = setting.data("currency-symbol") || "$";
+        currencyPosition = setting.data("currency-position") || "before";
+        decimalDigits = setting.data("decimal-digits");
+        parsedDecimalDigits = decimalDigits !== undefined && decimalDigits !== null ? parseInt(decimalDigits) : 2;
+        thousandPointType = setting.data("thousand-point-type") === "POINT" ? "." : ",";
+        decimalPointType = setting.data("decimal-point-type") === "COMMA" ? "," : ".";
+
+        function updateCartTotals() {
+            let subTotal = 0;
+            let totalDiscount = 0;
+
+            $('.col-12').each(function () {
+                const itemRow = $(this);
+                const quantity = parseInt(itemRow.find('.quantity-selector').val());
+                const price = parseFloat(itemRow.find('.original-price > span').text().replace(currencySymbol, '').replace(",", ''));
+                const discountPrice = parseFloat(itemRow.find('.discount-price > span').text().replace(currencySymbol, '').replace(",", ''));
+
+                const itemSubtotal = price * quantity;
+                subTotal += itemSubtotal;
+
+                const itemDiscount = (price - discountPrice) * quantity;
+                totalDiscount += itemDiscount;
             });
-
-            $('#cart-total').text('$' + cartTotal.toFixed(2));
+            $('#subtotal > span').text(formatCurrency(subTotal));
+            $('#discount > span').text(formatCurrency(totalDiscount));
+            const tax = parseFloat($('#tax').text().replace(currencySymbol, '').replace(",", '')) || 0;
+            const total = subTotal - totalDiscount + tax;
+            $('#cart-total > span').text(formatCurrency(total));
         }
 
-        $('.quantity-selector').on('change', function() {
-            const row = $(this).closest('tr');
-            const skuId = row.data('sku-id');
+        $('.quantity-selector').on('change', function () {
+            const row = $(this).closest('.col-12');
+            const skuId = $(this).data('sku-id');
             const newQuantity = $(this).val();
-            const price = parseFloat(row.find('td:nth-child(3)').text().replace('$', ''));
-            const itemTotalCell = row.find('.item-total');
+            const price = parseFloat(row.find('.discount-price > span').text().replace(currencySymbol, '').replace(",", ''));
+            const itemTotalCell = row.find('.item-total > span');
 
             if (newQuantity < 1) {
-                alert("Quantity cannot be less than 1");
+                alert("Số lượng không thể nhỏ hơn 1");
                 return;
             }
 
@@ -116,20 +189,20 @@
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(csrfHeader, csrfValue);
                 },
-                success: function() {
-                    const newItemTotal = (price * newQuantity).toFixed(2);
-                    itemTotalCell.text('$' + newItemTotal);
-                    updateCartTotal();
+                success: function () {
+                    const newItemTotal = (price * newQuantity);
+                    itemTotalCell.text(formatCurrency(newItemTotal));
+                    updateCartTotals();
                 },
-                error: function(jqXHR) {
-                    alert(jqXHR.responseText || "An error occurred while updating the cart.");
+                error: function (jqXHR) {
+                    alert(jqXHR.responseText || "Đã xảy ra lỗi khi cập nhật giỏ hàng.");
                 }
             });
         });
 
-        $(".delete-item").on('click', function() {
-            const row = $(this).closest('tr');
-            const skuId = row.data('sku-id');
+        $(".delete-item").on('click', function () {
+            const row = $(this).closest('.col-12');
+            const skuId = row.find('.quantity-selector').data('sku-id');
 
             $.ajax({
                 url: contextPath + `cart?sku=${skuId}&quantity=0`,
@@ -137,15 +210,17 @@
                 beforeSend: function (xhr) {
                     xhr.setRequestHeader(csrfHeader, csrfValue);
                 },
-                success: function() {
+                success: function () {
                     row.remove();
-                    updateCartTotal();
+                    updateCartTotals();
                 },
-                error: function(jqXHR) {
-                    alert(jqXHR.responseText || "An error occurred while deleting the item.");
+                error: function (jqXHR) {
+                    alert(jqXHR.responseText || "Đã xảy ra lỗi khi xóa mục.");
                 }
             });
         });
+
+        updateCartTotals(); // Initialize totals on page load
     });
 </script>
 </body>

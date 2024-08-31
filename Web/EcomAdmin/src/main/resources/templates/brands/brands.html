@@ -65,7 +65,6 @@
             <thead class="thead-dark">
             <tr>
                 <th>Brand ID</th>
-                <th>Logo</th>
                 <th>Brand Name</th>
                 <th>Categories</th>
                 <th></th>
@@ -74,12 +73,6 @@
             <tbody>
             <tr th:each="brand : ${listBrands}">
                 <td>[[${brand.id}]]</td>
-                <td class="text-center">
-                    <img th:src="@{${brand.logoPath}}"
-                         alt="avatar"
-                         style="width: 75px; height: 75px; object-fit: cover; border-radius: 25%;"
-                    />
-                </td>
                 <td>
                     <span class="badge badge-info text-white" style="font-size: 1.2rem;">
                         [[${brand.name}]]

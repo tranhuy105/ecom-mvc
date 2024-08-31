@@ -51,28 +51,10 @@ public class BrandServiceImpl implements BrandService {
         return brandRepository.findById(id).orElse(null);
     }
 
-    private void handleSaveLogo(Brand brand, MultipartFile image) throws IOException {
-        if (image != null && !image.isEmpty()) {
-            String fileName = FileUploadUtil.validateAndGetImageFilename(image);
-            brand.setLogo(fileName);
-            // if is creating new
-            if (brand.getId() == null) {
-                brand = brandRepository.save(brand);
-            }
-            String uploadDir = "brand_logos/" + brand.getId();
-            FileUploadUtil.cleanDir(uploadDir);
-            FileUploadUtil.saveFile(uploadDir, fileName, image);
-        } else if (brand.getId() == null) {
-            // if creating new without logo
-            throw new IllegalArgumentException("Brand must have an logo");
-        }
-    }
-
     @Transactional
     @Override
     public void save(Brand brand, MultipartFile file) throws IOException {
         validateBrand(brand);
-        handleSaveLogo(brand, file);
         brandRepository.save(brand);
     }
 

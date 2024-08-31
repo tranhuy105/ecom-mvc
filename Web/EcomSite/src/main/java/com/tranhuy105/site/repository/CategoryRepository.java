@@ -19,17 +19,28 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     Optional<Category> findByAlias(String alias);
 
     @Transactional(readOnly = true)
-    @Query(value = "WITH RECURSIVE CategoryPath (id, name, alias, enabled, image, parent_id, level) AS (" +
-            "SELECT c.id, c.name, c.alias, c.enabled, c.image, c.parent_id, 0 AS level " +
+    @Query(value = "WITH RECURSIVE CategoryPath (id, name, alias, enabled, parent_id, level) AS (" +
+            "SELECT c.id, c.name, c.alias, c.enabled, c.parent_id, 0 AS level " +
             "FROM categories c " +
             "WHERE c.id = :id " +
             "UNION ALL " +
-            "SELECT p.id, p.name, p.alias, p.enabled, p.image, p.parent_id, cp.level + 1 " +
+            "SELECT p.id, p.name, p.alias, p.enabled, p.parent_id, cp.level + 1 " +
             "FROM categories p " +
             "JOIN CategoryPath cp ON p.id = cp.parent_id " +
             ") " +
-            "SELECT id, name, alias, enabled, image, parent_id, level " +
+            "SELECT id, name, alias, enabled, parent_id, level " +
             "FROM CategoryPath", nativeQuery = true)
     List<Category> findCategoryPathById(@NonNull Integer id);
 
+    @Query(nativeQuery = true, value = "WITH RECURSIVE CategoryHierarchy AS (" +
+            "SELECT c.id, c.parent_id " +
+            "FROM categories c " +
+            "WHERE c.id = :categoryId " +
+            "UNION ALL " +
+            "SELECT child.id, child.parent_id " +
+            "FROM categories child " +
+            "JOIN CategoryHierarchy parent ON parent.id = child.parent_id" +
+            ") " +
+            "(SELECT id FROM CategoryHierarchy)")
+    List<Integer> findAllDescendent(Integer categoryId);
 }

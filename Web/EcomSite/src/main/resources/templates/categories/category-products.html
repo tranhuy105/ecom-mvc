@@ -14,7 +14,6 @@
                 <div th:each="child : ${category.children}" class="col-lg-2 col-md-3 mb-4">
                     <div class="card shadow-sm">
                         <a th:href="@{'/categories/' + ${child.alias}}" class="text-decoration-none">
-                            <img th:src="@{${child.imagePath}}" alt="[[${child.name}]]" class="card-img-top" style="height: 150px; object-fit: cover;">
                             <div class="card-body text-center">
                                 <h5 class="card-title">[[${child.name}]]</h5>
                             </div>
@@ -33,8 +32,8 @@
                 <div class="card h-100 card-hover">
                     <div th:if="${product.images.size() > 0}" th:id="'carouselExampleControlsTh_' + ${product.id}" class="carousel slide">
                         <div class="carousel-inner">
-                            <div th:each="image, iterStat : ${product.images}" class="carousel-item" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
-                                <img th:src="@{${image.path}}" class="card-img-top" alt="Product Image" style="width: 100%; height: 360px; object-fit: cover;">
+                            <div th:each="image, iterStat : ${product.orderedImages}" class="carousel-item" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
+                                <img th:src="${image.path}" class="card-img-top" alt="Product Image" style="width: 100%; height: 360px; object-fit: cover;">
                             </div>
                         </div>
                         <a class="carousel-control-prev" th:href="'#carouselExampleControlsTh_' + ${product.id}" role="button" data-slide="prev">

@@ -22,12 +22,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Query("SELECT c FROM Customer c WHERE c.id = :id")
     Optional<Customer> findByIdWithShoppingCart(Integer id);
 
-    @EntityGraph(attributePaths = {"shoppingCart.cartItems.sku"})
     @Query("SELECT c FROM Customer c " +
             "LEFT JOIN FETCH c.shoppingCart sc " +
             "LEFT JOIN FETCH sc.cartItems ci " +
             "LEFT JOIN FETCH ci.sku s " +
-            "LEFT JOIN FETCH s.product " +
+            "LEFT JOIN FETCH s.product p " +
+            "LEFT JOIN FETCH p.images " +
             "WHERE c.id = :id")
     Optional<Customer> findByIdWithShoppingCartItems(Integer id);
 
@@ -40,4 +40,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     @Transactional
     @Query("UPDATE Customer c SET c.authenticationType = :authenticationType WHERE c.id = :id")
     void updateAuthenticationType(Integer id, AuthenticationType authenticationType);
+
+    @Query("SELECT c FROM Customer c LEFT JOIN FETCH c.addresses WHERE c.id = :customerId")
+    Optional<Customer> findByIdWithAddress(Integer customerId);
 }

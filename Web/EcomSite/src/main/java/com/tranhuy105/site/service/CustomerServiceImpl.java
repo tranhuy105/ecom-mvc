@@ -51,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
 
         customerRepository.save(newCustomer);
         try {
-            mailService.sendVerificationEmail(newCustomer);
+//            mailService.sendVerificationEmail(newCustomer);
         } catch (Exception exception) {
             log.error("Something went wrong when sending email: ", exception);
             throw new RuntimeException("Unexpected Error Occurred When Sending Verification Email");

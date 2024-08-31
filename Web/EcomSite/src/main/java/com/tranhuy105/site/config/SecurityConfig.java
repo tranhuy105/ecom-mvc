@@ -24,7 +24,7 @@ public class SecurityConfig {
                                               EmailLoginSuccessHandler emailLoginSuccessHandler,
                                               CustomerOAuth2UserService oAuth2UserService) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/customer/**").authenticated()
+                .requestMatchers("/customer/**", "/order/**").authenticated()
                 .anyRequest().permitAll())
                 .csrf(csrf -> csrf
                             .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
