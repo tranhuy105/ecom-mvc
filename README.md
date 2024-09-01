@@ -110,6 +110,7 @@ To get a better understanding of how the platform works, watch the following dem
 
    - **Edit Existing Products**:
      - **Update Product Details**:
+       
        - **Modify Information**: Admins can update product information such as name, description, price, and other attributes.
        - **Change Images**: Upload or replace product images as needed to reflect the latest visual representation of the product.
        - **Adjust SKUs**: Update SKU codes if necessary, ensuring that all changes are reflected in the inventory system.
