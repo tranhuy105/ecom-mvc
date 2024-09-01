@@ -29,6 +29,7 @@ public class BrandDTO {
                 .map(cat -> new CategoryDTO(cat.getId(), cat.getName()))
                 .toList();
         this.categoryIds = this.categories.stream().map(CategoryDTO::getId).toList();
+        this.logo = brand.getLogo();
     }
 
     public Brand toBrand(CategoryService categoryService) {

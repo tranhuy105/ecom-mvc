@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Orders')}"></head>
+<body class="container-fluid">
+<div th:replace="~{navigation :: menu}"></div>
+
+<div class="mt-4">
+    <h1 class="mb-4">Orders</h1>
+
+    <form class="row mb-4" method="get" th:action="@{/orders}">
+        <div class="col-md-3 mb-2">
+            <label for="search" class="form-label">Order Number</label>
+            <input type="text" id="search" class="form-control" name="search" th:placeholder="'Search by Order Number'" th:value="${q}">
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <label for="orderStatus" class="form-label">Order Status</label>
+            <select id="orderStatus" class="form-control" name="orderStatus">
+                <option value="" th:selected="${#strings.isEmpty(orderStatus)}">All Statuses</option>
+                <option th:each="status : ${T(com.tranhuy105.common.constant.OrderStatus).values()}"
+                        th:value="${status.name()}"
+                        th:text="${status.name()}"
+                        th:selected="${status.name() == orderStatus}">Status</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <label for="shippingStatus" class="form-label">Shipping Status</label>
+            <select id="shippingStatus" class="form-control" name="shippingStatus">
+                <option value="" th:selected="${#strings.isEmpty(shippingStatus)}">All Shipping Statuses</option>
+                <option th:each="status : ${T(com.tranhuy105.common.constant.ShippingStatus).values()}"
+                        th:value="${status.name()}"
+                        th:text="${status.name()}"
+                        th:selected="${status.name() == shippingStatus}">Shipping Status</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <label for="paymentStatus" class="form-label">Payment Status</label>
+            <select id="paymentStatus" class="form-control" name="paymentStatus">
+                <option value="" th:selected="${#strings.isEmpty(paymentStatus)}">All Payment Statuses</option>
+                <option th:each="status : ${T(com.tranhuy105.common.constant.PaymentStatus).values()}"
+                        th:value="${status.name()}"
+                        th:text="${status.name()}"
+                        th:selected="${status.name() == paymentStatus}">Payment Status</option>
+            </select>
+        </div>
+        <div class="col-md-2"></div>
+
+        <div class="col-md-2 mb-2">
+            <label for="startDate" class="form-label">Start Date</label>
+            <input type="date" id="startDate" class="form-control" name="startDate" th:value="${#dates.format(startDate, 'yyyy-MM-dd')}">
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <label for="endDate" class="form-label">End Date</label>
+            <input type="date" id="endDate" class="form-control" name="endDate" th:value="${#dates.format(endDate, 'yyyy-MM-dd')}">
+        </div>
+
+        <div class="col-md-1 mb-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100"><i class="fa fa-search"></i> Search</button>
+        </div>
+    </form>
+
+
+    <!-- Orders Table -->
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Order Number</th>
+                <th>Customer Id</th>
+                <th>Total Amount</th>
+                <th>Final Amount</th>
+                <th>Status</th>
+                <th>Shipping</th>
+                <th>Payment</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="order : ${orders}">
+                <td th:text="${order.orderNumber}">ORD-123456</td>
+                <td th:text="${order.customerId}">John Doe</td>
+                <td th:text="${order.totalAmount}">100.00</td>
+                <td th:text="${order.finalAmount}">90.00</td>
+                <td th:text="${order.status}">CONFIRMED</td>
+                <td th:text="${order.shippingStatus}">IN_PROGRESS</td>
+                <td th:text="${order.paymentStatus}">PAID</td>
+                <td>
+                    <a th:href="@{/orders/{orderNumber}/detail(orderNumber=${order.orderNumber})}" class="btn btn-sm btn-info">
+                        <i class="fa fa-eye"></i> View
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div th:replace="~{navigation :: pagination(totalItems=${totalItems}, currentPage=${currentPage}, totalPages=${totalPages}, startCount=${startCount}, endCount=${endCount}, q=${q}, baseUrl=${'/orders'})}"></div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+<script type="text/javascript" th:src="@{/js/common_pagination.js}"></script>
+</html>

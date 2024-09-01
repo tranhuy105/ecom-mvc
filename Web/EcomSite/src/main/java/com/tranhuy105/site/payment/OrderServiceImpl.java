@@ -22,7 +22,6 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -96,12 +95,12 @@ public class OrderServiceImpl implements OrderService {
             throw new AccessDeniedException("You dont have the permission to perform this action");
         }
 
-        if (order.getPaymentStatus().equals(PaymentStatus.PAID.name())) {
+        if (order.getPaymentStatus().equals(PaymentStatus.PAID)) {
             throw new IllegalArgumentException("You can not cancel an paid order, please contact the support team if need more assistant");
         }
 
-        if (order.getStatus().equals(OrderStatus.PENDING.name())
-                || order.getStatus().equals(OrderStatus.CONFIRMED.name())) {
+        if (order.getStatus().equals(OrderStatus.PENDING)
+                || order.getStatus().equals(OrderStatus.CONFIRMED)) {
             updateOrderStatus(order, OrderStatus.CANCELED);
             orderRepository.save(order);
         } else {
@@ -111,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void updateOrderStatus(Order order, OrderStatus newStatus) {
-        order.setStatus(newStatus.name());
+        order.setStatus(newStatus);
         OrderStatusHistory history = new OrderStatusHistory();
         history.setOrder(order);
         history.setStatus(newStatus.name());
@@ -136,6 +135,8 @@ public class OrderServiceImpl implements OrderService {
         List<OrderItemDTO> orderItems = orderItemRepository.findFullByOrderId(order.getId());
 
         OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+        orderDetailDTO.setShippingOrderCode(order.getShippingOrderCode());
+        orderDetailDTO.setExpectedDeliveryTime(order.getExpectedDeliveryTime());
         orderDetailDTO.setOrderNumber(order.getOrderNumber());
         orderDetailDTO.setCreatedAt(order.getCreatedAt());
         orderDetailDTO.setShippingAmount(order.getShippingAmount());
@@ -143,16 +144,16 @@ public class OrderServiceImpl implements OrderService {
         orderDetailDTO.setTotalAmount(order.getTotalAmount());
         orderDetailDTO.setDiscountAmount(order.getDiscountAmount());
         orderDetailDTO.setFinalAmount(order.getFinalAmount());
-        orderDetailDTO.setShippingStatus(order.getShippingStatus());
-        orderDetailDTO.setOrderStatus(order.getStatus());
-        orderDetailDTO.setPaymentStatus(order.getPaymentStatus());
+        orderDetailDTO.setShippingStatus(order.getShippingStatus().name());
+        orderDetailDTO.setOrderStatus(order.getStatus().name());
+        orderDetailDTO.setPaymentStatus(order.getPaymentStatus().name());
         orderDetailDTO.setItems(orderItems);
 
         PaymentDTO paymentDTO = order.getPayment() != null ? new PaymentDTO(
                 order.getPayment().getPaymentMethod(),
                 order.getPayment().getAmount(),
                 order.getPayment().getPaymentDate(),
-                order.getPayment().getStatus(),
+                order.getPayment().getStatus().name(),
                 order.getPayment().getTransactionId()
         ) : null;
 
@@ -197,8 +198,8 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderNumber(UUID.randomUUID().toString());
         order.setCustomer(customer);
         order.setShippingAddress(shippingAddress);
-        order.setPaymentStatus(PaymentStatus.PENDING.name());
-        order.setShippingStatus(ShippingStatus.PENDING.name());
+        order.setPaymentStatus(PaymentStatus.PENDING);
+        order.setShippingStatus(ShippingStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
 
         BigDecimal totalAmount = BigDecimal.ZERO;

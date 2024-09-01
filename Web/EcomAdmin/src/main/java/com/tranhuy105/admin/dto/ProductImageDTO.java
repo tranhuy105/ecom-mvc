@@ -10,9 +10,6 @@ public class ProductImageDTO {
     private Integer id;
     private String name;
     public String getPath() {
-        if (id != null && id > 10 && name != null) {
-            return "/product-images/"+this.name;
-        }
-        return "/images/default_user.jpg";
+        return this.name;
     }
 }

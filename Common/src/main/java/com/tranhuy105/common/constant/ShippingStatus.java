@@ -2,7 +2,7 @@ package com.tranhuy105.common.constant;
 
 public enum ShippingStatus {
     PENDING,
-    IN_PROGRESS,
+    IN_TRANSIT,
     DELIVERED,
     RETURNED,
     CANCELED

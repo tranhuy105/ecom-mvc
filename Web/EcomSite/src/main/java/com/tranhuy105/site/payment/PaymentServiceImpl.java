@@ -34,12 +34,12 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentGatewayClient paymentClient = getPaymentClient(paymentMethod);
         String url = paymentClient.createPaymentURL(order, request);
 
-        order.setPaymentStatus(PaymentStatus.PENDING.name());
+        order.setPaymentStatus(PaymentStatus.PENDING);
         Payment payment = Payment.builder()
                 .order(order)
                 .amount(order.getFinalAmount())
                 .paymentMethod(paymentMethod.toString())
-                .status(PaymentStatus.PENDING.name())
+                .status(PaymentStatus.PENDING)
                 .build();
         order.setPayment(payment);
         orderRepository.saveAndFlush(order);
@@ -55,7 +55,7 @@ public class PaymentServiceImpl implements PaymentService {
         Order order = orderRepository.findByOrderNumberWithPayment(response.getOrderNumber())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid order ID"));
 
-        if (!order.getPaymentStatus().equals("PENDING")) {
+        if (!order.getPaymentStatus().equals(PaymentStatus.PENDING)) {
             throw new IllegalArgumentException("This payment has already been processed or have been expired");
         }
 
@@ -89,15 +89,15 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     private void updateOnSuccessPayment(Order order) {
-        order.setPaymentStatus(PaymentStatus.PAID.name());
-        order.getPayment().setStatus(PaymentStatus.PAID.name());
+        order.setPaymentStatus(PaymentStatus.PAID);
+        order.getPayment().setStatus(PaymentStatus.PAID);
         order.getPayment().setPaymentDate(LocalDateTime.now());
     }
 
     private void updateOnFailPayment(Order order) {
-        order.getPayment().setStatus(PaymentStatus.FAILED.name());
-        order.setPaymentStatus(PaymentStatus.FAILED.name());
-        order.setStatus(OrderStatus.CANCELED.name());
+        order.getPayment().setStatus(PaymentStatus.FAILED);
+        order.setPaymentStatus(PaymentStatus.FAILED);
+        order.setStatus(OrderStatus.CANCELED);
     }
 
     private PaymentGatewayClient getPaymentClient(PaymentMethod method) {

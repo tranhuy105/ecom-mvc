@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Order Detail')}">
+</head>
+<body class="">
+<div th:replace="~{navigation :: menu}"></div>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2>Order Details</h2>
+
+            <!-- Order Information -->
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Order Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Order Number:</strong> <span th:text="${order.orderNumber}">ORD-123456</span></p>
+                    <p><strong>Customer Name:</strong> <span th:text="${order.customer.fullName}">John Doe</span></p>
+                    <p><strong>Customer Email:</strong> <span th:text="${order.customer.email}">john.doe@example.com</span></p>
+                    <p><strong>Customer Phone:</strong> <span th:text="${order.customer.phoneNumber}">john.doe@example.com</span></p>
+                    <p><strong>Total Amount:</strong> <span th:text="${order.totalAmount}">$100.00</span></p>
+                    <p><strong>Final Amount:</strong> <span th:text="${order.finalAmount}">$90.00</span></p>
+                    <p><strong>Status:</strong> <span th:text="${order.status}">CONFIRMED</span></p>
+                    <p><strong>Shipping Status:</strong> <span th:text="${order.shippingStatus}">IN_PROGRESS</span></p>
+                    <p><strong>Payment Status:</strong> <span th:text="${order.paymentStatus}">IN_PROGRESS</span></p>
+                </div>
+            </div>
+
+            <!-- Payment Information -->
+            <div class="card mb-4 shadow-sm border-light" th:if="${order.payment != null}">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Payment Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Payment Status:</strong> <span th:text="${order.payment.status}">PAID</span></p>
+                    <p><strong>Payment Method:</strong> <span th:text="${order.payment.paymentMethod}">Credit Card</span></p>
+                    <p><strong>Transaction ID:</strong> <span th:text="${order.payment.transactionId}">TRX123456789</span></p>
+                </div>
+            </div>
+
+            <!-- Status History Section -->
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Status History</h5>
+                </div>
+                <div class="card-body">
+                    <div th:each="history : ${order.statusHistory}">
+                        <p><strong>Status:</strong> <span th:text="${history.status}">CONFIRMED</span></p>
+                        <p><strong>Changed At:</strong> <span th:text="${history.changedAt}">2024-09-01 12:00:00</span></p>
+                        <hr/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Placeholder for Print Mã Vận Đơn -->
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Print Mã Vận Đơn (Placeholder)</h5>
+                </div>
+                <div class="card-body">
+                    <button class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
+                </div>
+            </div>
+
+            <!-- Dropdown for Selecting Province -->
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-light">
+                    <h5>COD Order (Giao Hàng Nhanh)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="provinceSelect">Province</label>
+                        <select class="form-control" id="provinceSelect">
+                            <option value="">Select Province</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown for Selecting District -->
+                    <div class="form-group">
+                        <label for="districtSelect">District</label>
+                        <select class="form-control" id="districtSelect" disabled>
+                            <option value="">Select District</option>
+                        </select>
+                    </div>
+
+                    <!-- Dropdown for Selecting Ward -->
+                    <div class="form-group">
+                        <label for="wardSelect">Ward</label>
+                        <select class="form-control" id="wardSelect" disabled>
+                            <option value="">Select Ward</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="loadProvince" class="btn btn-primary m-3" style="cursor: pointer">Load All COD supported Province</div>
+            </div>
+
+
+            <!-- Placeholder for Order Status Update -->
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Update Order Status (Placeholder)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="orderStatus">Change Status</label>
+                        <select class="form-control" id="orderStatus">
+                            <option value="CONFIRMED">Confirmed</option>
+                            <option value="PREPARING">Preparing</option>
+                            <option value="SHIPPED">Shipped</option>
+                            <option value="DELIVERED">Delivered</option>
+                            <option value="CANCELLED">Cancelled</option>
+                        </select>
+                    </div>
+                    <button id="updateStatusBtn" class="btn btn-success">Update Status</button>
+                </div>
+            </div>
+
+            <!-- Order Items Section -->
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Order Items</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="orderItemsContainer">
+                        <p class="px-2">No items loaded. Click the button to load items.</p>
+                    </div>
+                </div>
+            </div>
+            <button id="loadItemsBtn" class="btn btn-primary mb-3"><i class="fa fa-refresh"></i> Load Items</button>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+
+<script type="text/javascript">
+    const csrfHeader = "[[${_csrf.headerName}]]";
+    const csrfValue = "[[${_csrf.token}]]";
+    const contextPath = "[[@{/}]]";
+    const orderId = "[[${order.id}]]";
+    $(document).ready(function() {
+        $('#loadItemsBtn').on('click', function() {
+            $.get(contextPath + "orders/" + orderId + "/items", function(data) {
+                let itemsHtml = '';
+                $.each(data, function(index, item) {
+                    itemsHtml += '<div class="col-md-4 mb-3">';
+                    itemsHtml += '  <div class="card shadow-sm border-light">';
+                    itemsHtml += '    <img src="' + item.productImage + '" alt="Product Image" class="card-img-top" style="height: 200px; object-fit: cover;">';
+                    itemsHtml += '    <div class="card-body">';
+                    itemsHtml += '      <h5 class="card-title text-wrap-two-line">' + item.productName + '</h5>';
+                    itemsHtml += '      <p class="card-text">';
+                    itemsHtml += '        Giá: ' + item.originalPrice + '<br>';
+                    itemsHtml += '        Giảm giá: ' + item.discountedPercent + '%<br>';
+                    itemsHtml += '        Tổng tiền: ' + item.finalAmount + '<br>';
+                    itemsHtml += '        Số lượng: ' + item.quantity;
+                    itemsHtml += '      </p>';
+                    itemsHtml += '    </div>';
+                    itemsHtml += '  </div>';
+                    itemsHtml += '</div>';
+                });
+                $('#orderItemsContainer').html(itemsHtml);
+            });
+        });
+
+        $('#loadProvince').on('click', function () {
+            console.log("hello")
+            loadProvinces();
+        })
+
+        $('#provinceSelect').on('change', function() {
+            const provinceId = $(this).val();
+            console.log(provinceId);
+            if (provinceId) {
+                loadDistricts(provinceId);
+            } else {
+                $('#districtSelect').empty().append('<option value="">Select District</option>').prop('disabled', true);
+                $('#wardSelect').empty().append('<option value="">Select Ward</option>').prop('disabled', true);
+            }
+        });
+
+
+        $('#updateStatusBtn').on('click', function() {
+            const newStatus = $('#orderStatus').find(':selected').val();
+            console.log(newStatus)
+            console.log("hello")
+
+            if (!newStatus) {
+                alert("Please select a new status.");
+                return;
+            }
+
+            if (newStatus === 'PREPARING') {
+                const provinceId = $('#provinceSelect').find(':selected').val();
+                const districtId = $('#districtSelect').find(':selected').val();
+                const wardCode = $('#wardSelect').find(':selected').val();
+
+                if (!provinceId || !districtId || !wardCode) {
+                    alert("Please complete the COD address config to confirm this order")
+                    return;
+                }
+
+                const requestData = {
+                    WardCode: wardCode,
+                    DistrictID: districtId
+                };
+
+                $.ajax({
+                    url: contextPath + "orders/" + orderId + "/prepare",
+                    type: "PUT",
+                    contentType: "application/json",
+                    data: JSON.stringify(requestData),
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(csrfHeader, csrfValue);
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        alert("Order confirmed successfully!");
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 400) {
+                            alert("Bad request: Please check the input values.");
+                        } else if (xhr.status === 500) {
+                            alert("Internal server error. Please try again later.");
+                        }
+                    }
+                });
+            }
+            else if (newStatus === 'CONFIRMED') {
+                $.ajax({
+                    url: contextPath + "orders/" + orderId + "/confirm",
+                    type: "PUT",
+                    contentType: "application/json",
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader(csrfHeader, csrfValue);
+                    },
+                    success: function(response) {
+                        alert("Order confirmed successfully!");
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 400) {
+                            console.log(xhr)
+                            alert("Bad request: "+xhr.responseText);
+                        } else if (xhr.status === 500) {
+                            alert("Internal server error. Please try again later.");
+                        }
+                    }
+                });
+            }
+            else {
+                alert("Action for the selected status is not implemented yet.");
+            }
+        });
+
+        $('#districtSelect').on('change', function() {
+            const districtId = $(this).val();
+            if (districtId) {
+                loadWards(districtId);
+            } else {
+                $('#wardSelect').empty().append('<option value="">Select Ward</option>').prop('disabled', true);
+            }
+        });
+
+        function loadProvinces() {
+            $.ajax({
+                url: contextPath + "orders/ghn/province",
+                type: "GET",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfValue);
+                },
+                success: function(data) {
+                    const provinceSelect = $('#provinceSelect');
+                    console.log(data);
+                    provinceSelect.empty().append('<option value="">Select Province</option>');
+                    $.each(data, function(index, province) {
+                        provinceSelect.append('<option value="' + province.ProvinceID + '">' + province.ProvinceName + '</option>');
+                    });
+                },
+                error: function(xhr) {
+                    console.error("Failed to load provinces: ", xhr);
+                }
+            });
+        }
+
+        function loadDistricts(provinceId) {
+            if (!provinceId) {
+                console.error("provinceId", provinceId)
+                return;
+            }
+            $.ajax({
+                url: contextPath + "orders/ghn/district?provinceId="+provinceId,
+                type: "GET",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfValue);
+                },
+                success: function(data) {
+                    const districtSelect = $('#districtSelect');
+                    districtSelect.empty().append('<option value="">Select District</option>');
+                    $.each(data, function(index, district) {
+                        districtSelect.append('<option value="' + district.DistrictID + '">' + district.DistrictName + '</option>');
+                    });
+                    districtSelect.prop('disabled', false);
+                },
+                error: function(xhr) {
+                    console.error("Failed to load districts: ", xhr);
+                }
+            });
+        }
+
+        function loadWards(districtId) {
+            if (!districtId) {
+                console.error("districtId", districtId)
+                return;
+            }
+            $.ajax({
+                url: contextPath + "orders/ghn/ward?districtId="+districtId,
+                type: "GET",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfValue);
+                },
+                success: function(data) {
+                    const wardSelect = $('#wardSelect');
+                    wardSelect.empty().append('<option value="">Select Ward</option>');
+                    $.each(data, function(index, ward) {
+                        wardSelect.append('<option value="' + ward.WardCode + '">' + ward.WardName + '</option>');
+                    });
+                    wardSelect.prop('disabled', false);
+                },
+                error: function(xhr) {
+                    console.error("Failed to load wards: ", xhr);
+                }
+            });
+        }
+
+    });
+</script>
+</body>
+</html>

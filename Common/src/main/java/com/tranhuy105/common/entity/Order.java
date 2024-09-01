@@ -1,5 +1,8 @@
 package com.tranhuy105.common.entity;
 
+import com.tranhuy105.common.constant.OrderStatus;
+import com.tranhuy105.common.constant.PaymentStatus;
+import com.tranhuy105.common.constant.ShippingStatus;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -41,13 +44,16 @@ public class Order {
     private BigDecimal finalAmount;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @Column(name = "payment_status", nullable = false)
-    private String paymentStatus;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @Column(name = "shipping_status", nullable = false)
-    private String shippingStatus;
+    @Enumerated(EnumType.STRING)
+    private ShippingStatus shippingStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id", nullable = false)
@@ -55,6 +61,12 @@ public class Order {
 
     @Column(name = "reservation_expiry", nullable = false)
     private LocalDateTime reservationExpiry;
+
+    @Column(name = "shipping_order_code", length = 64)
+    private String shippingOrderCode;
+
+    @Column(name = "expected_delivery_time")
+    private LocalDateTime expectedDeliveryTime;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @EqualsAndHashCode.Exclude

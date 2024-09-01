@@ -1,5 +1,6 @@
 package com.tranhuy105.common.entity;
 
+import com.tranhuy105.common.constant.PaymentStatus;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
@@ -34,7 +35,8 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     @Column(name = "transaction_id", unique = true)
     private String transactionId;
