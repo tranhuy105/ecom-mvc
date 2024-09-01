@@ -99,15 +99,6 @@ To get a better understanding of how the platform works, watch the following dem
    - **Access Control**:
      
      - **Control Access**: Securely manage access to various parts of the admin interface.
-
-5. **Order and Shipping Label Printing**
-   - **Print Shipping Labels**:
-     
-     - **Generate Labels**: Generate shipping labels with GHN integration.
-     - **Print Directly**: Print labels in A5 format from the admin interface.
-   - **Manage Labels**:
-     
-     - **Track Label Status**: Monitor the status of printed labels.
     
 ### Product And Inventory Management
 
