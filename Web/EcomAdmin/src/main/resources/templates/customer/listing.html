@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head('Manage Customers')}">
+</head>
+<body class="container-fluid">
+<style>
+    .table td, .table th {
+        text-align: center;
+        vertical-align: middle;
+        font-size: 18px;
+    }
+</style>
+<div th:replace="~{navigation :: menu}"></div>
+
+<div class="mt-4">
+    <div class="mb-3">
+        <h1>Manage Customers</h1>
+        <a th:href="@{/customers/new}">Create New Customer</a>
+    </div>
+
+    <div th:if="${message}" class="alert alert-success" role="alert">
+        <span th:text="${message}"></span>
+    </div>
+
+
+    <!-- Search and Sort Form -->
+    <form method="get" class="form-inline mb-4">
+        <div class="form-group mr-2">
+            <input type="text" name="search" class="form-control" placeholder="Search" th:value="${q}">
+        </div>
+        <div class="form-group mr-2">
+            <select name="sortBy" class="form-control">
+                <option value="" th:selected="${sortBy == null}">Sort By</option>
+                <option value="email" th:selected="${sortBy == 'email'}">Email</option>
+                <option value="firstName" th:selected="${sortBy == 'firstName'}">First Name</option>
+                <option value="lastName" th:selected="${sortBy == 'lastName'}">Last Name</option>
+            </select>
+        </div>
+        <div class="form-group mr-2">
+            <select name="sortDirection" class="form-control">
+                <option value="asc" th:selected="${sortDirection == 'asc'}">Ascending</option>
+                <option value="desc" th:selected="${sortDirection == 'desc'}">Descending</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Apply</button>
+    </form>
+
+    <!-- Customer Table -->
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Pfp</th>
+            <th>Email</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Phone Number</th>
+            <th>Enabled</th>
+            <th>Created At</th>
+            <th>Account Type</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="customer : ${customers}">
+            <td th:text="${customer.id}"></td>
+            <td class="text-center">
+                <img th:src="@{${customer.pfp}}"
+                     alt="avatar"
+                     style="width: 75px; height: 75px; object-fit: cover; border-radius: 25%;"
+                />
+            </td>
+            <td th:text="${customer.email}"></td>
+            <td th:text="${customer.firstName}"></td>
+            <td th:text="${customer.lastName}"></td>
+            <td th:text="${customer.phoneNumber}"></td>
+            <td>
+                <span th:text="${customer.enabled ? 'Yes' : 'No'}"></span>
+            </td>
+            <td th:text="${customer.formatLocalDate(customer.createdAt)}"></td>
+            <td th:text="${customer.authenticationType}" class="text-info font-weight-bold"></td>
+            <td>
+                <a th:href="@{/customers/edit/{id}(id=${customer.id})}" class="btn btn-sm btn-info">
+                    <i class="fa fa-eye"></i> View
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <div th:replace="~{navigation :: pagination(totalItems=${totalItems}, currentPage=${currentPage}, totalPages=${totalPages}, startCount=${startCount}, endCount=${endCount}, q=${q}, baseUrl=${'/customers'})}"></div>
+</div>
+
+<div th:replace="~{navigation :: footer}"></div>
+</body>
+<script th:src="@{/js/common_pagination.js}"></script>
+</html>
