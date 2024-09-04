@@ -59,7 +59,7 @@
                     <h5 class="mb-0">Print Mã Vận Đơn (Placeholder)</h5>
                 </div>
                 <div class="card-body">
-                    <button class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
+                    <button id="printShippingLabelButton" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
                 </div>
             </div>
 
@@ -179,11 +179,31 @@
             }
         });
 
+        $('#printShippingLabelButton').on("click", function () {
+            $.ajax({
+                url: contextPath + "orders/" + orderId + "/print",
+                type: "POST",
+                contentType: "application/json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader(csrfHeader, csrfValue);
+                },
+                success: function(response) {
+                    console.log(response);
+                    window.open(response, '_blank');
+                },
+                error: function(xhr) {
+                    if (xhr.status === 400) {
+                        console.log(xhr)
+                        alert("Bad request: "+xhr.responseText);
+                    } else if (xhr.status === 500) {
+                        alert("Internal server error. Please try again later.");
+                    }
+                }
+            });
+        });
 
         $('#updateStatusBtn').on('click', function() {
             const newStatus = $('#orderStatus').find(':selected').val();
-            console.log(newStatus)
-            console.log("hello")
 
             if (!newStatus) {
                 alert("Please select a new status.");
@@ -226,9 +246,25 @@
                     }
                 });
             }
-            else if (newStatus === 'CONFIRMED') {
+            else {
+                let endpoint = "";
+                switch (newStatus) {
+                    case 'CONFIRMED':
+                        endpoint = "/confirm"
+                        break;
+                    case 'SHIPPED':
+                        endpoint = "/ship"
+                        break;
+                    case 'DELIVERED':
+                        endpoint = "/deliver"
+                        break;
+                    default:
+                        alert("Action for the selected status is not implemented yet.");
+                        return;
+                }
+
                 $.ajax({
-                    url: contextPath + "orders/" + orderId + "/confirm",
+                    url: contextPath + "orders/" + orderId + endpoint,
                     type: "PUT",
                     contentType: "application/json",
                     beforeSend: function(xhr) {
@@ -246,9 +282,6 @@
                         }
                     }
                 });
-            }
-            else {
-                alert("Action for the selected status is not implemented yet.");
             }
         });
 

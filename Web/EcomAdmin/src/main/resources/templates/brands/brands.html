@@ -31,8 +31,8 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-4 text-center">
-                        <img th:src="@{${brand.logoPath}}" alt="Brand Logo"
-                             class="img-fluid rounded-circle"
+                        <img th:src="@{${brand.logo}}" alt="Brand Logo"
+                             class="img-fluid rounded-circle border"
                              style="width: 80px; height: 80px; object-fit: cover;" />
                     </div>
                     <div class="col-8">
@@ -76,9 +76,9 @@
                 <td>[[${brand.id}]]</td>
                 <td>
                     <div class="text-center">
-                        <img th:src="@{${brand.logoPath}}" alt="Brand Logo"
-                             class="img-fluid rounded-circle"
-                             style="width: 80px; height: 80px; object-fit: cover;" />
+                        <img th:src="@{${brand.logo}}" alt="Brand Logo"
+                             class="img-fluid rounded-circle border"
+                             style="width: 80px; height: 80px; object-fit: contain;" />
                     </div>
                 </td>
                 <td>

@@ -11,6 +11,7 @@ import com.tranhuy105.admin.service.OrderService;
 import com.tranhuy105.common.entity.Order;
 import com.tranhuy105.common.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class OrderController {
     private final OrderService orderService;
     private final GhnApiService ghnApiService;
@@ -125,7 +127,7 @@ public class OrderController {
         } catch (IllegalArgumentException exception) {
             return ResponseEntity.badRequest().build();
         } catch (Exception exception) {
-            exception.printStackTrace();
+            log.error(exception.getMessage(), exception);
             return ResponseEntity.internalServerError().build();
         }
     }
@@ -142,7 +144,57 @@ public class OrderController {
             return ResponseEntity.badRequest().body(exception.getMessage());
         }
         catch (Exception exception) {
-            exception.printStackTrace();
+            log.error(exception.getMessage(), exception);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/orders/{orderId}/ship")
+    @ResponseBody
+    public ResponseEntity<String> shipOrder(@PathVariable Integer orderId) {
+        try {
+            orderService.shipOrder(orderId);
+            return ResponseEntity.ok("SUCCESS");
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().build();
+        } catch (IllegalStateException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
+        catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/orders/{orderId}/deliver")
+    @ResponseBody
+    public ResponseEntity<String> deliverOrder(@PathVariable Integer orderId) {
+        try {
+            orderService.deliverOrder(orderId);
+            return ResponseEntity.ok("SUCCESS");
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().build();
+        } catch (IllegalStateException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
+        catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PostMapping("/orders/{orderId}/print")
+    @ResponseBody
+    public ResponseEntity<String> printOrder(@PathVariable Integer orderId) {
+        try {
+            return ResponseEntity.ok(orderService.printA5ShippingLabel(orderId));
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity.badRequest().build();
+        } catch (IllegalStateException exception) {
+            return ResponseEntity.badRequest().body(exception.getMessage());
+        }
+        catch (Exception exception) {
+            log.error(exception.getMessage(), exception);
             return ResponseEntity.internalServerError().build();
         }
     }

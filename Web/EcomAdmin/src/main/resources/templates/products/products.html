@@ -43,11 +43,11 @@
         <div class="row">
             <div class="col-lg-3 col-md-4 col-sm-6 mb-4" th:each="product : ${listProducts}">
                 <div class="card border-light shadow-sm bg-white card-hover" style="cursor: pointer">
-                    <a style="display: none;" th:href="@{'/products/' + ${product.alias}}" class="card-link"></a>
+                    <a style="display: none;" th:href="@{'/products/edit/' + ${product.id}}" class="card-link"></a>
                     <div th:if="${product.images.size() > 0}" th:id="'carouselExampleControlsTh_' + ${product.id}" class="carousel slide">
                         <div class="carousel-inner">
                             <div th:each="image, iterStat : ${product.images}" class="carousel-item" th:classappend="${iterStat.index == 0 ? 'active' : ''}">
-                                <img th:src="@{${image.path}}" class="d-block w-100" style="aspect-ratio: 7/8; object-fit: cover" alt="Product Image">
+                                <img th:src="@{${image.path}}" class="d-block w-100" loading="lazy" style="aspect-ratio: 7/8; object-fit: cover" alt="Product Image">
                             </div>
                         </div>
                         <a class="carousel-control-prev" th:href="'#carouselExampleControlsTh_' + ${product.id}" role="button" data-slide="prev">
@@ -63,27 +63,27 @@
                         <img th:src="@{/images/default_user.jpg}" class="d-block w-100" style="aspect-ratio: 7/8; object-fit: cover" alt="Product Image">
                     </div>
                     <div class="card-body">
-                        <h4 class="card-title" th:text="${product.name} + ' (' + ${product.id} + ')'" style="color: #007bff; font-size: 1.25rem; font-weight: bold;">Product Name</h4>
+                        <h4 class="card-title text-danger" th:text="${product.name} + ' (' + ${product.id} + ')'"
+                            style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+                            overflow: hidden; text-overflow: ellipsis; margin: 0; font-size: 20px;"
+                        >Product Name</h4>
                         <p class="card-text">
                             <strong>Category:</strong> <span th:text="${product.category.name}">Category Name</span><br/>
                             <strong>Brand:</strong> <span th:text="${product.brand.name}">Brand Name</span>
                         </p>
                         <div class="d-flex flex-column">
                             <div class="d-flex align-items-baseline mb-2" th:if="${product.discountPercent > 0}">
-                                <h5 class="mb-0 text-muted" style="text-decoration: line-through; opacity: 70%; font-size: medium" th:text="'$' + ${product.price}">$0.00</h5>
-                                <h3 class="text-danger mb-0 ml-2" th:text="'$' + ${product.price * (1 - product.discountPercent / 100)}">$0.00</h3>
+                                <h5 class="mb-0 text-muted" style="text-decoration: line-through; opacity: 70%; font-size: medium" th:text="${product.price}">$0.00</h5>
+                                <h3 class="mb-0 ml-2" th:text="${product.price * (1 - product.discountPercent / 100)}">$0.00</h3>
                             </div>
                             <div class="d-flex align-items-center mb-2" th:if="${product.discountPercent > 0}">
                                 <span class="badge badge-danger" th:text="${product.discountPercent + '% OFF'}">0% OFF</span>
                             </div>
                             <div th:if="${product.discountPercent == 0}" class="mt-2 mb-4">
-                                <h3 class="mb-0 text-primary" th:text="'$' + ${product.price}">$0.00</h3>
+                                <h3 class="mb-0 text-primary" th:text="${product.price}">$0.00</h3>
                             </div>
                         </div>
                         <div class="d-flex justify-content-end">
-                            <th:block sec:authorize="hasAnyAuthority('Admin', 'Editor')">
-                                <a th:href="@{'/products/edit/' + ${product.id}}" class="btn btn-primary mr-3 btn-action">Edit</a>
-                            </th:block>
                             <th:block sec:authorize="hasAuthority('Admin')">
                                 <a th:href="@{'/products/delete/' + ${product.id}}" onclick="return confirmDelete()" class="btn btn-danger btn-action">Delete</a>
                             </th:block>
@@ -108,18 +108,19 @@
                 </p>
                 <div class="d-flex flex-column">
                     <div class="d-flex align-items-baseline mb-2" th:if="${product.discountPercent > 0}">
-                        <h5 class="mb-0 text-muted" style="text-decoration: line-through; opacity: 70%; font-size: medium" th:text="'$' + ${product.price}">$0.00</h5>
-                        <h3 class="text-danger mb-0 ml-2" th:text="'$' + ${product.price * (1 - product.discountPercent / 100)}">$0.00</h3>
+                        <h5 class="mb-0 text-muted" style="text-decoration: line-through; opacity: 70%; font-size: medium" th:text="${product.price}">$0.00</h5>
+                        <h3 class="mb-0 ml-2" th:text="${product.price * (1 - product.discountPercent / 100)}">$0.00</h3>
                     </div>
                     <div class="d-flex align-items-center mb-2" th:if="${product.discountPercent > 0}">
                         <span class="badge badge-danger" th:text="${product.discountPercent + '% OFF'}">0% OFF</span>
                     </div>
                     <div th:if="${product.discountPercent == 0}" class="mt-2 mb-4">
-                        <h3 class="mb-0 text-primary" th:text="'$' + ${product.price}">$0.00</h3>
+                        <h3 class="mb-0 text-primary" th:text="${product.price}">$0.00</h3>
                     </div>
                 </div>
-                <a th:href="@{'/products/edit/' + ${product.id}}" class="btn btn-sm btn-primary">Edit</a>
-                <a th:href="@{'/products/delete/' + ${product.id}}" onclick="return confirmDelete()" class="btn btn-sm btn-danger">Delete</a>
+                <div class="d-flex justify-content-end">
+                    <a th:href="@{'/products/delete/' + ${product.id}}" onclick="return confirmDelete()" class="btn btn-sm btn-danger">Delete</a>
+                </div>
             </div>
         </div>
     </div>

@@ -9,6 +9,7 @@ import lombok.*;
 public class ProductImageDTO {
     private Integer id;
     private String name;
+    private boolean isMain;
     public String getPath() {
         return this.name;
     }

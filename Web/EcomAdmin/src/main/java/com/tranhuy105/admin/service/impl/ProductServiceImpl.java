@@ -24,7 +24,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductServiceImpl implements ProductService {
-    public static final int PAGE_SIZE = 4;
+    public static final int PAGE_SIZE = 24;
     public static final String IMAGE_UPLOAD_DIR = "product-images";
     private final ProductRepository productRepository;
 
@@ -65,6 +65,20 @@ public class ProductServiceImpl implements ProductService {
 
         Set<ProductImage> combinedImages = new HashSet<>(keepImageList);
         combinedImages.addAll(newImageList);
+        if (combinedImages.isEmpty()) {
+            throw new IllegalArgumentException("A product must have at least 1 image");
+        }
+
+        int mainImage = 0;
+        for (ProductImage image : combinedImages) {
+            if (image.isMain()) {
+                mainImage++;
+            }
+        }
+
+        if (mainImage != 1) {
+            throw new IllegalArgumentException("A product must have one and only one main image");
+        }
 
         product.setImages(combinedImages);
         productRepository.save(product);
@@ -185,9 +199,9 @@ public class ProductServiceImpl implements ProductService {
                     throw new IllegalArgumentException("NULL instruction.");
                 }
                 switch (instruction.toLowerCase()) {
-                    case "remove" -> deleteImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false));
-                    case "add" -> newImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false));
-                    case "keep" -> keepImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, false));
+                    case "remove" -> deleteImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, imageInstructionDTO.isMain()));
+                    case "add" -> newImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, imageInstructionDTO.isMain()));
+                    case "keep" -> keepImageList.add(new ProductImage(imageInstructionDTO.getId(), imageInstructionDTO.getName(), product, imageInstructionDTO.isMain()));
                     default -> throw new IllegalArgumentException("Illegal Instruction: "+imageInstructionDTO.getInstruction());
                 }
             });

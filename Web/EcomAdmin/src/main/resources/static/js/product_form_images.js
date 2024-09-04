@@ -19,20 +19,24 @@ $(document).ready(function() {
         const reader = new FileReader();
         reader.onload = function(e) {
             const imageHtml = `
-                <div class="col-md-3 mb-3" id="imageSection${imageCounter}">
-                    <div class="card image-container add" data-id="null" data-name="${file.name}" data-instruction="add">
-                        <img src="${e.target.result}" class="card-img-top img-fluid" alt="Image">
-                        <div class="card-body text-center">
-                            <button type="button" class="btn btn-danger removeImageButton">
-                                <i class="fas fa-trash"></i> Remove
-                            </button>
-                            <button type="button" class="btn btn-secondary undoImageButton" style="display: none;">
-                                <i class="fas fa-undo"></i> Undo
-                            </button>
+                    <div class="col-md-3 mb-3" id="imageSection${imageCounter}">
+                        <div class="card image-container add" data-id="null" data-name="${file.name}" data-instruction="add" data-main="false">
+                            <img src="${e.target.result}" class="card-img-top img-fluid" alt="Image">
+                            <div class="card-body text-center">
+                                <button type="button" class="btn btn-danger removeImageButton">
+                                    <i class="fas fa-trash"></i> Remove
+                                </button>
+                                <button type="button" class="btn btn-secondary undoImageButton" style="display: none;">
+                                    <i class="fas fa-undo"></i> Undo
+                                </button>
+                                <div class="form-check mt-3">
+                                    <input class="form-check-input mainImageCheckbox" type="checkbox" name="mainImage" />
+                                    <label class="form-check-label font-weight-bold">Main Image</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
             $('#imageContainer').append(imageHtml);
             imageCounter++;
         };
@@ -49,15 +53,14 @@ $(document).ready(function() {
         const fileInput = document.getElementById("imageList");
 
         if ($card.data('id') === null) {
-            // Directly delete images with null ID
             $card.closest('.col-md-3').remove();
             removeFileFromFileList(fileInput, imageName);
         } else {
-            // Change the class to 'remove' for images with an ID
             $card.data('instruction', 'remove')
                 .removeClass('add keep')
                 .addClass('remove');
             $(this).siblings('.undoImageButton').show();
+            $card.find('.mainImageCheckbox').prop('disabled', true);
         }
     });
 
@@ -68,10 +71,35 @@ $(document).ready(function() {
                 .removeClass('remove')
                 .addClass('keep');
             $(this).hide();
+            $card.find('.mainImageCheckbox').prop('disabled', false);
         }
     });
 
-    // i love you stackoverflow
+    $(document).on('change', '.mainImageCheckbox', function() {
+        if ($(this).is(':checked')) {
+            $('.mainImageCheckbox').not(this).prop('checked', false);
+            $('.image-container').data('main', false);
+            $(this).closest('.image-container').data('main', true);
+        } else {
+            $(this).prop('checked', true);
+        }
+    });
+
+    $('#productForm').on('submit', function(e) {
+        const imageInstructions = [];
+        $('.image-container').each(function() {
+            const instruction = $(this).data('instruction');
+            const isMain = $(this).data('main');
+            imageInstructions.push({
+                id: $(this).data('id'),
+                name: $(this).data('name'),
+                instruction: instruction,
+                main: isMain
+            });
+        });
+        $('#imageInstructions').val(JSON.stringify(imageInstructions));
+    });
+
     function removeFileFromFileList(input, name) {
         const dt = new DataTransfer();
         const { files } = input;
@@ -92,7 +120,7 @@ $(document).ready(function() {
 
         for (let i = 0; i < files.length; i++) {
             if (files[i].name === newFile.name) {
-                console.log("already have that file", newFile.name)
+                console.log("already have that file", newFile.name);
                 return false;
             }
             dt.items.add(files[i]);
@@ -102,18 +130,4 @@ $(document).ready(function() {
         input.files = dt.files;
         return true;
     }
-
-
-    $('#productForm').on('submit', function(e) {
-        const imageInstructions = [];
-        $('.image-container').each(function() {
-            const instruction = $(this).data('instruction');
-                imageInstructions.push({
-                    id: $(this).data('id'),
-                    name: $(this).data('name'),
-                    instruction: instruction
-                });
-        });
-        $('#imageInstructions').val(JSON.stringify(imageInstructions));
-    });
 });

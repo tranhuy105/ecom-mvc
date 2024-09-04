@@ -13,4 +13,5 @@ public class ImageInstructionDTO {
     private Integer id;
     private String name;
     private String instruction;
+    private boolean main;
 }

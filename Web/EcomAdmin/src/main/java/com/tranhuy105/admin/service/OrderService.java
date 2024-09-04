@@ -30,4 +30,5 @@ public interface OrderService {
 
     List<OrderItemDTO> getOrderItems(Integer orderId);
 
+    String printA5ShippingLabel(Integer orderId);
 }

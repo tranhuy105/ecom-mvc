@@ -46,8 +46,8 @@ public class ProductMapper {
         dto.setAdditionalDetails(product.getAdditionalDetails().stream()
                 .map(detail -> new ProductDetailDTO(detail.getId(), detail.getName(), detail.getValue()))
                 .toList());
-        dto.setImages(product.getImages().stream()
-                .map(image -> new ProductImageDTO(image.getId(), image.getName()))
+        dto.setImages(product.getOrderedImages().stream()
+                .map(image -> new ProductImageDTO(image.getId(), image.getName(), image.isMain()))
                 .toList());
         dto.setSkus(product.getSkus().stream()
                 .map(sku -> new SkuDTO(sku.getId(), sku.getSkuCode(), sku.getPrice(), sku.getDiscountPercent(), sku.getStockQuantity(),

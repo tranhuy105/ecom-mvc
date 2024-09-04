@@ -4,6 +4,7 @@ import com.tranhuy105.admin.dto.OrderItemDTO;
 import com.tranhuy105.admin.dto.OrderOverviewDTO;
 import com.tranhuy105.admin.dto.ghn.GhnOrderRequest;
 import com.tranhuy105.admin.dto.ghn.GhnOrderResponse;
+import com.tranhuy105.admin.dto.ghn.GhnTokenResponse;
 import com.tranhuy105.admin.repository.OrderItemRepository;
 import com.tranhuy105.admin.repository.OrderRepository;
 import com.tranhuy105.admin.service.GhnApiService;
@@ -168,10 +169,30 @@ public class OrderServiceImpl implements OrderService {
         return orderItemRepository.findFullByOrderId(orderId);
     }
 
+    @Override
+    public String printA5ShippingLabel(Integer orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(
+                () -> new IllegalArgumentException("Invalid Order Id")
+        );
+
+        if (order.getShippingOrderCode() == null) {
+            throw new IllegalStateException("Couldn't print the shipping label because this order hasn't been initiated yet");
+        }
+
+        GhnTokenResponse tokenResponse = ghnApiService.generatePrintOrderToken(List.of(order.getShippingOrderCode()));
+
+        if (tokenResponse.getCode() != 200) {
+            throw new RuntimeException(tokenResponse.getCode()+": " + tokenResponse.getMessage());
+        }
+
+        String token = tokenResponse.getData().getToken();
+        return "https://dev-online-gateway.ghn.vn/a5/public-api/printA5?token=" + token;
+    }
+
     private GhnOrderRequest buildGhnOrderRequest(Order order, String wardCode, Integer districtId) {
         GhnOrderRequest request = new GhnOrderRequest();
 
-        request.setPayment_type_id(2);
+        request.setPayment_type_id(PaymentStatus.PAID.equals(order.getPaymentStatus()) ? 1 : 2);
         request.setFrom_name("Trần Huy 105 Shop");
         request.setFrom_phone("0342880966");
         request.setFrom_address("Dia Chi Cua Toi Test");
