@@ -58,7 +58,7 @@ public class ProductController {
             throw new IllegalArgumentException("Min price cannot be greater than max price.");
         }
 
-        if (priceRange != null) {
+        if (priceRange != null && !priceRange.isBlank()) {
             String[] range = priceRange.split("-");
             if (range.length != 2) {
                 throw new IllegalArgumentException("Invalid price range");

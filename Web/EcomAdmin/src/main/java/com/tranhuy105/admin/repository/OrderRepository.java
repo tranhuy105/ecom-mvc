@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface OrderRepository extends JpaRepository<Order, Integer> {
@@ -52,4 +53,16 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "LEFT JOIN FETCH o.statusHistory " +
             "WHERE o.orderNumber = :orderNumber ")
     Order findOrderDetailByOrderNumber(String orderNumber);
+
+    @Query(value = "SELECT " +
+            "DATE(o.created_at) as identifier, " +
+            "SUM(oi.total_amount) as grossSales, " +
+            "SUM((oi.total_amount) - (oi.quantity * s.cost)) as netSales, " +
+            "COUNT(DISTINCT o.id) as ordersCount " +
+            "FROM orders o " +
+            "JOIN order_items oi ON o.id = oi.order_id " +
+            "JOIN skus s ON oi.sku_id = s.id " +
+            "WHERE o.payment_status = 'PAID' AND o.created_at BETWEEN :startDate AND :endDate " +
+            "GROUP BY DATE(o.created_at) ", nativeQuery = true)
+    List<Object[]> getSalesReportByDateRange(LocalDateTime startDate,LocalDateTime endDate);
 }

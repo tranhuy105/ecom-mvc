@@ -18,7 +18,7 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Địa chỉ nhận hàng (cod)</h5>
+                    <h5 class="mb-0">Địa chỉ nhận hàng</h5>
                 </div>
                 <div class="card-body">
                     <p class="mb-0">
@@ -84,7 +84,7 @@
                             <tr>
                                 <th class="text-center" style="width: 100px;"></th>
                                 <th class="text-center">Số lượng</th>
-                                <th class="text-center" style="width: 200px;">Sản phẩm</th>
+                                <th class="text-center" style="width: 250px;">Sản phẩm</th>
                                 <th class="text-center">Tổng Giá</th>
                             </tr>
                             </thead>
@@ -97,7 +97,7 @@
                                     <td class="align-middle text-center font-weight-bold">
                                         [[${item.quantity}]]
                                     </td>
-                                    <td class="align-middle" style="max-width: 200px; overflow: hidden;">
+                                    <td class="align-middle" style="max-width: 250px; overflow: hidden;">
                                         <a th:href="@{'/products/' + ${sku.product.alias}}" target="_blank">
                                             [[${sku.product.name}]]
                                         </a>
@@ -111,7 +111,7 @@
                             </th:block>
                             <tr><td colspan="4"><hr/></td></tr>
                             <tr>
-                                <td colspan="2" class="text-left"><b>Tổng cộng:</b></td>
+                                <td colspan="3" class="text-left"><b>Tổng cộng:</b></td>
                                 <td colspan="3" class="text-right"><b id="finalPrice"></b></td>
                             </tr>
                             </tbody>

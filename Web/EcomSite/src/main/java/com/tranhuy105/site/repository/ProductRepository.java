@@ -58,32 +58,32 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     List<Product> findAllFull(List<Product> products);
 
     @EntityGraph(attributePaths = {"category", "brand", "skus", "additionalDetails", "images"})
-    @Query("SELECT p FROM Product p WHERE p.alias = :alias")
+    @Query("SELECT p FROM Product p WHERE p.alias = :alias AND p.enabled = TRUE")
     Optional<Product> findByAlias(String alias);
 
     @Query(value = "SELECT p.id AS id, " +
-            "       p.name AS name, " +
-            "       p.alias AS alias, " +
-            "       p.short_description AS shortDescription, " +
-            "       p.default_price AS price, " +
-            "       p.default_discount AS discountPercent, " +
-            "       pi.name AS imagePath " +
+            "p.name AS name, " +
+            "p.alias AS alias, " +
+            "p.short_description AS shortDescription, " +
+            "p.default_price AS price, " +
+            "p.default_discount AS discountPercent, " +
+            "pi.name AS imagePath " +
             "FROM products p " +
-            "LEFT JOIN product_images pi ON p.id = pi.product_id " +
-            "WHERE pi.is_main = TRUE AND p.category_id = :categoryId",
+            "LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_main = TRUE " +
+            "WHERE p.enabled = TRUE AND p.category_id = :categoryId",
             nativeQuery = true)
     List<ProductOverview> findProductOverviewsByCategory(Integer categoryId, PageRequest pageRequest);
 
     @Query(value = "SELECT p.id AS id, " +
-            "       p.name AS name, " +
-            "       p.alias AS alias, " +
-            "       p.short_description AS shortDescription, " +
-            "       p.default_price AS price, " +
-            "       p.default_discount AS discountPercent, " +
-            "       pi.name AS imagePath " +
+            "p.name AS name, " +
+            "p.alias AS alias, " +
+            "p.short_description AS shortDescription, " +
+            "p.default_price AS price, " +
+            "p.default_discount AS discountPercent, " +
+            "pi.name AS imagePath " +
             "FROM products p " +
-            "LEFT JOIN product_images pi ON p.id = pi.product_id " +
-            "WHERE pi.is_main = TRUE AND p.brand_id = :brandId",
+            "LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_main = TRUE " +
+            "WHERE p.enabled = TRUE AND p.brand_id = :brandId",
             nativeQuery = true)
     List<ProductOverview> getBrandProduct(Integer brandId, PageRequest pageRequest);
 }

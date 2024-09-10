@@ -11,7 +11,7 @@
         <form id="filterForm" class="mb-3 overflow-auto" onsubmit="submitFilterForm()">
           <!-- Category Filter -->
           <div class="mb-3 pt-3">
-            <label class="form-label">Danh mục</label>
+            <label class="form-label font-weight-bold">Danh mục</label>
             <div class="form-check">
               <input class="form-check-input" type="radio" name="c" id="categoryAll" value="" th:checked="${c == null}" onchange="submitFilterForm()">
               <label class="form-check-label" for="categoryAll">Tất cả</label>
@@ -28,7 +28,7 @@
 
           <!-- Brand Filter -->
           <div class="mb-3">
-            <label for="brandFilter" class="form-label">Thương hiệu</label>
+            <label for="brandFilter" class="form-label font-weight-bold">Thương hiệu</label>
             <select id="brandFilter" class="form-control" name="b"  onchange="submitFilterForm()">
               <option value="">Tất cả</option>
               <option th:each="brand : ${brands}" th:value="${brand.id}" th:text="${brand.name}" th:selected="${b == brand.id}"></option>
@@ -37,9 +37,9 @@
 
           <!-- Price Range Filter -->
           <div class="mb-3">
-            <label class="form-label">Tầm Giá</label>
+            <label class="form-label font-weight-bold">Tầm Giá</label>
             <div class="form-check">
-              <input class="form-check-input" type="radio" name="price_range" id="allPrice" value="" th:checked="${priceRange == null}">
+              <input class="form-check-input" type="radio" name="price_range" id="allPrice" value="" th:checked="${priceRange == null || priceRange == ''}">
               <label class="form-check-label" for="allPrice">Tất cả</label>
             </div>
             <div class="form-check">
@@ -65,7 +65,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="sortFilter" class="form-label">Sắp xếp theo</label>
+            <label for="sortFilter" class="form-label font-weight-bold">Sắp xếp theo</label>
             <select id="sortFilter" class="form-control" name="sort" onchange="submitFilterForm()">
               <option value="name" th:selected="${sort == 'name'}">Tên</option>
               <option value="price" th:selected="${sort == 'price'}">Giá</option>
@@ -74,7 +74,7 @@
           </div>
 
           <div class="mb-3">
-            <label for="sortDirection" class="form-label">Hướng sắp xếp</label>
+            <label for="sortDirection" class="form-label font-weight-bold">Hướng sắp xếp</label>
             <select id="sortDirection" class="form-control" name="sort_direction">
               <option value="asc" th:selected="${sortDirection == 'asc'}">Tăng dần</option>
               <option value="desc" th:selected="${sortDirection == 'desc'}">Giảm dần</option>

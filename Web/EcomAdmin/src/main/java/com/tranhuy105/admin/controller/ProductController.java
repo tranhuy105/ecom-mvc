@@ -1,5 +1,6 @@
 package com.tranhuy105.admin.controller;
 
+import com.tranhuy105.admin.dto.ProductOverviewDTO;
 import com.tranhuy105.admin.mapper.ProductMapper;
 import com.tranhuy105.admin.service.BrandService;
 import com.tranhuy105.admin.service.CategoryService;
@@ -20,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,27 +37,43 @@ public class ProductController {
     public String productListingView(Model model,
                                      @RequestParam(value = "page", required = false) Integer page,
                                      @RequestParam(value = "q", required = false) String search,
-                                     @RequestParam(value = "category", required = false) Integer categoryId) {
+                                     @RequestParam(value = "category", required = false) Integer categoryId,
+                                     @RequestParam(value = "brand", required = false) Integer brandId,
+                                     @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+                                     @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice,
+                                     @RequestParam(value = "sort", required = false) String sort,
+                                     @RequestParam(value = "enabled", required = false) Boolean enabled) {
         page = PaginationUtil.sanitizePage(page);
-        if (search != null) {
-            if (search.isEmpty() || search.isBlank()) {
-                search = null;
-            }
+
+        if (search != null && (search.isEmpty() || search.isBlank())) {
+            search = null;
         }
-        if (categoryId != null) {
-            if (categoryId.equals(0)) {
-                categoryId = null;
-            }
+
+        if (categoryId != null && categoryId.equals(0)) {
+            categoryId = null;
         }
-        Page<Product> productPage = productService.findAll(page, search, categoryId);
+
+        if (brandId != null && brandId.equals(0)) {
+            brandId = null;
+        }
+
+        Page<ProductOverviewDTO> productPage = productService.findAll(page, search, categoryId, brandId, minPrice, maxPrice, sort, enabled);
         PaginationUtil.setPaginationAttributes(page, productService.getPageSize(), search, model, productPage);
-        model.addAttribute("listProducts", productService.lazyFetchAttribute(productPage.getContent()));
+        List<ProductOverviewDTO> content = productPage.getContent();
+
+        model.addAttribute("listProducts", content);
         model.addAttribute("listCategories", categoryService.findAllWithHierarchy());
-        if (categoryId != null) {
-            model.addAttribute("categoryId", categoryId);
-        }
+        model.addAttribute("listBrands", brandService.findAllMin());
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("brandId", brandId);
+        model.addAttribute("minPrice", minPrice);
+        model.addAttribute("maxPrice", maxPrice);
+        model.addAttribute("sort", sort);
+        model.addAttribute("enabled", enabled);
+
         return "products/products";
     }
+
 
     @GetMapping("/products/edit/{id}")
     @PreAuthorize("hasAnyAuthority('Admin', 'Editor')")
@@ -65,7 +84,7 @@ public class ProductController {
             return "redirect:/products";
         }
         model.addAttribute("productDTO", productDTO);
-        model.addAttribute("pageTitle", "Create New Product");
+        model.addAttribute("pageTitle", productDTO.getName());
         model.addAttribute("listBrands", brandService.findAllMin());
         model.addAttribute("listCategories", categoryService.findAllWithHierarchy());
         return "products/product_form";

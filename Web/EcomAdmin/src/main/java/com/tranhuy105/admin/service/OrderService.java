@@ -2,6 +2,7 @@ package com.tranhuy105.admin.service;
 
 import com.tranhuy105.admin.dto.OrderItemDTO;
 import com.tranhuy105.admin.dto.OrderOverviewDTO;
+import com.tranhuy105.admin.dto.ReportDTO;
 import com.tranhuy105.admin.dto.ghn.GhnOrderResponse;
 import com.tranhuy105.common.entity.Order;
 import org.springframework.data.domain.Page;
@@ -31,4 +32,8 @@ public interface OrderService {
     List<OrderItemDTO> getOrderItems(Integer orderId);
 
     String printA5ShippingLabel(Integer orderId);
+
+    List<ReportDTO> getOrderReportLastXDays(long days);
+
+    List<ReportDTO> getOrderReportByRange(LocalDateTime start, LocalDateTime end);
 }

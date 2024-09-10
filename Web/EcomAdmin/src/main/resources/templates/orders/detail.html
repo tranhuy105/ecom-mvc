@@ -21,6 +21,8 @@
                     <p><strong>Customer Phone:</strong> <span th:text="${order.customer.phoneNumber}">john.doe@example.com</span></p>
                     <p><strong>Total Amount:</strong> <span th:text="${order.totalAmount}">$100.00</span></p>
                     <p><strong>Final Amount:</strong> <span th:text="${order.finalAmount}">$90.00</span></p>
+                    <p><strong>Address:</strong> <span th:text="${order.shippingAddress}">N/A</span></p>
+                    <p><strong>Shipping Amount:</strong> <span th:text="${order.shippingAmount}">N/A</span></p>
                     <p><strong>Status:</strong> <span th:text="${order.status}">CONFIRMED</span></p>
                     <p><strong>Shipping Status:</strong> <span th:text="${order.shippingStatus}">IN_PROGRESS</span></p>
                     <p><strong>Payment Status:</strong> <span th:text="${order.paymentStatus}">IN_PROGRESS</span></p>
@@ -99,7 +101,7 @@
             <!-- Placeholder for Order Status Update -->
             <div class="card mb-4 shadow-sm border-light">
                 <div class="card-header bg-light">
-                    <h5 class="mb-0">Update Order Status (Placeholder)</h5>
+                    <h5 class="mb-0">Update Order Status</h5>
                 </div>
                 <div class="card-body">
                     <div class="form-group">

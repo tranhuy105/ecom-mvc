@@ -51,7 +51,8 @@ public class SettingServiceImpl implements SettingService {
         for (Setting setting : settings) {
             settingsCache.put(setting.getKey(), setting);
         }
-        lastCacheRefreshTime = getCurrentUTCDateTime();
+//        lastCacheRefreshTime = getCurrentUTCDateTime();
+        lastCacheRefreshTime = LocalDateTime.now();
         log.info("Settings loaded successfully");
     }
 
@@ -67,7 +68,7 @@ public class SettingServiceImpl implements SettingService {
 
         scheduledFuture = scheduler.scheduleAtFixedRate(() -> {
             try {
-                LocalDateTime lastUpdated = settingRepository.findMaxLastUpdated().atZone(ZoneId.of("UTC")).toLocalDateTime();
+                LocalDateTime lastUpdated = settingRepository.findMaxLastUpdated();
                 if (lastUpdated.isAfter(lastCacheRefreshTime)) {
                     loadSettingsIntoCache();
                     updateIntervalIfChanged();

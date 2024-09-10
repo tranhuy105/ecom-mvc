@@ -3,6 +3,7 @@ function addSku() {
         id: null,
         skuCode: $('#newSkuCode').val(),
         price: parseFloat($('#newPrice').val()) || 0,
+        cost: parseFloat($('#newCost').val()) || 0,
         discountPercent: parseFloat($('#newDiscountPercent').val()) || 0,
         stockQuantity: parseInt($('#newStockQuantity').val()) || 0,
         length: parseFloat($('#newLength').val()) || 0,
@@ -36,6 +37,7 @@ function renderSkus() {
         const row = `<tr>
                 <td><input type="text" value="${sku.skuCode}" class="form-control" data-index="${index}" data-field="skuCode"/></td>
                 <td><input type="number" step="0.01" value="${sku.price}" class="form-control" placeholder="Price" data-index="${index}" data-field="price"/></td>
+                <td><input type="number" step="0.01" value="${sku.cost}" class="form-control" placeholder="Cost" data-index="${index}" data-field="cost"/></td>
                 <td><input type="number" step="0.01" value="${sku.discountPercent}" class="form-control" placeholder="Discount %" data-index="${index}" data-field="discountPercent"/></td>
                 <td><input type="number" value="${sku.stockQuantity}" class="form-control" placeholder="Stock Quantity" data-index="${index}" data-field="stockQuantity"/></td>
                 <td>
@@ -55,7 +57,7 @@ function renderSkus() {
         const index = $(this).data('index');
         const field = $(this).data('field');
         const value = $(this).val();
-        skus[index][field] = field === 'price' || field === 'discountPercent' || field === 'length' || field === 'width' || field === 'height' || field === 'weight' ? parseFloat(value) : value;
+        skus[index][field] = field === 'price' || field === 'discountPercent' || field === 'cost' || field === 'length' || field === 'width' || field === 'height' || field === 'weight' ? parseFloat(value) : value;
         updateSkusInput();
     });
 }
@@ -63,6 +65,7 @@ function renderSkus() {
 function clearInputs() {
     $('#newSkuCode').val('');
     $('#newPrice').val('');
+    $('#newCost').val('');
     $('#newDiscountPercent').val('');
     $('#newStockQuantity').val('');
     $('#newLength').val('');

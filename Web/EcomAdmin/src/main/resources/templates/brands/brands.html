@@ -12,6 +12,7 @@
     <div>
         <form th:action="@{/brands}" class="form-inline m-3">
             <input type="search" th:value="${q}" name="q" class="form-control mb-2" required/>
+            &nbsp;&nbsp;
             <input type="submit" value="Search" class="btn btn-primary mb-2" />
             &nbsp;&nbsp;
             <input type="button" value="Clear" id="clearButton" class="btn btn-secondary mb-2"/>
@@ -62,7 +63,7 @@
 
     <div class="full-view">
         <table class="table table-bordered table-striped table-hover table-responsive-xl">
-            <thead class="thead-dark">
+            <thead>
             <tr>
                 <th>Brand ID</th>
                 <th>Brand Logo</th>

@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +22,7 @@ import java.util.stream.Collectors;
 @Component
 @RequiredArgsConstructor
 public class ProductMapper {
-
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
     private final CategoryService categoryService;
     private final BrandService brandService;
     private final ObjectMapper objectMapper;
@@ -36,8 +38,12 @@ public class ProductMapper {
         dto.setAlias(product.getAlias());
         dto.setShortDescription(product.getShortDescription());
         dto.setFullDescription(product.getFullDescription());
-        dto.setCreatedAt(product.getCreatedAt());
-        dto.setUpdatedAt(product.getUpdatedAt());
+        if (product.getCreatedAt() != null) {
+            dto.setCreatedAt(product.getCreatedAt().format(formatter));
+        }
+        if (product.getUpdatedAt() != null) {
+            dto.setUpdatedAt(product.getUpdatedAt().format(formatter));
+        }
         dto.setPrice(product.getPrice());
         dto.setDiscountPercent(product.getDiscountPercent());
         dto.setEnabled(product.isEnabled());
@@ -50,7 +56,7 @@ public class ProductMapper {
                 .map(image -> new ProductImageDTO(image.getId(), image.getName(), image.isMain()))
                 .toList());
         dto.setSkus(product.getSkus().stream()
-                .map(sku -> new SkuDTO(sku.getId(), sku.getSkuCode(), sku.getPrice(), sku.getDiscountPercent(), sku.getStockQuantity(),
+                .map(sku -> new SkuDTO(sku.getId(), sku.getSkuCode(), sku.getPrice(), sku.getCost(), sku.getDiscountPercent(), sku.getStockQuantity(),
                         sku.getLength(), sku.getWidth(), sku.getHeight(), sku.getWeight(), product.getId()))
                 .toList());
         return dto;
@@ -67,8 +73,12 @@ public class ProductMapper {
         product.setAlias(dto.getAlias());
         product.setShortDescription(dto.getShortDescription());
         product.setFullDescription(dto.getFullDescription());
-        product.setCreatedAt(dto.getCreatedAt());
-        product.setUpdatedAt(dto.getUpdatedAt());
+        if (dto.getCreatedAt() != null) {
+            product.setCreatedAt(LocalDateTime.parse(dto.getCreatedAt(), formatter));
+        }
+        if (dto.getUpdatedAt() != null) {
+            product.setUpdatedAt(LocalDateTime.parse(dto.getUpdatedAt(), formatter));
+        }
         product.setEnabled(dto.isEnabled());
         product.setDiscountPercent(dto.getDiscountPercent());
         product.setPrice(dto.getPrice());
@@ -102,6 +112,7 @@ public class ProductMapper {
                     sku.setId(skuDTO.getId());
                     sku.setSkuCode(skuDTO.getSkuCode());
                     sku.setPrice(skuDTO.getPrice());
+                    sku.setCost(skuDTO.getCost());
                     sku.setDiscountPercent(skuDTO.getDiscountPercent());
                     sku.setStockQuantity(skuDTO.getStockQuantity());
                     sku.setLength(skuDTO.getLength());

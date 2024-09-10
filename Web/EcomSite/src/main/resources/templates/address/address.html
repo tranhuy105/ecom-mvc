@@ -5,12 +5,6 @@
 <div th:replace="~{navigation :: navbar}"></div>
 
 <div class="container-fluid content mt-3">
-    <div class="mb-3">
-        <a href="/customer" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to My Account
-        </a>
-    </div>
-
     <div th:if="${message != null}" class="alert alert-success text-center m-1">
         [[${message}]]
     </div>
@@ -57,9 +51,17 @@
     </div>
     <div>&nbsp;</div>
     <div class="text-center mt-3">
-        <a th:href="@{/customer/address/new}" class="h4" style="text-decoration: underline">Add New Address</a>
+        <a th:href="@{/customer/address/new}" class="h4 btn btn-primary">Add New Address</a>
+    </div>
+
+    <div class="border-card-footer text-end">
+        <a th:href="@{/customer}" class="btn btn-outline-secondary">
+            <i class="fas fa-reply"></i> Quay lại
+        </a>
     </div>
 </div>
+
+
 
 <div class="modal fade" id="setDefaultModal" tabindex="-1" role="dialog" aria-labelledby="setDefaultModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">

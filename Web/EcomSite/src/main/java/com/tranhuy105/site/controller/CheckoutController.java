@@ -1,9 +1,6 @@
 package com.tranhuy105.site.controller;
 
-import com.tranhuy105.common.entity.Address;
-import com.tranhuy105.common.entity.Customer;
-import com.tranhuy105.common.entity.Order;
-import com.tranhuy105.common.entity.ShoppingCart;
+import com.tranhuy105.common.entity.*;
 import com.tranhuy105.site.exception.PaymentException;
 import com.tranhuy105.site.payment.OrderService;
 import com.tranhuy105.common.constant.PaymentMethod;
@@ -21,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Comparator;
 
 @Controller
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class CheckoutController {
         }
         Address address = addressService.findMainAddressForCustomer(customer);
         ShoppingCart cart = cartService.getOrCreateCartForCustomer(customer.getId());
-        model.addAttribute("cartItems", cart.getCartItems());
+        model.addAttribute("cartItems", cart.getCartItems().stream().sorted(Comparator.comparing(CartItem::getId)).toList());
         model.addAttribute("address", address == null ? "" : address.toString());
         model.addAttribute("shippingAddressId", address != null ? address.getId() : null);
         return "payment/checkout";

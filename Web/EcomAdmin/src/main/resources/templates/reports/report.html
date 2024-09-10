@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${'Sales Report'})}"></head>
+<body>
+<div class="container-fluid">
+    <div th:replace="~{navigation :: menu}"></div>
+
+    <div class="mt-2">
+        <h2>Sale Report</h2>
+    </div>
+
+    <div th:if="${message != null}" class="alert alert-success text-center">
+        [[${message}]]
+    </div>
+
+    <div th:if="${error != null}" class="alert alert-danger text-center">
+        [[${error}]]
+    </div>
+
+
+    <div>
+        <button period="last_7_days" class="btn btn-primary button-sales-by-date m-1">Last 7 days</button>
+        <button period="last_28_days" class="btn btn-light button-sales-by-date m-1">Last 28 days</button>
+        <button period="last_6_months" class="btn btn-light button-sales-by-date m-1">Last 6 Months</button>
+        <button period="last_year" class="btn btn-light button-sales-by-date m-1">Last Year</button>
+        <button class="btn btn-light button-sales-by-date m-1">Custom Date Range</button>
+    </div>
+
+    <form>
+        <div id="divCustomDateRange" class="d-none">
+            From date: <input type="date" id="startDate"> &nbsp;
+            To date: <input type="date" id="endDate"> &nbsp;
+            <button type="button" class="btn btn-secondary" id="buttonViewReportByDateRange">View</button>
+        </div>
+    </form>
+
+    <div id="chart_sales_by_date" class="justify-content-center mt-3"></div>
+
+    <div class="row justify-content-center">
+        <div class="col-2-sm">
+            <div class="card">
+                <div class="card-header"><b>Total Gross Sales</b></div>
+                <div class="card-body">
+                    <span class="h3" id="textTotalGrossSales"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-2-sm">
+            <div class="card">
+                <div class="card-header"><b>Total Net Sales</b></div>
+                <div class="card-body">
+                    <span class="h3" id="textTotalNetSales"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-2-sm">
+            <div class="card">
+                <div class="card-header"><b>Avg. Gross Sales</b></div>
+                <div class="card-body">
+                    <span class="h3" id="textAvgGrossSales"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-2-sm">
+            <div class="card">
+                <div class="card-header"><b>Avg. Net Sales</b></div>
+                <div class="card-body">
+                    <span class="h3" id="textAvgNetSales"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-2-sm">
+            <div class="card">
+                <div class="card-header"><b>Total Orders</b></div>
+                <div class="card-body">
+                    <span class="h3" id="textTotalOrders"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="toast d-flex justify-content-center" role="alert" aria-live="polite" aria-atomic="true" data-delay="3000">
+        <div role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body">
+                <span id="toastMessage"></span>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{navigation :: footer}"></div>
+</div>
+</body>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+    contextPath = "[[@{/}]]";
+    currencySymbol = "₫";
+    thousandsPointType = ",";
+    decimalPointType = ".";
+    currencySymbolPosition = "after";
+    decimalDigits = "0";
+
+    prefixCurrencySymbol = currencySymbolPosition === 'before' ? currencySymbol : '';
+    suffixCurrencySymbol = currencySymbolPosition === 'after' ? currencySymbol : '';
+
+    $(document).ready(function() {
+        google.charts.load('current', {'packages': ['corechart']});
+        google.charts.setOnLoadCallback(loadSalesReportByDate);
+    });
+
+</script>
+<script type="text/javascript" th:src="@{/js/jquery.number.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/sales_report_by_date.js}"></script>
+</html>

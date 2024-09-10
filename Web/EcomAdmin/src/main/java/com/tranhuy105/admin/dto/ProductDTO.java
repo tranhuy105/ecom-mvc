@@ -19,8 +19,8 @@ public class ProductDTO {
     private String alias;
     private String shortDescription;
     private String fullDescription;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    private String createdAt;
+    private String updatedAt;
     private boolean enabled = true;
     private Integer categoryId;
     private Integer brandId;
@@ -45,6 +45,7 @@ public class ProductDTO {
                     .append("\"id\":").append(sku.getId()).append(",")
                     .append("\"skuCode\":\"").append(sku.getSkuCode()).append("\",")
                     .append("\"price\":").append(sku.getPrice()).append(",")
+                    .append("\"cost\":").append(sku.getCost()).append(",")
                     .append("\"discountPercent\":").append(sku.getDiscountPercent()).append(",")
                     .append("\"stockQuantity\":").append(sku.getStockQuantity()).append(",")
                     .append("\"length\":").append(sku.getLength()).append(",")

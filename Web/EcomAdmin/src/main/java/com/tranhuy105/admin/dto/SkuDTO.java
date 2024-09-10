@@ -14,6 +14,7 @@ public class SkuDTO {
     private Integer id;
     private String skuCode;
     private BigDecimal price;
+    private BigDecimal cost;
     private BigDecimal discountPercent;
     private Integer stockQuantity;
     private BigDecimal length;

@@ -51,7 +51,7 @@ public class OrderController {
         try {
             OrderDetailDTO dto = orderService.findOrderDetailByOrderNumber(customer.getId(), orderNumber);
             model.addAttribute("orderDetail", dto);
-            model.addAttribute("pageTitle", dto.getOrderNumber());
+            model.addAttribute("pageTitle", "Chi tiết đơn hàng " + dto.getOrderNumber());
             return "customer/order-detail";
         } catch (AccessDeniedException | IllegalArgumentException exception) {
             model.addAttribute("message", exception.getMessage());

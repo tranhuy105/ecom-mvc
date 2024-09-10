@@ -1,6 +1,7 @@
 package com.tranhuy105.admin.service.impl;
 
 import com.tranhuy105.admin.dto.ImageInstructionDTO;
+import com.tranhuy105.admin.dto.ProductOverviewDTO;
 import com.tranhuy105.admin.repository.ProductRepository;
 import com.tranhuy105.admin.service.ProductService;
 import com.tranhuy105.admin.utils.FileUploadUtil;
@@ -12,12 +13,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.Normalizer;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -34,13 +38,33 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<Product> findAll(int page, String search, Integer category) {
-        return productRepository.findAll(PageRequest.of(page-1, PAGE_SIZE), search, category);
+    public Page<ProductOverviewDTO> findAll(int page,
+                                                String search,
+                                                Integer category,
+                                                Integer brand,
+                                                BigDecimal minPrice,
+                                                BigDecimal maxPrice,
+                                                String sort,
+                                                Boolean enabled) {
+        Sort sortBy = getSortFromString(sort);
+        Pageable pageable = PageRequest.of(page - 1, getPageSize(), sortBy);
+
+        return productRepository.findAllTest(pageable, search, category, brand, minPrice, maxPrice, enabled);
     }
 
-    @Override
-    public List<Product> lazyFetchAttribute(List<Product> products) {
-        return productRepository.findAllFull(products);
+    private Sort getSortFromString(String sort) {
+        if (sort == null || sort.isEmpty()) {
+            return Sort.by(Sort.Order.desc("updated_at"));
+        }
+
+        return switch (sort) {
+            case "oldest" -> Sort.by(Sort.Order.asc("updated_at"));
+            case "highestPrice" -> Sort.by(Sort.Order.desc("default_price"));
+            case "lowestPrice" -> Sort.by(Sort.Order.asc("default_price"));
+            case "nameAsc" -> Sort.by(Sort.Order.asc("name"));
+            case "nameDesc" -> Sort.by(Sort.Order.desc("name"));
+            default -> Sort.by(Sort.Order.desc("updated_at"));
+        };
     }
 
     @Override
@@ -81,6 +105,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.setImages(combinedImages);
+        product.setUpdatedAt(LocalDateTime.now());
         productRepository.save(product);
     }
 

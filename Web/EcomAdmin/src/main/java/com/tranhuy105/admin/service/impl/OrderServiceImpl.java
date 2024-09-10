@@ -2,6 +2,7 @@ package com.tranhuy105.admin.service.impl;
 
 import com.tranhuy105.admin.dto.OrderItemDTO;
 import com.tranhuy105.admin.dto.OrderOverviewDTO;
+import com.tranhuy105.admin.dto.ReportDTO;
 import com.tranhuy105.admin.dto.ghn.GhnOrderRequest;
 import com.tranhuy105.admin.dto.ghn.GhnOrderResponse;
 import com.tranhuy105.admin.dto.ghn.GhnTokenResponse;
@@ -247,5 +248,34 @@ public class OrderServiceImpl implements OrderService {
 
 
         return request;
+    }
+
+    @Override
+    public List<ReportDTO> getOrderReportLastXDays(long days) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(days);
+
+        List<Object[]> rawReport = orderRepository.getSalesReportByDateRange(startDate, endDate);
+        return buildReportDTO(rawReport);
+    }
+
+    @Override
+    public List<ReportDTO> getOrderReportByRange(LocalDateTime start, LocalDateTime end) {
+        List<Object[]> rawReport = orderRepository.getSalesReportByDateRange(start, end);
+        return buildReportDTO(rawReport);
+    }
+
+    private List<ReportDTO> buildReportDTO(List<Object[]> rawReport) {
+        List<ReportDTO> reportDTOList = new ArrayList<>();
+        for (Object[] record : rawReport) {
+            ReportDTO reportDTO = new ReportDTO();
+            reportDTO.setIdentifier(record[0].toString());
+            reportDTO.setGrossSales((BigDecimal) record[1]);
+            reportDTO.setNetSales((BigDecimal) record[2]);
+            reportDTO.setOrdersCount(((Number) record[3]).intValue());
+            reportDTOList.add(reportDTO);
+        }
+
+        return reportDTOList;
     }
 }

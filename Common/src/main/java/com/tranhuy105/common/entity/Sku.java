@@ -23,6 +23,9 @@ public class Sku {
     @Column(nullable = false)
     private BigDecimal price = BigDecimal.valueOf(0);
 
+    @Column(nullable = false)
+    private BigDecimal cost = BigDecimal.valueOf(0);
+
     @Column(name = "discount_percent")
     private BigDecimal discountPercent = BigDecimal.valueOf(0);
 
