@@ -3,8 +3,11 @@ package com.tranhuy105.site.controller;
 import com.tranhuy105.common.entity.Product;
 import com.tranhuy105.common.util.PaginationUtil;
 import com.tranhuy105.site.dto.ProductOverview;
+import com.tranhuy105.site.dto.ReviewDTO;
+import com.tranhuy105.site.dto.ReviewStatsDTO;
 import com.tranhuy105.site.service.CategoryService;
 import com.tranhuy105.site.service.ProductService;
+import com.tranhuy105.site.service.ReviewService;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
@@ -20,13 +23,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
+    private final ReviewService reviewService;
 
     @GetMapping("/products/{alias}")
     public String productDetailView(@PathVariable String alias,
@@ -37,6 +42,13 @@ public class ProductController {
             model.addAttribute("categoryParents", categoryService.getBreadcrumbTrail(product.getCategory()));
         }
         model.addAttribute("pageTitle", product.getName());
+
+
+//        ReviewStatsDTO reviewStats = reviewService.getReviewStatsByProductId(product.getId());
+        ReviewStatsDTO reviewStats = new ReviewStatsDTO(4.4, 102, 21, Arrays.asList(64, 22, 10, 2, 2));
+        model.addAttribute("reviewStats", reviewStats);
+
+
         return "products/product-detail";
     }
 

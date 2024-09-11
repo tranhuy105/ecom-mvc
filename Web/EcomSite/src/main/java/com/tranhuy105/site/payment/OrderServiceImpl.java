@@ -13,6 +13,7 @@ import com.tranhuy105.site.repository.SkuRepository;
 import com.tranhuy105.site.service.ShoppingCartService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,7 +41,7 @@ public class OrderServiceImpl implements OrderService {
         Address shippingAddress = validateShippingAddress(customer, shippingAddressId);
         ShoppingCart cart = validateCart(customerId);
         Order order = buildOrder(customer, shippingAddress, cart);
-//        reserveOrder(order);
+        reserveOrder(order);
         order.setReservationExpiry(LocalDateTime.now().plusMinutes(15));
         updateOrderStatus(order, OrderStatus.PENDING);
         return orderRepository.save(order);
@@ -102,6 +103,13 @@ public class OrderServiceImpl implements OrderService {
         if (order.getStatus().equals(OrderStatus.PENDING)
                 || order.getStatus().equals(OrderStatus.CONFIRMED)) {
             updateOrderStatus(order, OrderStatus.CANCELED);
+            if (!order.getStatus().equals(OrderStatus.EXPIRED)) {
+                order = orderRepository.lazyFetchItem(order);
+                if (order == null) {
+                    throw new RuntimeException("Hmm this shouldn't happening");
+                }
+                releaseStock(order);
+            }
             orderRepository.save(order);
         } else {
             throw new IllegalArgumentException("You can not cancel order at this stage");
@@ -244,17 +252,17 @@ public class OrderServiceImpl implements OrderService {
         return orderItem;
     }
 
-//    @Scheduled(fixedRate = 300000)
-//    @Transactional
-//    public void releaseExpiredReservations() {
-//        List<Order> expiredOrders = orderRepository.findExpiredOrders(LocalDateTime.now());
-//
-//        for (Order expiredOrder : expiredOrders) {
-//            releaseStock(expiredOrder);
-//            expiredOrder.setStatus(OrderStatus.EXPIRED.name());
-//            orderRepository.save(expiredOrder);
-//        }
-//    }
+    @Scheduled(fixedRate = 300000)
+    @Transactional
+    public void releaseExpiredReservations() {
+        List<Order> expiredOrders = orderRepository.findExpiredOrders(LocalDateTime.now());
+
+        for (Order expiredOrder : expiredOrders) {
+            releaseStock(expiredOrder);
+            updateOrderStatus(expiredOrder, OrderStatus.EXPIRED);
+            orderRepository.save(expiredOrder);
+        }
+    }
 
     private void releaseStock(Order order) {
         for (OrderItem orderItem : order.getOrderItems()) {

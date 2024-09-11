@@ -114,7 +114,7 @@ class CategoryServiceTest {
 
             when(categoryRepository.save(category)).thenReturn(category);
 
-            Category result = categoryService.save(category, file);
+            Category result = categoryService.save(category);
 
             assertEquals(category, result);
             verify(categoryRepository).save(category);
@@ -133,7 +133,7 @@ class CategoryServiceTest {
         try (MockedStatic<FileUploadUtil> mockedStatic = Mockito.mockStatic(FileUploadUtil.class)) {
             when(categoryRepository.save(category)).thenReturn(category);
 
-            Category result = categoryService.save(category, file);
+            Category result = categoryService.save(category);
 
             assertEquals(category, result);
             verify(categoryRepository).save(category);

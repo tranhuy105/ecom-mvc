@@ -46,6 +46,11 @@ public class Product {
     @Column(nullable = false, name = "support_cod")
     private boolean supportCod = true;
 
+    @Transient
+    private Integer rating = 0;
+    @Transient
+    private Integer reviewsCount = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;

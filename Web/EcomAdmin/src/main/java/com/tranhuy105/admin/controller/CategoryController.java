@@ -58,16 +58,13 @@ public class CategoryController {
 
     @PostMapping("/categories")
     public String saveCategory(CategoryFormDTO categoryDTO,
-                               @RequestParam(value = "file") MultipartFile file,
                                RedirectAttributes redirectAttributes
     ) {
         try {
-            categoryService.updateCategoryInCache(categoryService.save(categoryDTO.toCategory(categoryService), file));
+            categoryService.updateCategoryInCache(categoryService.save(categoryDTO.toCategory(categoryService)));
             redirectAttributes.addFlashAttribute("message", "Success");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("message", "IOException when saving category: " + e.getMessage());
         }
         return "redirect:/categories";
     }

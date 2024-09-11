@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Transactional
     @Override
-    public Category save(Category newCategory, MultipartFile image) throws IOException {
+    public Category save(Category newCategory) {
         validateCategoryNameAndAlias(newCategory);
         return categoryRepository.save(newCategory);
     }

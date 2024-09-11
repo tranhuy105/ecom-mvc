@@ -43,4 +43,10 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
     Optional<Order> findOrderDetail(String orderNumber);
 
     Optional<Order> findByOrderNumber(String orderNumber);
+
+    @Query("SELECT o FROM Order o " +
+            "LEFT JOIN FETCH o.orderItems ot " +
+            "LEFT JOIN FETCH ot.sku " +
+            "WHERE o = :order")
+    Order lazyFetchItem(Order order);
 }

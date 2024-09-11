@@ -127,13 +127,13 @@
         <!-- Reviews -->
         <div class="d-flex align-items-center mt-2">
           <div class="text-warning">
-            <i class="fa-star" th:classappend="${product.discountPercent >= 1 ? 'fas' : 'far'}"></i>
-            <i class="fa-star" th:classappend="${product.discountPercent >= 2 ? 'fas' : 'far'}"></i>
-            <i class="fa-star" th:classappend="${product.discountPercent >= 3 ? 'fas' : 'far'}"></i>
-            <i class="fa-star" th:classappend="${product.discountPercent >= 4 ? 'fas' : 'far'}"></i>
-            <i class="fa-star" th:classappend="${product.discountPercent >= 5 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.rating >= 1 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.rating >= 2 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.rating >= 3 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.rating >= 4 ? 'fas' : 'far'}"></i>
+            <i class="fa-star" th:classappend="${product.rating >= 5 ? 'fas' : 'far'}"></i>
           </div>
-          <span class="text-muted ml-2" th:text="'(' + ${product.discountPercent.intValue()} + ')'">0 reviews</span>
+          <span class="text-muted ml-2" th:text="'(' + ${product.reviewsCount} + ')'">0 reviews</span>
         </div>
 
         <!-- SKU Selection -->
@@ -273,6 +273,41 @@
     </div>
 
 
+    <div class="mt-5">
+      <h3 class="text-info font-weight-bold">Đánh giá sản phẩm</h3>
+      <div class="row mt-3">
+
+        <div class="col-md-4">
+          <div class="rating-overview">
+            <h4 th:text="'Customer reviews ' + ${reviewStats.averageRating} + ' out of 5'"></h4>
+            <p class="text-info font-weight-bold"><span th:text="${reviewStats.totalReviews}"></span> global ratings</p>
+            <div th:each="percent, stat : ${reviewStats.starDistribution}" class="d-flex align-items-center mb-2 text-info">
+              <span class="mr-2" th:text="${(stat.index + 1) + ' star'}"></span>
+
+              <div class="progress flex-grow-1" style="height: 20px;">
+                <div class="progress-bar" role="progressbar"
+                     th:style="'width: ' + ${percent} + '%'"
+                     aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+              <span class="ml-2 text-info" th:text="${percent} + '%'"></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-8 p-3 pl-3 pl-lg-5">
+          <div id="reviewsList">
+          </div>
+
+          <!-- Pagination Links -->
+          <nav aria-label="Review pagination">
+            <ul class="pagination justify-content-center" id="pagination">
+
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -302,7 +337,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -523,6 +557,119 @@
 
     loadProducts('products/related', 'related-products-container', relatedPage, productId);
     loadProducts('products/by-brand', 'brand-products-container', brandPage, brandId);
+  });
+</script>
+<script>
+  const product = [[${product.id}]];
+  const totalReviewPages = [[${reviewStats.totalPages}]]
+
+  $(document).ready(function() {
+    $(document).on('click', '.pagination a', function(e) {
+      e.preventDefault();
+      let page = $(this).data('page');
+      fetchReviews(page, product);
+    });
+
+    const $reviewList = $('#reviewsList');
+    const $pagination = $("#pagination");
+
+    function fetchReviews(page, productId) {
+      $.ajax({
+        url: contextPath + `products/${productId}/reviews?page=${page}`,
+        method: 'GET',
+        success: function(data) {
+          $reviewList.empty();
+          if (!data || data.length === 0) {
+            let noReviewHtml = `
+            <div class="text-center mt-5">
+              <div class="pt-5"></div>
+              <div class="alert alert-info" role="alert">
+                <strong>Chưa có đánh giá</strong><br />
+                Hiện tại sản phẩm này chưa có đánh giá từ khách hàng.
+              </div>
+            </div>`;
+            $reviewList.append(noReviewHtml);
+            return;
+          }
+          $.each(data, function(index, review) {
+            let reviewHtml = `
+                        <div class="media mb-3">
+                            <img class="mr-3 rounded-circle" src="${review.customerAvatar}" alt="Customer avatar" width="64">
+                            <div class="media-body">
+                                <div class="my-0">${review.customerName}</div>
+                                <small>Đánh giá lúc ${review.formatCreatedAt}</small><br />
+                                <small style="color: #c45500!important">Xác nhận đã mua hàng <i class="fas fa-check"></i></small><br />
+                                <small>
+                                    ${renderStars(review.rating)}&nbsp;(Phân loại: ${review.productVariation})
+                                </small>
+                                <p class="mt-2" style="font-size: 16px">${review.content}</p>
+                            </div>
+                        </div>`;
+            $reviewList.append(reviewHtml);
+          });
+
+          updatePagination(page, totalReviewPages);
+        },
+        error: function(error) {
+          console.error('Error fetching reviews:', error);
+        }
+      });
+    }
+
+    function renderStars(rating) {
+      let starsHtml = '';
+      for (let i = 1; i <= rating; i++) {
+        starsHtml += '<i class="fas fa-star text-warning"></i>';
+      }
+      for (let i = rating + 1; i <= 5; i++) {
+        starsHtml += '<i class="fas fa-star text-secondary"></i>';
+      }
+      return starsHtml;
+    }
+
+    function updatePagination(currentPage, totalPages) {
+      const maxVisiblePages = 5;
+      const halfVisible = Math.floor(maxVisiblePages / 2);
+
+      $pagination.empty();
+
+      if (currentPage > 1) {
+        $pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage - 1}">&laquo;</a></li>`);
+      } else {
+        $pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>`);
+      }
+
+      if (currentPage > halfVisible + 1) {
+        $pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`);
+        if (currentPage > halfVisible + 2) {
+          $pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`);
+        }
+      }
+
+      let startPage = Math.max(1, currentPage - halfVisible);
+      let endPage = Math.min(totalPages, currentPage + halfVisible);
+
+      for (let i = startPage; i <= endPage; i++) {
+        let activeClass = (i === currentPage) ? 'active' : '';
+        $pagination.append(`<li class="page-item ${activeClass}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`);
+      }
+
+      if (currentPage < totalPages - halfVisible) {
+        if (currentPage < totalPages - halfVisible - 1) {
+          $pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">...</a></li>`);
+        }
+        $pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`);
+      }
+
+      if (currentPage < totalPages) {
+        $pagination.append(`<li class="page-item"><a class="page-link" href="#" data-page="${currentPage + 1}">&raquo;</a></li>`);
+      } else {
+        $pagination.append(`<li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>`);
+      }
+    }
+
+
+    fetchReviews(1, product);
   });
 
 </script>

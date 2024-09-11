@@ -16,7 +16,7 @@ public interface CategoryService {
     Category findById(Integer id);
 
     @Transactional
-    Category save(Category newCategory, MultipartFile image) throws IOException;
+    Category save(Category newCategory);
 
     List<Category> findAllWithHierarchy();
 

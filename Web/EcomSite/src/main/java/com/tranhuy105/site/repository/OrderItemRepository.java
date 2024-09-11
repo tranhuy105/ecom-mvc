@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Integer> {
     @Query(nativeQuery = true, value =
@@ -25,4 +26,7 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Integer> {
                     "LEFT JOIN product_images pi ON pi.product_id = p.id AND pi.is_main = 1 " +
                     "WHERE ot.order_id = :id")
     List<OrderItemDTO> findFullByOrderId(Integer id);
+
+    @Query("SELECT o FROM OrderItem o LEFT JOIN FETCH o.sku WHERE o.id = :id")
+    Optional<OrderItem> findByIdWithSku(Integer id);
 }
