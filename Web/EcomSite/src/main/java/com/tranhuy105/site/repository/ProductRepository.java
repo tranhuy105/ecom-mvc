@@ -24,38 +24,38 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
                         "FROM categories child " +
                         "JOIN CategoryHierarchy parent ON parent.id = child.parent_id" +
                     ") " +
-                    "SELECT * FROM products WHERE category_id IN (SELECT id FROM CategoryHierarchy)")
-    List<Product> findAllByCategory(Pageable pageable, Integer categoryId);
+                    "SELECT id FROM products WHERE category_id IN (SELECT id FROM CategoryHierarchy)")
+    List<Integer> findAllByCategory(Pageable pageable, Integer categoryId);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM products " +
+    @Query(nativeQuery = true, value = "SELECT id FROM products " +
             "WHERE (:keyword IS NULL OR MATCH(name, short_description) AGAINST (:keyword)) " +
             "AND (category_id IN :categoryIds) " +
             "AND (:brandId IS NULL OR brand_id = :brandId) " +
             "AND (:minPrice IS NULL OR products.default_price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR products.default_price <= :maxPrice) " +
             "AND enabled = TRUE")
-    Page<Product> searchProductWithCategory(Pageable pageable,
+    Page<Integer> searchProductWithCategory(Pageable pageable,
                                 @Param("keyword") String keyword,
                                 @Param("categoryIds") List<Integer> categoryIds,
                                 @Param("brandId") Integer brandId,
                                 @Param("minPrice") BigDecimal minPrice,
                                 @Param("maxPrice") BigDecimal maxPrice);
 
-    @Query(nativeQuery = true, value = "SELECT * FROM products " +
+    @Query(nativeQuery = true, value = "SELECT id FROM products " +
             "WHERE (:keyword IS NULL OR MATCH(name, short_description) AGAINST (:keyword)) " +
             "AND (:brandId IS NULL OR brand_id = :brandId) " +
             "AND (:minPrice IS NULL OR products.default_price >= :minPrice) " +
             "AND (:maxPrice IS NULL OR products.default_price <= :maxPrice) " +
             "AND enabled = TRUE")
-    Page<Product> searchProduct(Pageable pageable,
+    Page<Integer> searchProduct(Pageable pageable,
                                             @Param("keyword") String keyword,
                                             @Param("brandId") Integer brandId,
                                             @Param("minPrice") BigDecimal minPrice,
                                             @Param("maxPrice") BigDecimal maxPrice);
 
     @EntityGraph(attributePaths = {"category", "brand", "images"})
-    @Query("SELECT p FROM Product p WHERE p IN :products")
-    List<Product> findAllFull(List<Product> products);
+    @Query("SELECT p FROM Product p WHERE p.id IN :productIds")
+    List<Product> findAllFull(List<Integer> productIds);
 
     @EntityGraph(attributePaths = {"category", "brand", "skus", "additionalDetails", "images"})
     @Query("SELECT p FROM Product p WHERE p.alias = :alias AND p.enabled = TRUE")
@@ -66,7 +66,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "p.alias AS alias, " +
             "p.short_description AS shortDescription, " +
             "p.default_price AS price, " +
-            "p.default_discount AS discountPercent, " +
+            "p.default_discount AS discountPercent," +
+            "p.rating AS rating," +
+            "p.reviews_count AS reviewsCount, " +
             "pi.name AS imagePath " +
             "FROM products p " +
             "LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_main = TRUE " +
@@ -80,6 +82,8 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "p.short_description AS shortDescription, " +
             "p.default_price AS price, " +
             "p.default_discount AS discountPercent, " +
+            "p.rating AS rating," +
+            "p.reviews_count AS reviewsCount, " +
             "pi.name AS imagePath " +
             "FROM products p " +
             "LEFT JOIN product_images pi ON p.id = pi.product_id AND pi.is_main = TRUE " +

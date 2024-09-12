@@ -12,4 +12,5 @@ public interface OrderItemDTO {
     BigDecimal getOriginalPrice();
     BigDecimal getFinalAmount();
     BigDecimal getDiscountedPercent();
+    Integer getIsReviewed();
 }

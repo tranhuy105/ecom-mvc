@@ -512,14 +512,12 @@
                     <div>
                       <h5 class="card-title text-wrap-two-line" style="font-size: 1.25rem; font-weight: bold; margin: 0; color: #dc3545;">${product.name}</h5>
                       <div class="d-flex align-items-center my-2">
-                        <div class="text-warning">
-                          <i class="fa-star ${product.discountPercent >= 1 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
-                          <i class="fa-star ${product.discountPercent >= 2 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
-                          <i class="fa-star ${product.discountPercent >= 3 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
-                          <i class="fa-star ${product.discountPercent >= 4 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
-                          <i class="fa-star ${product.discountPercent >= 5 ? 'fas' : 'far'}" style="font-size: 1rem;"></i>
+                        <div class="star-rating" style="--rating: ${product.rating}">
+                            <div class="stars-outer">
+                                <div class="stars-inner"></div>
+                            </div>
                         </div>
-                        <span class="text-muted ml-2" style="font-size: 0.875rem;">0 đánh giá</span>
+                        <span class="text-muted ml-2" style="font-size: 0.875rem;">${product.reviewsCount} đánh giá</span>
                       </div>
                       <p class="card-text text-wrap-two-line" style="margin: 0; color: #555; font-style: italic">${product.shortDescription}</p>
                     </div>
@@ -561,12 +559,25 @@
 </script>
 <script>
   const product = [[${product.id}]];
-  const totalReviewPages = [[${reviewStats.totalPages}]]
+  const totalReviewPages = [[${reviewStats.totalPages}]];
+  const totalReviews = [[${reviewStats.totalReviews}]]
 
   $(document).ready(function() {
     $(document).on('click', '.pagination a', function(e) {
       e.preventDefault();
       let page = $(this).data('page');
+      if (!totalReviews) {
+        let noReviewHtml = `
+            <div class="text-center mt-5">
+              <div class="pt-5"></div>
+              <div class="alert alert-info" role="alert">
+                <strong>Chưa có đánh giá</strong><br />
+                Hiện tại sản phẩm này chưa có đánh giá từ khách hàng.
+              </div>
+            </div>`;
+        $reviewList.append(noReviewHtml);
+        return;
+      }
       fetchReviews(page, product);
     });
 
@@ -594,7 +605,7 @@
           $.each(data, function(index, review) {
             let reviewHtml = `
                         <div class="media mb-3">
-                            <img class="mr-3 rounded-circle" src="${review.customerAvatar}" alt="Customer avatar" width="64">
+                            <img class="mr-3 rounded-circle" src="${review.customerAvatar == null ? "" : review.customerAvatar}" alt="Customer avatar" width="64">
                             <div class="media-body">
                                 <div class="my-0">${review.customerName}</div>
                                 <small>Đánh giá lúc ${review.formatCreatedAt}</small><br />

@@ -46,9 +46,10 @@ public class Product {
     @Column(nullable = false, name = "support_cod")
     private boolean supportCod = true;
 
-    @Transient
-    private Integer rating = 0;
-    @Transient
+    @Column(name = "rating", precision = 3, scale = 2)
+    private BigDecimal rating = BigDecimal.valueOf(0.0);
+
+    @Column(name = "reviews_count")
     private Integer reviewsCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)

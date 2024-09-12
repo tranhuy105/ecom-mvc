@@ -140,7 +140,7 @@ public class OrderServiceImpl implements OrderService {
             throw new AccessDeniedException("You dont have permission to view this content");
         }
 
-        List<OrderItemDTO> orderItems = orderItemRepository.findFullByOrderId(order.getId());
+        List<OrderItemDTO> orderItems = orderItemRepository.findFullByOrderId(order.getId(), customerId);
 
         OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
         orderDetailDTO.setShippingOrderCode(order.getShippingOrderCode());

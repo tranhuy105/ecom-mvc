@@ -45,6 +45,19 @@
         </div>
     </div>
 
+    <div th:fragment="product-rating(rating, reviewsCount)" class="d-flex align-items-center">
+        <div class="d-flex align-items-center">
+            <div class="star-rating" th:style="'--rating: ' + ${rating}">
+                <div class="stars-outer">
+                    <div class="stars-inner"></div>
+                </div>
+            </div>
+        </div>
+        <span class="ml-2 font-italic font-weight-bold" th:text="${rating}">4.1</span>
+        <span class="ml-1 text-muted" th:text="'(' + ${reviewsCount} + ')'">(-1)</span>
+    </div>
+
+
     <span th:fragment="format-price(price)" th:remove="tag">
         <span th:if="${CURRENCY_SYMBOL_POSITION != 'after'}">
                 <span>

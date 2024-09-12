@@ -17,7 +17,7 @@ public interface ProductService {
 
     Product findByAlias(String alias);
 
-    Page<Product> findMany(String keyword,
+    Page<Integer> findMany(String keyword,
                            Integer categoryId,
                            Integer brandId,
                            BigDecimal minPrice,
@@ -26,9 +26,9 @@ public interface ProductService {
                            String sort,
                            String sortDirection);
 
-    List<Product> lazyFetchAttribute(List<Product> rawProducts);
+    List<Product> lazyFetchAttribute(List<Integer> rawProducts);
 
-    List<Product> lazyFetchAttribute(List<Product> rawProducts, String sort, String sortDirection);
+    List<Product> lazyFetchAttribute(List<Integer> rawProducts, String sort, String sortDirection);
 
     List<Brand> findAllAvailableProductBrand();
 

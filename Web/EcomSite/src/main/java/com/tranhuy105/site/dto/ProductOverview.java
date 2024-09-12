@@ -9,5 +9,7 @@ public interface ProductOverview {
     String getShortDescription();
     BigDecimal getPrice();
     BigDecimal getDiscountPercent();
+    BigDecimal getRating();
+    Integer getReviewsCount();
     String getImagePath();
 }

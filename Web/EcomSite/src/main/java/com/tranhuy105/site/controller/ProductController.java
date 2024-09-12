@@ -44,8 +44,8 @@ public class ProductController {
         model.addAttribute("pageTitle", product.getName());
 
 
-//        ReviewStatsDTO reviewStats = reviewService.getReviewStatsByProductId(product.getId());
-        ReviewStatsDTO reviewStats = new ReviewStatsDTO(4.4, 102, 21, Arrays.asList(64, 22, 10, 2, 2));
+        ReviewStatsDTO reviewStats = reviewService.getReviewStatsByProductId(product.getId());
+//        ReviewStatsDTO reviewStats = new ReviewStatsDTO(4.4, 102, 21, Arrays.asList(64, 22, 10, 2, 2));
         model.addAttribute("reviewStats", reviewStats);
 
 
@@ -61,7 +61,7 @@ public class ProductController {
             @RequestParam(value = "b", required = false) Integer brandId,
             @RequestParam(value = "min_price", required = false) @DecimalMin("0.0") BigDecimal minPrice,
             @RequestParam(value = "max_price", required = false) @DecimalMin("0.0") BigDecimal maxPrice,
-            @RequestParam(value = "sort", required = false, defaultValue = "name") @Pattern(regexp = "name|price|created_at") String sort,
+            @RequestParam(value = "sort", required = false, defaultValue = "name") @Pattern(regexp = "name|price|created_at|rating") String sort,
             @RequestParam(value = "price_range", required = false) String priceRange,
             @RequestParam(value = "sort_direction", required = false, defaultValue = "asc") @Pattern(regexp = "asc|desc") String sortDirection
     ) {
@@ -83,7 +83,7 @@ public class ProductController {
             }
         }
 
-        Page<Product> productPage = productService.findMany(searchKeyword, categoryId, brandId, minPrice, maxPrice, page, sort, sortDirection);
+        Page<Integer> productPage = productService.findMany(searchKeyword, categoryId, brandId, minPrice, maxPrice, page, sort, sortDirection);
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("sort", sort);

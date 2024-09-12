@@ -12,6 +12,10 @@ public interface ReviewDTO {
     String getProductVariation();
 
     default String getFormatCreatedAt(){
-        return "";
+        if (getCreatedAt() == null) {
+            return "";
+        }
+
+        return getCreatedAt().format(DateTimeFormatter.ofPattern("dd MMM yyyy, HH:mm"));
     }
 }

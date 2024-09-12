@@ -66,13 +66,13 @@ public class ProductServiceImpl implements ProductService{
             return new ArrayList<>();
         }
 
-        List<Product> rawProduct = productRepository.findAllByCategory(
+        List<Integer> rawProduct = productRepository.findAllByCategory(
                 Pageable.ofSize(pageSize()),
                 category.getId()
         );
 
         if (rawProduct.isEmpty()) {
-            return rawProduct;
+            return new ArrayList<>();
         }
 
         return productRepository.findAllFull(rawProduct);
@@ -85,7 +85,7 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Page<Product> findMany(String keyword, Integer categoryId, Integer brandId, BigDecimal minPrice, BigDecimal maxPrice,
+    public Page<Integer> findMany(String keyword, Integer categoryId, Integer brandId, BigDecimal minPrice, BigDecimal maxPrice,
                                   int page, String sort, String sortDirection) {
         Pageable pageable;
         try {
@@ -105,15 +105,15 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<Product> lazyFetchAttribute(List<Product> rawProducts) {
+    public List<Product> lazyFetchAttribute(List<Integer> rawProducts) {
         if (rawProducts == null || rawProducts.isEmpty()) {
-            return rawProducts;
+            return new ArrayList<>();
         }
         return productRepository.findAllFull(rawProducts);
     }
 
     @Override
-    public List<Product> lazyFetchAttribute(List<Product> rawProducts, String sort, String sortDirection) {
+    public List<Product> lazyFetchAttribute(List<Integer> rawProducts, String sort, String sortDirection) {
         List<Product> products = lazyFetchAttribute(rawProducts);
 
         if (sort != null && sortDirection != null && products != null &&  !products.isEmpty()) {
@@ -128,6 +128,7 @@ public class ProductServiceImpl implements ProductService{
         Comparator<Product> comparator = switch (sort) {
             case "price" -> Comparator.comparing(Product::getDiscountedPrice);
             case "created_at" -> Comparator.comparing(Product::getCreatedAt);
+            case "rating" -> Comparator.comparing(Product::getRating);
             default -> Comparator.comparing(Product::getName);
         };
 

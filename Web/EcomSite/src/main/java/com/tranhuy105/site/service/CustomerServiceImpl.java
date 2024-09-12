@@ -98,6 +98,7 @@ public class CustomerServiceImpl implements CustomerService {
         customerInDB.setFirstName(accountDTO.getFirstName());
         customerInDB.setLastName(accountDTO.getLastName());
         customerInDB.setPhoneNumber(accountDTO.getPhoneNumber());
+        customerInDB.setProfilePictureUrl(generateUserAvatar(accountDTO.getFirstName() + " " + accountDTO.getLastName()));
 
         if (customerInDB.getAuthenticationType().equals(AuthenticationType.EMAIL)) {
             if (!customerInDB.getPassword().isEmpty()) {
@@ -203,5 +204,13 @@ public class CustomerServiceImpl implements CustomerService {
 
     private void encodePassword(Customer customer) {
         customer.setPassword(passwordEncoder.encode(customer.getPassword()));
+    }
+
+    private String generateUserAvatar(String fullname) {
+        if (fullname == null) {
+            throw new NullPointerException("NULL name to generate avatar");
+        }
+
+        return "https://ui-avatars.com/api/?background=0D8ABC&color=fff&name="+fullname.replaceAll(" ", "+");
     }
 }
