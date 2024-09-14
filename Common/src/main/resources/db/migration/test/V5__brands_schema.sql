@@ -1,5 +1,7 @@
 CREATE TABLE brands (
     id INT AUTO_INCREMENT PRIMARY KEY,
+    logo VARCHAR(255),
+    description VARCHAR(512),
     name VARCHAR(45) NOT NULL UNIQUE
 );
 

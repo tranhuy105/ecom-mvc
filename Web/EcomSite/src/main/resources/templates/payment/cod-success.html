@@ -7,7 +7,7 @@
 <div class="container content success-page">
     <div class="row">
         <div class="col-md-8 offset-md-2">
-            <div class="card">
+            <div th:if="${customer != null && order != null}" class="card">
                 <div class="card-header text-center bg-success text-white">
                     <h1>Đặt Hàng Thành Công</h1>
                 </div>
@@ -28,7 +28,7 @@
                     </div>
 
                     <p>Để xem chi tiết đơn hàng của bạn, hãy nhấp vào nút bên dưới:</p>
-                    <a href="#" class="btn btn-view btn-lg">Xem Đơn Hàng Của Bạn</a>
+                    <a th:href="@{'/orders/' + ${order.orderNumber}}" class="btn btn-view btn-lg">Xem Đơn Hàng Của Bạn</a>
 
                     <p class="mt-4">Đơn hàng của bạn sẽ được chúng tôi xem xét và xử lý trong vòng 3 ngày.</p>
                     <p>Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với đội hỗ trợ của chúng tôi.</p>

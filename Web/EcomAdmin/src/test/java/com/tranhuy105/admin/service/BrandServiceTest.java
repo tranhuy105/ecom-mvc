@@ -118,6 +118,7 @@ class BrandServiceTest {
         Brand brand = new Brand();
         brand.setId(1);
         brand.setName("test brand");
+        brand.setDescription("description");
         MultipartFile file = mock(MultipartFile.class);
 
         when(file.isEmpty()).thenReturn(false);
@@ -126,6 +127,7 @@ class BrandServiceTest {
         try (MockedStatic<FileUploadUtil> mockedStatic = Mockito.mockStatic(FileUploadUtil.class)) {
             mockedStatic.when(() -> FileUploadUtil.validateAndGetImageFilename(file)).thenReturn("logo.png");
             doNothing().when(FileUploadUtil.class);
+            brand.setLogo("logo.png");
             FileUploadUtil.saveFile(anyString(), anyString(), eq(file));
 
             brandService.save(brand, file);

@@ -62,12 +62,6 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order findOrderById(Integer orderId) {
-//        return orderRepository.findByIdWithPayment(orderId).orElse(null);
-        return null;
-    }
-
-    @Override
     @Transactional
     public Order createCodOrder(Integer customerId, Integer shippingAddressId) {
         Customer customer = validateCustomer(customerId);
@@ -79,7 +73,7 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         Order order = buildOrder(customer, shippingAddress, cart);
-//        reserveOrder(order);
+        reserveOrder(order);
         order.setReservationExpiry(LocalDateTime.now().plusDays(3));
         updateOrderStatus(order, OrderStatus.PENDING);
         Order savedOrder = orderRepository.save(order);
@@ -252,7 +246,7 @@ public class OrderServiceImpl implements OrderService {
         return orderItem;
     }
 
-    @Scheduled(fixedRate = 300000)
+    @Scheduled(initialDelay = 300000, fixedRate = 300000)
     @Transactional
     public void releaseExpiredReservations() {
         List<Order> expiredOrders = orderRepository.findExpiredOrders(LocalDateTime.now());

@@ -11,7 +11,8 @@
 
     <modules>
         <module>Common</module>
-        <module>Web</module>
+        <module>Web/EcomAdmin</module>
+        <module>Web/EcomSite</module>
     </modules>
 
     <properties>

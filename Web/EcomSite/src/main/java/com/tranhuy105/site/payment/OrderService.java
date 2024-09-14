@@ -12,8 +12,6 @@ public interface OrderService {
     @Transactional
     Order createOrder(Integer customerId, Integer shippingAddressId);
 
-    Order findOrderById(Integer orderId);
-
     @Transactional
     Order createCodOrder(Integer customerId, Integer shippingAddressId);
 

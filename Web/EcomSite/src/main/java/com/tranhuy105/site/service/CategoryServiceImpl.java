@@ -26,7 +26,7 @@ public class CategoryServiceImpl implements CategoryService{
     @Override
     public Category findByAlias(String alias) {
         return categoryRepository.findByAlias(alias).orElseThrow(
-                () -> new NotFoundException("")
+                () -> new NotFoundException("Category not found")
         );
     }
 

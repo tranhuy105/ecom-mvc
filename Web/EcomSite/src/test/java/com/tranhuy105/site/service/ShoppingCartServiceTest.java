@@ -4,6 +4,7 @@ import com.tranhuy105.common.entity.CartItem;
 import com.tranhuy105.common.entity.Customer;
 import com.tranhuy105.common.entity.ShoppingCart;
 import com.tranhuy105.common.entity.Sku;
+import com.tranhuy105.site.repository.CartItemRepository;
 import com.tranhuy105.site.repository.CustomerRepository;
 import com.tranhuy105.site.repository.ShoppingCartRepository;
 import com.tranhuy105.site.repository.SkuRepository;
@@ -27,6 +28,9 @@ class ShoppingCartServiceTest {
 
     @Mock
     private ShoppingCartRepository shoppingCartRepository;
+
+    @Mock
+    private CartItemRepository cartItemRepository;
 
     @Mock
     private CustomerRepository customerRepository;

@@ -63,6 +63,14 @@ public class BrandServiceImpl implements BrandService {
             throw new IllegalArgumentException("Invalid brand name.");
         }
 
+        if (brand.getLogo() == null || brand.getLogo().isBlank()) {
+            throw new IllegalArgumentException("Brand must have an logo");
+        }
+
+        if (brand.getDescription() == null || brand.getDescription().isBlank()) {
+            throw new IllegalArgumentException("Brand must have an description");
+        }
+
         Optional<Integer> brandDB = brandRepository.findByName(brand.getName());
         if (brandDB.isPresent()) {
             if (brand.getId() == null) {

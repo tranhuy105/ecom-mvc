@@ -36,8 +36,8 @@ spring:
 
 payment:
   vnpay:
-    tmn: ${VNPAY_TMN_CODE}
-    secret: ${VNPAY_SECRET}
+    tmn: ${VNPAY_TMN_CODE:N/a}
+    secret: ${VNPAY_SECRET:N/a}
 
 logging:
   level:

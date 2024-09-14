@@ -1,0 +1,2 @@
+ALTER TABLE product_images
+    ADD COLUMN is_main BOOLEAN NOT NULL DEFAULT FALSE;

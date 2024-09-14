@@ -275,7 +275,7 @@
 
     <div class="mt-5">
       <h3 class="text-info font-weight-bold">Đánh giá sản phẩm</h3>
-      <div class="row mt-3">
+      <div id="reviewSection" class="row mt-3">
 
         <div class="col-md-4">
           <div class="rating-overview">
@@ -553,14 +553,26 @@
       loadProducts('products/by-brand', 'brand-products-container', brandPage, brandId);
     });
 
-    loadProducts('products/related', 'related-products-container', relatedPage, productId);
-    loadProducts('products/by-brand', 'brand-products-container', brandPage, brandId);
+    const relatedProductSession = $('#related-products').get(0);
+    let initialLoaded = false;
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !initialLoaded) {
+          loadProducts('products/related', 'related-products-container', relatedPage, productId);
+          loadProducts('products/by-brand', 'brand-products-container', brandPage, brandId);
+          initialLoaded = true;
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(relatedProductSession);
   });
 </script>
 <script>
   const product = [[${product.id}]];
   const totalReviewPages = [[${reviewStats.totalPages}]];
-  const totalReviews = [[${reviewStats.totalReviews}]]
+  const totalReviews = [[${reviewStats.totalReviews}]];
 
   $(document).ready(function() {
     $(document).on('click', '.pagination a', function(e) {
@@ -585,6 +597,7 @@
     const $pagination = $("#pagination");
 
     function fetchReviews(page, productId) {
+      console.log("FETCH REVIEW");
       $.ajax({
         url: contextPath + `products/${productId}/reviews?page=${page}`,
         method: 'GET',
@@ -679,8 +692,20 @@
       }
     }
 
+    const reviewSection = $('#reviewSection').get(0);
+    let initialLoaded = false;
 
-    fetchReviews(1, product);
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !initialLoaded) {
+          fetchReviews(1, product);
+          initialLoaded = true;
+        }
+      });
+    }, { threshold: 0.5 });
+
+    observer.observe(reviewSection);
+
   });
 
 </script>
