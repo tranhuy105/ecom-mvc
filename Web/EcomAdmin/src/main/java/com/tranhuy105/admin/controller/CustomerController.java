@@ -25,7 +25,7 @@ public class CustomerController {
                                       @RequestParam(required = false) String sortBy,
                                       @RequestParam(required = false) String sortDirection,
                                       Model model) {
-        final int pageSize = 1;
+        final int pageSize = 15;
         Page<CustomerDTO> customerPage = customerService.findAll(search, enabled, sortBy, sortDirection, page - 1, pageSize);
         model.addAttribute("customers", customerPage.getContent());
         PaginationUtil.setPaginationAttributes(page, pageSize, search, model, customerPage);

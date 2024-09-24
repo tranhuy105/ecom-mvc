@@ -2,42 +2,41 @@
 <html lang="en">
 <head th:replace="~{fragments :: page_head('Order Detail')}">
 </head>
-<body class="">
+<body>
+<style>
+    .card-header {
+        font-weight: bold;
+    }
+    .form-group label {
+        font-weight: 500;
+    }
+    .form-control, .btn {
+        border-radius: 8px;
+    }
+    #loadItemsBtn, #updateStatusBtn, #loadProvince {
+        width: 100%;
+        margin-top: 10px;
+    }
+</style>
 <div th:replace="~{navigation :: menu}"></div>
 <div class="container mt-4">
+    <h2>Order Details</h2>
     <div class="row">
-        <div class="col-12">
-            <h2>Order Details</h2>
-
-            <!-- Order Information -->
+        <!-- Order Information -->
+        <div class="col-md-6">
             <div class="card mb-4 shadow-sm border-light">
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0">Order Information</h5>
                 </div>
                 <div class="card-body">
-                    <p><strong>Order Number:</strong> <span th:text="${order.orderNumber}">ORD-123456</span></p>
-                    <p><strong>Customer Name:</strong> <span th:text="${order.customer.fullName}">John Doe</span></p>
-                    <p><strong>Customer Email:</strong> <span th:text="${order.customer.email}">john.doe@example.com</span></p>
-                    <p><strong>Customer Phone:</strong> <span th:text="${order.customer.phoneNumber}">john.doe@example.com</span></p>
-                    <p><strong>Total Amount:</strong> <span th:text="${order.totalAmount}">$100.00</span></p>
-                    <p><strong>Final Amount:</strong> <span th:text="${order.finalAmount}">$90.00</span></p>
-                    <p><strong>Address:</strong> <span th:text="${order.shippingAddress}">N/A</span></p>
-                    <p><strong>Shipping Amount:</strong> <span th:text="${order.shippingAmount}">N/A</span></p>
-                    <p><strong>Status:</strong> <span th:text="${order.status}">CONFIRMED</span></p>
-                    <p><strong>Shipping Status:</strong> <span th:text="${order.shippingStatus}">IN_PROGRESS</span></p>
-                    <p><strong>Payment Status:</strong> <span th:text="${order.paymentStatus}">IN_PROGRESS</span></p>
-                </div>
-            </div>
-
-            <!-- Payment Information -->
-            <div class="card mb-4 shadow-sm border-light" th:if="${order.payment != null}">
-                <div class="card-header bg-warning text-white">
-                    <h5 class="mb-0">Payment Information</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Payment Status:</strong> <span th:text="${order.payment.status}">PAID</span></p>
-                    <p><strong>Payment Method:</strong> <span th:text="${order.payment.paymentMethod}">Credit Card</span></p>
-                    <p><strong>Transaction ID:</strong> <span th:text="${order.payment.transactionId}">TRX123456789</span></p>
+                    <div>
+                        <p><strong>Order Number:</strong> <span th:text="${order.orderNumber}">ORD-123456</span></p>
+                        <p><strong>Customer Name:</strong> <span th:text="${order.customer.fullName}">John Doe</span></p>
+                        <p><strong>Email:</strong> <span th:text="${order.customer.email}">john.doe@example.com</span></p>
+                        <p><strong>Phone:</strong> <span th:text="${order.customer.phoneNumber}">john.doe@example.com</span></p>
+                        <p><strong>Total Amount:</strong> <span th:text="${order.totalAmount}">$100.00</span></p>
+                        <p><strong>Final Amount:</strong> <span th:text="${order.finalAmount}">$90.00</span></p>
+                    </div>
                 </div>
             </div>
 
@@ -50,22 +49,51 @@
                     <div th:each="history : ${order.statusHistory}">
                         <p><strong>Status:</strong> <span th:text="${history.status}">CONFIRMED</span></p>
                         <p><strong>Changed At:</strong> <span th:text="${history.changedAt}">2024-09-01 12:00:00</span></p>
-                        <hr/>
+                        <hr />
                     </div>
                 </div>
             </div>
 
-            <!-- Placeholder for Print Mã Vận Đơn -->
+            <!-- Order Items Section -->
             <div class="card mb-4 shadow-sm border-light">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">Print Mã Vận Đơn (Placeholder)</h5>
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Order Items</h5>
                 </div>
                 <div class="card-body">
-                    <button id="printShippingLabelButton" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
+                    <div class="row" id="orderItemsContainer">
+                        <p class="px-2">No items loaded. Click the button to load items.</p>
+                    </div>
+                </div>
+            </div>
+            <button id="loadItemsBtn" class="btn btn-primary mb-3"><i class="fa fa-refresh"></i> Load Items</button>
+        </div>
+
+        <!-- Shipping Information -->
+        <div class="col-md-6">
+            <div class="card mb-4 shadow-sm border-light">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0">Shipping Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Shipping Amount:</strong> <span th:text="${order.shippingAmount}">$10.00</span></p>
+                    <p><strong>Shipping Status:</strong> <span th:text="${order.shippingStatus}">IN_PROGRESS</span></p>
+                    <p><strong>Shipping Address:</strong> <span th:text="${order.shippingAddress}">1234 Street, City</span></p>
                 </div>
             </div>
 
-            <!-- Dropdown for Selecting Province -->
+            <!-- Payment Information -->
+            <div class="card mb-4 shadow-sm border-light" th:if="${order.payment != null}">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Payment Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Payment Status:</strong> <span th:text="${order.payment.status}">PAID</span></p>
+                    <p><strong>Payment Method:</strong> <span th:text="${order.payment.paymentMethod}">Credit Card</span></p>
+                    <p><strong>Transaction ID:</strong> <span th:text="${order.payment.transactionId}">TRX123456789</span></p>
+                </div>
+            </div>
+
+            <!-- COD Order (Giao Hàng Nhanh) -->
             <div class="card mb-4 shadow-sm border-light">
                 <div class="card-header bg-light">
                     <h5>COD Order (Giao Hàng Nhanh)</h5>
@@ -77,28 +105,33 @@
                             <option value="">Select Province</option>
                         </select>
                     </div>
-
-                    <!-- Dropdown for Selecting District -->
                     <div class="form-group">
                         <label for="districtSelect">District</label>
                         <select class="form-control" id="districtSelect" disabled>
                             <option value="">Select District</option>
                         </select>
                     </div>
-
-                    <!-- Dropdown for Selecting Ward -->
                     <div class="form-group">
                         <label for="wardSelect">Ward</label>
                         <select class="form-control" id="wardSelect" disabled>
                             <option value="">Select Ward</option>
                         </select>
                     </div>
+                    <button id="loadProvince" class="btn btn-primary">Load All COD supported Provinces</button>
                 </div>
-                <div id="loadProvince" class="btn btn-primary m-3" style="cursor: pointer">Load All COD supported Province</div>
             </div>
 
+            <!-- Print Mã Vận Đơn -->
+            <div class="card mb-4 shadow-sm border-light text-center">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Print Mã Vận Đơn</h5>
+                </div>
+                <div class="card-body">
+                    <button id="printShippingLabelButton" class="btn btn-primary"><i class="fa fa-print"></i> Print</button>
+                </div>
+            </div>
 
-            <!-- Placeholder for Order Status Update -->
+            <!-- Update Order Status -->
             <div class="card mb-4 shadow-sm border-light">
                 <div class="card-header bg-light">
                     <h5 class="mb-0">Update Order Status</h5>
@@ -117,22 +150,10 @@
                     <button id="updateStatusBtn" class="btn btn-success">Update Status</button>
                 </div>
             </div>
-
-            <!-- Order Items Section -->
-            <div class="card mb-4 shadow-sm border-light">
-                <div class="card-header bg-info text-white">
-                    <h5 class="mb-0">Order Items</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row" id="orderItemsContainer">
-                        <p class="px-2">No items loaded. Click the button to load items.</p>
-                    </div>
-                </div>
-            </div>
-            <button id="loadItemsBtn" class="btn btn-primary mb-3"><i class="fa fa-refresh"></i> Load Items</button>
         </div>
     </div>
 </div>
+
 
 <div th:replace="~{navigation :: footer}"></div>
 
@@ -146,7 +167,7 @@
             $.get(contextPath + "orders/" + orderId + "/items", function(data) {
                 let itemsHtml = '';
                 $.each(data, function(index, item) {
-                    itemsHtml += '<div class="col-md-4 mb-3">';
+                    itemsHtml += '<div class="col-md-6 mb-3">';
                     itemsHtml += '  <div class="card shadow-sm border-light">';
                     itemsHtml += '    <img src="' + item.productImage + '" alt="Product Image" class="card-img-top" style="height: 200px; object-fit: cover;">';
                     itemsHtml += '    <div class="card-body">';

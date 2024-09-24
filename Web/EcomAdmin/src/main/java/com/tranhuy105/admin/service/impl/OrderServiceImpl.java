@@ -40,7 +40,7 @@ public class OrderServiceImpl implements OrderService {
         );
 
         if (!order.getStatus().canTransit(OrderStatus.CONFIRMED)) {
-            throw new IllegalStateException("Cannot confirm this order. Invalid status transition.");
+            throw new IllegalStateException("Invalid status transition.");
         }
 
         updateOrderStatus(order, OrderStatus.CONFIRMED);
@@ -93,7 +93,7 @@ public class OrderServiceImpl implements OrderService {
         );
 
         if (!order.getStatus().canTransit(OrderStatus.PREPARING)) {
-            throw new IllegalStateException("Cannot confirm this order. Invalid status transition.");
+            throw new IllegalStateException("Invalid status transition.");
         }
 
         GhnOrderRequest request = buildGhnOrderRequest(order, wardCode, districtId);

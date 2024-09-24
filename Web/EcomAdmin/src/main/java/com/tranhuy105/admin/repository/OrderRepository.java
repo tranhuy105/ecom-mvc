@@ -23,7 +23,8 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "o.finalAmount as finalAmount, " +
             "o.status as status, " +
             "o.shippingStatus as shippingStatus, " +
-            "o.paymentStatus as paymentStatus " +
+            "o.paymentStatus as paymentStatus," +
+            "o.createdAt as createdAt " +
             "FROM Order o WHERE " +
             "(:orderStatus IS NULL OR o.status = :orderStatus) AND " +
             "(:shippingStatus IS NULL OR o.shippingStatus = :shippingStatus) AND " +

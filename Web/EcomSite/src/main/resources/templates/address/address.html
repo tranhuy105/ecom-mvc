@@ -1,63 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:replace="~{fragments :: page_head('Address')}"></head>
+<head>
+    <link rel="stylesheet" type="text/css" th:href="@{/account-sidebar.css}" />
+</head>
 <body>
 <div th:replace="~{navigation :: navbar}"></div>
+<div th:if="${message != null}" class="alert alert-success text-center m-1">
+    [[${message}]]
+</div>
+<div class="container-fluid content d-flex">
+    <div th:replace="~{navigation:: sidebar('address')}" class="mr-4"></div>
+    <div class="m-1 mt-4 container">
+        <div class="row">
+            <th:block th:each="address, status: ${addressList}">
+                <div class="col-sm-6 mt-2">
+                    <div class="card" th:classappend="${address.mainAddress ? 'bg-warning' : ''}">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <b>Address #[[${status.count}]]</b>
 
-<div class="container-fluid content mt-3">
-    <div th:if="${message != null}" class="alert alert-success text-center m-1">
-        [[${message}]]
-    </div>
+                                    <th:block th:if="${address.mainAddress}">
+                                        <span class="text-danger">[Default]</span>
+                                    </th:block>
 
-    <div class="row m-1">
-        <th:block th:each="address, status: ${addressList}">
-            <div class="col-sm-6 mt-2">
-                <div class="card" th:classappend="${address.mainAddress ? 'bg-warning' : ''}">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                <b>Address #[[${status.count}]]</b>
+                                    <th:block th:unless="${address.mainAddress}">
+                                        <a href="#" class="text-primary set-default" th:data-address-id="${address.id}">[Set default]</a>
+                                    </th:block>
 
-                                <th:block th:if="${address.mainAddress}">
-                                    <span class="text-danger">[Default]</span>
-                                </th:block>
-
-                                <th:block th:unless="${address.mainAddress}">
-                                    <a href="#" class="text-primary set-default" th:data-address-id="${address.id}">[Set default]</a>
-                                </th:block>
-
-                            </div>
-                            <div class="col">
-                                <div class="float-right">
-                                    <a class="fas fa-edit icon-dark" title="Edit this address"
-                                       th:href="@{'/customer/address/edit/' + ${address.id}}"></a>
-                                    &nbsp;
-                                    <a class="fas fa-trash icon-dark link-delete" title="Delete this address"
-                                       href="#" th:data-address-id="${address.id}"></a>
+                                </div>
+                                <div class="col">
+                                    <div class="float-right">
+                                        <a class="fas fa-edit icon-dark" title="Edit this address"
+                                           th:href="@{'/customer/address/edit/' + ${address.id}}"></a>
+                                        &nbsp;
+                                        <a class="fas fa-trash icon-dark link-delete" title="Delete this address"
+                                           href="#" th:data-address-id="${address.id}"></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body">
-                        <p><strong>Address Line 1:</strong> [[${address.addressLine1}]]</p>
-                        <p><strong>Address Line 2:</strong> [[${address.addressLine2}]]</p>
-                        <p><strong>City:</strong> [[${address.city}]]</p>
-                        <p><strong>State:</strong> [[${address.state}]]</p>
-                        <p><strong>Postal Code:</strong> [[${address.postalCode}]]</p>
+                        <div class="card-body">
+                            <p><strong>Address Line 1:</strong> [[${address.addressLine1}]]</p>
+                            <p><strong>Address Line 2:</strong> [[${address.addressLine2}]]</p>
+                            <p><strong>City:</strong> [[${address.city}]]</p>
+                            <p><strong>State:</strong> [[${address.state}]]</p>
+                            <p><strong>Postal Code:</strong> [[${address.postalCode}]]</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </th:block>
-    </div>
-    <div>&nbsp;</div>
-    <div class="text-center mt-3">
-        <a th:href="@{/customer/address/new}" class="h4 btn btn-primary">Add New Address</a>
-    </div>
-
-    <div class="border-card-footer text-end">
-        <a th:href="@{/customer}" class="btn btn-outline-secondary">
-            <i class="fas fa-reply"></i> Quay lại
-        </a>
+            </th:block>
+        </div>
+        <div>&nbsp;</div>
+        <div class="text-center">
+            <a th:href="@{/customer/address/new}" class="h4 btn btn-primary">Add New Address</a>
+        </div>
     </div>
 </div>
 

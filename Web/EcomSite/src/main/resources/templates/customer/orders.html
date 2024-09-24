@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head th:replace="~{fragments :: page_head(${'Đơn đặt hàng của tôi'})}"></head>
+<head>
+  <link rel="stylesheet" type="text/css" th:href="@{/account-sidebar.css}" />
+</head>
 <body>
 <style>
   .order-card {
@@ -26,10 +29,9 @@
   [[${message}]]
 </div>
 
-<div class="container-fluid content">
+<div class="container-fluid content d-flex">
+  <div th:replace="~{navigation:: sidebar('orders')}" class="mr-4"></div>
   <div class="container mt-4">
-    <h1 class="mb-4">Đơn đặt hàng của tôi</h1>
-
     <div class="row">
       <div class="col-12">
         <div th:if="${orders.isEmpty()}" class="alert alert-info" role="alert">

@@ -257,6 +257,9 @@
       <h3 class="text-info font-weight-bold">Liên quan đến sản phẩm này</h3>
       <div id="related-products-container" class="d-flex overflow-auto mt-4">
       </div>
+        <div id="loading-spinner-related" class="spinner-border text-info mx-auto mt-2" role="status" style="display: none">
+          <span class="sr-only">Loading...</span>
+        </div>
       <div class="text-center">
         <button id="loadMoreRelated" class="btn btn-outline-secondary mt-3 btn-custom-width">Xem thêm</button>
       </div>
@@ -267,6 +270,9 @@
       <h3 class="text-info font-weight-bold">Sản phẩm khác của [[${product.brand.name}]]</h3>
       <div id="brand-products-container" class="d-flex overflow-auto mt-4">
       </div>
+        <div id="loading-spinner-brand" class="spinner-border text-info mx-auto mt-2" role="status" style="display: none">
+          <span class="sr-only">Loading...</span>
+        </div>
       <div class="text-center">
         <button id="loadMoreBrand" class="btn btn-outline-secondary mt-3 btn-custom-width">Xem thêm</button>
       </div>
@@ -488,11 +494,24 @@
     const productId = [[${product.category.id}]];
     const brandId = [[${product.brand.id}]];
 
+    const relatedLoader = $("#loading-spinner-related");
+    const brandLoader = $("#loading-spinner-brand");
+
     function loadProducts(url, container, page, variable) {
       if (page > 2) {
         $(`#${container} ~ .text-center .btn`).hide();
         return;
       }
+
+      let loader;
+      if (container === "related-products-container") {
+        loader = relatedLoader;
+      } else {
+        loader = brandLoader;
+      }
+
+      console.log("SHOW LOADER");
+      loader.css('display', 'flex');
 
       $.ajax({
         url: contextPath + url,
@@ -538,6 +557,13 @@
               $(`#${container} ~ .text-center .btn`).hide();
             }
           }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Error fetching products: " + textStatus, errorThrown);
+        },
+        complete: function () {
+          console.log("HIDE LOADER");
+          loader.css('display', 'none');
         }
       });
     }

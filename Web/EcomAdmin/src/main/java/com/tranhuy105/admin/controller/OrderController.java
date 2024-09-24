@@ -12,8 +12,10 @@ import com.tranhuy105.common.entity.Order;
 import com.tranhuy105.common.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.SortDirection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,7 +67,7 @@ public class OrderController {
             Model model) {
         Page<OrderOverviewDTO> orderPage = orderService.listOrders(orderStatus, shippingStatus, paymentStatus,
                 convertToLocalDateTimeViaInstant(startDate), convertToLocalDateTimeViaInstant(endDate),
-                search, PageRequest.of(page - 1, 24));
+                search, PageRequest.of(page - 1, 24, Sort.by("createdAt").descending()));
         PaginationUtil.setPaginationAttributes(page, 24, search, model, orderPage);
         model.addAttribute("orders", orderPage.getContent());
 //        model.addAttribute("orders", new ArrayList<>());

@@ -73,8 +73,7 @@
                 <th>Total Amount</th>
                 <th>Final Amount</th>
                 <th>Status</th>
-                <th>Shipping</th>
-                <th>Payment</th>
+                <th>Timestamp</th>
                 <th>Actions</th>
             </tr>
             </thead>
@@ -85,8 +84,7 @@
                 <td th:text="${order.totalAmount}">100.00</td>
                 <td th:text="${order.finalAmount}">90.00</td>
                 <td th:text="${order.status}">CONFIRMED</td>
-                <td th:text="${order.shippingStatus}">IN_PROGRESS</td>
-                <td th:text="${order.paymentStatus}">PAID</td>
+                <td th:text="${order.createdAt}">N/A</td>
                 <td>
                     <a th:href="@{/orders/{orderNumber}/detail(orderNumber=${order.orderNumber})}" class="btn btn-sm btn-info">
                         <i class="fa fa-eye"></i> View

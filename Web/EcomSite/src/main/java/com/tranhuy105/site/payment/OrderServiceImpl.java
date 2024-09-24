@@ -176,8 +176,14 @@ public class OrderServiceImpl implements OrderService {
 
 
     private Customer validateCustomer(Integer customerId) {
-        return customerRepository.findByIdWithAddress(customerId)
+        Customer customer = customerRepository.findByIdWithAddress(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
+
+        if (customer.getPhoneNumber() == null) {
+            throw new IllegalArgumentException("Customer Must Registered A Phone Number Before Placing Orders.");
+        }
+
+        return customer;
     }
 
     private Address validateShippingAddress(Customer customer, Integer shippingAddressId) {

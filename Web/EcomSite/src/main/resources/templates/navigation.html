@@ -113,6 +113,36 @@
     </div>
 </div>
 
+<div th:fragment="sidebar(activePage)" class="p-3 bg-white shadow-sm rounded">
+    <button class="btn btn-primary d-md-none" type="button" data-toggle="collapse" data-target="#sidebar" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation" style="position: fixed; top: 50%; left: 0; z-index: 999; background-color: rgba(0, 0, 0, 0.5); border: none; padding: 10px; border-radius: 0 5px 5px 0;">
+        <i class="fas fa-chevron-right" style="color: white;"></i>
+    </button>
+
+    <div id="sidebar" class="collapse d-md-block bg-white shadow-sm rounded p-3" style="width: 220px; height: 100vh; position: sticky; top: 0;">
+        <h5 class="font-weight-bold text-center mb-4">Danh mục</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link px-3 py-2 my-1" th:classappend="${activePage == 'account' ? 'active' : ''}" th:href="@{/customer}">
+                    <i class="fas fa-user"></i> Account Details
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link px-3 py-2 my-1" th:classappend="${activePage == 'orders' ? 'active' : ''}" th:href="@{/orders/me}">
+                    <i class="fas fa-box"></i> Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link px-3 py-2 my-1" th:classappend="${activePage == 'address' ? 'active' : ''}" th:href="@{/customer/address}">
+                    <i class="fas fa-map-marker-alt"></i> Addresses
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
 
     <div th:fragment="pagination(totalItems, currentPage, totalPages, startCount, endCount, q, baseUrl)"
          class="text-center" th:if="${totalItems > 0}" style="cursor: pointer">
