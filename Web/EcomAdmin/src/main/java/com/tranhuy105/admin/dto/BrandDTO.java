@@ -19,6 +19,7 @@ public class BrandDTO {
     private String name;
     private String logo;
     private String logoPath = "/images/default_user.jpg";
+    private String description;
     private List<CategoryDTO> categories = new ArrayList<>();
     private List<Integer> categoryIds = new ArrayList<>();
 
@@ -30,6 +31,7 @@ public class BrandDTO {
                 .toList();
         this.categoryIds = this.categories.stream().map(CategoryDTO::getId).toList();
         this.logo = brand.getLogo();
+        this.description = brand.getDescription();
     }
 
     public Brand toBrand(CategoryService categoryService) {
@@ -41,6 +43,8 @@ public class BrandDTO {
         Brand brand = new Brand();
         brand.setId(this.id);
         brand.setName(this.name);
+        brand.setDescription(this.description);
+        brand.setLogo(this.logo);
         brand.setCategories(validCategories);
         return brand;
     }

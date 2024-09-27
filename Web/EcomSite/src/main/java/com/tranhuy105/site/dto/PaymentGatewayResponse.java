@@ -5,7 +5,8 @@ import lombok.Data;
 @Data
 public class PaymentGatewayResponse {
     private String transactionId;
-    private String status;
+    private String statusCode;
+    private String statusMessage;
     private String paymentMethod;
     private String orderNumber;
     private String gatewayResponse;

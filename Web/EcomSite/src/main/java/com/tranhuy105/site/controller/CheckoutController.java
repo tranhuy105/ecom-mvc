@@ -10,6 +10,7 @@ import com.tranhuy105.site.service.CustomerService;
 import com.tranhuy105.site.service.ShoppingCartService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ import java.util.Comparator;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/checkout")
+@Slf4j
 public class CheckoutController {
     private final CustomerService customerService;
     private final ShoppingCartService cartService;
@@ -55,6 +57,7 @@ public class CheckoutController {
                              HttpServletRequest request,
                              RedirectAttributes redirectAttributes) {
         PaymentMethod selectedPaymentMethod = PaymentMethod.valueOf(paymentMethod);
+
         Customer customer = customerService.getCustomerFromAuthentication(authentication);
         if (customer == null) {
             model.addAttribute("pageTitle", "Unauthorized");
@@ -86,7 +89,7 @@ public class CheckoutController {
                 redirectAttributes.addFlashAttribute("message", exception.getMessage());
                 return "redirect:/checkout/review";
             } catch (Exception exception) {
-                exception.printStackTrace();
+                log.error("Lỗi xảy ra khi tạo COD order", exception);
                 redirectAttributes.addFlashAttribute("message", "Có lỗi xảy ra khi xử lí yêu cầu của bạn. vui lòng thử lại sau.");
                 return "redirect:/checkout/review";
             }

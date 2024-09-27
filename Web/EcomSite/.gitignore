@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 run-site.bat
+run_ecommerce.sh
 
 ### STS ###
 .apt_generated

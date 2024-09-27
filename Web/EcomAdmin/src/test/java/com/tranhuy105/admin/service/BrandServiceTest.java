@@ -114,40 +114,26 @@ class BrandServiceTest {
     }
 
     @Test
-    void testSaveWithLogo() throws IOException {
+    void testSaveWithLogo(){
         Brand brand = new Brand();
-        brand.setId(1);
         brand.setName("test brand");
         brand.setDescription("description");
-        MultipartFile file = mock(MultipartFile.class);
-
-        when(file.isEmpty()).thenReturn(false);
-        when(file.getOriginalFilename()).thenReturn("logo.png");
-
-        try (MockedStatic<FileUploadUtil> mockedStatic = Mockito.mockStatic(FileUploadUtil.class)) {
-            mockedStatic.when(() -> FileUploadUtil.validateAndGetImageFilename(file)).thenReturn("logo.png");
-            doNothing().when(FileUploadUtil.class);
-            brand.setLogo("logo.png");
-            FileUploadUtil.saveFile(anyString(), anyString(), eq(file));
-
-            brandService.save(brand, file);
-
-            verify(brandRepository).save(brand);
-        }
+        brand.setLogo("logo.png");
+        brandService.save(brand);
+        verify(brandRepository).save(brand);
     }
 
     @Test
     void testSaveWithoutLogo() {
         Brand brand = new Brand();
         brand.setName("test brand");
+        brand.setDescription("description");
         brand.setId(null);
-
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.isEmpty()).thenReturn(true);
+        brand.setLogo(null);
 
         IllegalArgumentException thrown = assertThrows(
                 IllegalArgumentException.class,
-                () -> brandService.save(brand, file),
+                () -> brandService.save(brand),
                 "Expected save() to throw, but it didn't"
         );
 

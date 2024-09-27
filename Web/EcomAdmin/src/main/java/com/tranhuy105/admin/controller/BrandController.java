@@ -63,16 +63,13 @@ public class BrandController {
 
     @PostMapping("/brands")
     public String saveBrand(BrandDTO brandDTO,
-                            @RequestParam(value = "file") MultipartFile file,
                             RedirectAttributes redirectAttributes
     ) {
         try {
-            brandService.save(brandDTO.toBrand(categoryService), file);
+            brandService.save(brandDTO.toBrand(categoryService));
             redirectAttributes.addFlashAttribute("message", "Success");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("message", e.getMessage());
-        } catch (IOException e) {
-            redirectAttributes.addFlashAttribute("message", "IOException when saving category: " + e.getMessage());
         }
         return "redirect:/brands";
     }

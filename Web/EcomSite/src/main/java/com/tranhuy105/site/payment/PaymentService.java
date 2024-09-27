@@ -15,4 +15,6 @@ public interface PaymentService {
 
     @Transactional
     PaymentGatewayResponse handlePaymentCallback(Map<String, String> params, PaymentMethod paymentMethod);
+
+    PaymentGatewayResponse parsePaymentResponse(Map<String, String> params, PaymentMethod paymentMethod);
 }

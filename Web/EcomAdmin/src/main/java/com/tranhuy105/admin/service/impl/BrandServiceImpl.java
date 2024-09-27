@@ -53,7 +53,7 @@ public class BrandServiceImpl implements BrandService {
 
     @Transactional
     @Override
-    public void save(Brand brand, MultipartFile file) throws IOException {
+    public void save(Brand brand) {
         validateBrand(brand);
         brandRepository.save(brand);
     }
@@ -61,10 +61,6 @@ public class BrandServiceImpl implements BrandService {
     private void validateBrand(Brand brand) {
         if (brand.getName()== null || brand.getName().isBlank()) {
             throw new IllegalArgumentException("Invalid brand name.");
-        }
-
-        if (brand.getLogo() == null || brand.getLogo().isBlank()) {
-            throw new IllegalArgumentException("Brand must have an logo");
         }
 
         if (brand.getDescription() == null || brand.getDescription().isBlank()) {
@@ -79,6 +75,14 @@ public class BrandServiceImpl implements BrandService {
 
             if (!brand.getId().equals(brandDB.get())) {
                 throw new IllegalArgumentException("Brand Name Already Exists.");
+            }
+
+            if (brand.getLogo() == null || brand.getLogo().isBlank()) {
+                brand.setLogo(brand.getLogo());
+            }
+        } else {
+            if (brand.getLogo() == null || brand.getLogo().isBlank()) {
+                throw new IllegalArgumentException("Brand must have an logo");
             }
         }
     }

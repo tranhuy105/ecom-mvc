@@ -18,7 +18,7 @@ public interface BrandService {
     Brand findById(Integer id);
 
     @Transactional
-    void save(Brand brand, MultipartFile file) throws IOException;
+    void save(Brand brand);
 
     void delete(Integer id);
 }

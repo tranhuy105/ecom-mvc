@@ -2,6 +2,7 @@ package com.tranhuy105.site.payment.client;
 
 import com.tranhuy105.common.entity.Order;
 import com.tranhuy105.site.dto.PaymentGatewayResponse;
+import com.tranhuy105.site.exception.PaymentException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,6 +62,20 @@ public class VNPayClient implements PaymentGatewayClient {
 
     @Override
     public PaymentGatewayResponse parseCallback(Map<String, String> parameters) {
+        String vnpSecureHash = parameters.get("vnp_SecureHash");
+
+        parameters.remove("vnp_SecureHash");
+
+        // Generate the secure hash based on the incoming parameters (excluding the vnp_SecureHash itself)
+        String hashData = generateQueryString(parameters, false);
+        String generatedSecureHash = generateSecureHash(hashData, VNPAY_HASH_SECRET);
+
+        // Verify the signature
+        if (!vnpSecureHash.equals(generatedSecureHash)) {
+            throw new PaymentException("Invalid VNPay callback signature");
+        }
+
+        // Continue processing if the signature is valid
         String status = parameters.get("vnp_ResponseCode");
         String transactionId = parameters.get("vnp_TransactionNo");
         String orderNumber = parameters.get("vnp_TxnRef");
@@ -77,7 +92,8 @@ public class VNPayClient implements PaymentGatewayClient {
         response.setAmount(amountInt);
         response.setTransactionId(transactionId);
         response.setOrderNumber(orderNumber);
-        response.setStatus(status);
+        response.setStatusCode(status);
+        response.setStatusMessage(status != null ? getStatusMessage(status) : "N/A");
         return response;
     }
 
@@ -120,4 +136,31 @@ public class VNPayClient implements PaymentGatewayClient {
             return "";
         }
     }
+
+    private String getStatusMessage(String statusCode) {
+        return switch (statusCode) {
+            case "00" -> "Giao dịch thành công";
+            case "07" -> "Trừ tiền thành công. Giao dịch bị nghi ngờ (liên quan tới lừa đảo, giao dịch bất thường).";
+            case "09" ->
+                    "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng.";
+            case "10" ->
+                    "Giao dịch không thành công do: Khách hàng xác thực thông tin thẻ/tài khoản không đúng quá 3 lần";
+            case "11" ->
+                    "Giao dịch không thành công do: Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.";
+            case "12" -> "Giao dịch không thành công do: Thẻ/Tài khoản của khách hàng bị khóa.";
+            case "13" ->
+                    "Giao dịch không thành công do Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.";
+            case "24" -> "Giao dịch không thành công do: Khách hàng hủy giao dịch";
+            case "51" ->
+                    "Giao dịch không thành công do: Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.";
+            case "65" ->
+                    "Giao dịch không thành công do: Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.";
+            case "75" -> "Ngân hàng thanh toán đang bảo trì.";
+            case "79" ->
+                    "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch.";
+            case "99" -> "Các lỗi khác (lỗi còn lại, không có trong danh sách mã lỗi đã liệt kê)";
+            default -> "Mã lỗi không xác định: " + statusCode;
+        };
+    }
+
 }

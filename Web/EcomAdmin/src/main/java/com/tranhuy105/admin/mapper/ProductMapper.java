@@ -38,6 +38,8 @@ public class ProductMapper {
         dto.setAlias(product.getAlias());
         dto.setShortDescription(product.getShortDescription());
         dto.setFullDescription(product.getFullDescription());
+        dto.setRating(product.getRating());
+        dto.setReviewsCount(product.getReviewsCount());
         if (product.getCreatedAt() != null) {
             dto.setCreatedAt(product.getCreatedAt().format(formatter));
         }
@@ -56,7 +58,8 @@ public class ProductMapper {
                 .map(image -> new ProductImageDTO(image.getId(), image.getName(), image.isMain()))
                 .toList());
         dto.setSkus(product.getSkus().stream()
-                .map(sku -> new SkuDTO(sku.getId(), sku.getSkuCode(), sku.getPrice(), sku.getCost(), sku.getDiscountPercent(), sku.getStockQuantity(),
+                .map(sku -> new SkuDTO(sku.getId(), sku.getSkuCode(), sku.getPrice(), sku.getCost(), sku.getDiscountPercent(),
+                        sku.getSaleStart(), sku.getSaleEnd(), sku.getStockQuantity(),
                         sku.getLength(), sku.getWidth(), sku.getHeight(), sku.getWeight(), product.getId()))
                 .toList());
         return dto;
@@ -84,6 +87,8 @@ public class ProductMapper {
         product.setPrice(dto.getPrice());
         product.setCategory(dto.getCategoryId() != null ? categoryService.findById(dto.getCategoryId()) : null);
         product.setBrand(dto.getBrandId() != null ? brandService.findById(dto.getBrandId()) : null);
+        product.setRating(dto.getRating());
+        product.setReviewsCount(dto.getReviewsCount());
 
         product.setAdditionalDetails(dto.getAdditionalDetails().stream()
                 .map(detailDTO -> {
@@ -120,6 +125,8 @@ public class ProductMapper {
                     sku.setHeight(skuDTO.getHeight());
                     sku.setWeight(skuDTO.getWeight());
                     sku.setProduct(product);
+                    sku.setSaleStart(skuDTO.getSaleStart());
+                    sku.setSaleEnd(skuDTO.getSaleEnd());
                     return sku;
                 })
                 .collect(Collectors.toSet()));

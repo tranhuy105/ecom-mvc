@@ -1,7 +1,8 @@
 server:
-  port: 80
+  port: 8000
   servlet:
     context-path: /site
+  shutdown: graceful
 
 spring:
   datasource:

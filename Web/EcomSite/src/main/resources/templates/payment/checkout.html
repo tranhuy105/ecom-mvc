@@ -56,11 +56,11 @@
                                 <img th:src="@{/images/vnpay.png}" style="height: 30px; object-fit: cover" alt="VNPay" class="payment-logo mr-3">
                             </div>
                         </div>
-                        <div class="payment-option text-white p-3 mb-3" style="cursor: pointer;" id="payment-paypal">
-                            <div class="text-center">
-                                <img th:src="@{/images/paypal.png}" alt="PayPal" style="height: 30px; object-fit: cover" class="payment-logo mr-3">
-                            </div>
-                        </div>
+<!--                        <div class="payment-option text-white p-3 mb-3" style="cursor: pointer;" id="payment-paypal">-->
+<!--                            <div class="text-center">-->
+<!--                                <img th:src="@{/images/paypal.png}" alt="PayPal" style="height: 30px; object-fit: cover" class="payment-logo mr-3">-->
+<!--                            </div>-->
+<!--                        </div>-->
                     </div>
                 </div>
             </div>
@@ -207,6 +207,7 @@
         $('input[name="paymentChoice"]').on('change', function () {
             if ($(this).val() === 'IMMEDIATE') {
                 $('#immediate-payment-options').removeClass('d-none');
+                $('#payment-vnpay').click()
             } else {
                 $('#immediate-payment-options').addClass('d-none');
                 $('.payment-option').removeClass('active border border-dark');

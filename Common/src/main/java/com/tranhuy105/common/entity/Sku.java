@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "skus")
@@ -29,6 +30,11 @@ public class Sku {
     @Column(name = "discount_percent")
     private BigDecimal discountPercent = BigDecimal.valueOf(0);
 
+    @Column(name = "sale_start")
+    private LocalDateTime saleStart;
+    @Column(name = "sale_end")
+    private LocalDateTime saleEnd;
+
     @Column(name = "stock_quantity",nullable = false)
     private Integer stockQuantity;
 
@@ -50,6 +56,16 @@ public class Sku {
         BigDecimal discountAmount = price.multiply(discountPercent).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
         return price.subtract(discountAmount);
     }
+
+    public boolean isOnSale() {
+        LocalDateTime now = LocalDateTime.now();
+        return saleStart != null
+                && saleEnd != null
+                && now.isAfter(saleStart)
+                && now.isBefore(saleEnd)
+                && discountPercent.compareTo(BigDecimal.ZERO) > 0;
+    }
+
 
     public BigDecimal getShippingCost() {
        return BigDecimal.ZERO;

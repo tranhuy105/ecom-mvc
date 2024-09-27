@@ -21,6 +21,7 @@
             <th>Stock Quantity</th>
             <th>Dimensions (LxWxH)</th>
             <th>Weight</th>
+            <th>Sales</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -62,6 +63,15 @@
         <div class="col-md-6 col-lg-3">
             <label for="newWeight" class="form-label">Weight</label>
             <input type="number" step="0.01" id="newWeight" class="form-control" placeholder="Weight"/>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <label for="newSaleStart" class="form-label">Sale Start</label>
+            <input type="datetime-local" id="newSaleStart" class="form-control" placeholder="Sale Start"/>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <label for="newSaleEnd" class="form-label">Sale End</label>
+            <input type="datetime-local" id="newSaleEnd" class="form-control" placeholder="Sale End"/>
         </div>
     </div>
     <div class="w-50 mx-auto py-3">

@@ -10,7 +10,9 @@ function addSku() {
         width: parseFloat($('#newWidth').val()) || 0,
         height: parseFloat($('#newHeight').val()) || 0,
         weight: parseFloat($('#newWeight').val()) || 0,
-        productId: parseInt($('#id').val()) || null
+        productId: parseInt($('#id').val()) || null,
+        saleStart: $('#newSaleStart').val(),
+        saleEnd: $('#newSaleEnd').val()
     };
     skus.push(newSku);
     updateSkusInput();
@@ -47,6 +49,10 @@ function renderSkus() {
                 </td>
                 <td><input type="number" step="0.01" value="${sku.weight}" class="form-control" placeholder="Weight" data-index="${index}" data-field="weight"/></td>
                 <td>
+                    <input type="datetime-local" value="${sku.saleStart}" class="form-control mb-1" placeholder="Sale Start" data-index="${index}" data-field="saleStart"/>
+                    <input type="datetime-local" value="${sku.saleEnd}" class="form-control mb-1" placeholder="Sale End" data-index="${index}" data-field="saleEnd"/>
+                </td>
+                <td>
                     <button type="button" class="btn btn-danger btn-sm" onclick="removeSku(${index})">Remove</button>
                 </td>
             </tr>`;
@@ -57,10 +63,18 @@ function renderSkus() {
         const index = $(this).data('index');
         const field = $(this).data('field');
         const value = $(this).val();
-        skus[index][field] = field === 'price' || field === 'discountPercent' || field === 'cost' || field === 'length' || field === 'width' || field === 'height' || field === 'weight' ? parseFloat(value) : value;
+
+        if (field === 'saleStart' || field === 'saleEnd') {
+            skus[index][field] = value;
+        } else {
+            skus[index][field] = (field === 'price' || field === 'discountPercent' || field === 'cost' || field === 'length' || field === 'width' || field === 'height' || field === 'weight')
+                ? parseFloat(value)
+                : value;
+        }
         updateSkusInput();
     });
 }
+
 
 function clearInputs() {
     $('#newSkuCode').val('');
@@ -72,6 +86,8 @@ function clearInputs() {
     $('#newWidth').val('');
     $('#newHeight').val('');
     $('#newWeight').val('');
+    $('#newSaleStart').val('');
+    $('#newSaleEnd').val('');
 }
 
 $(document).ready(function () {

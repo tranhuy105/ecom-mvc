@@ -148,6 +148,7 @@
                       th:data-discount="${sku.discountPercent}"
                       th:data-discount-price="${sku.discountedPrice}"
                       th:data-stock="${sku.stockQuantity}"
+                      th:data-on-sale="${sku.onSale}"
                       th:data-shipping-cost="${sku.shippingCost}"
                       th:text="${sku.skuCode}"
                       th:classappend="${iterStat.index == 0} ? 'btn-primary' : 'btn-outline-primary'"
@@ -440,13 +441,14 @@
     function updateSkuInfo(skuButton) {
       const price = skuButton.data('price');
       const discount = skuButton.data('discount');
+      const onSale = skuButton.data('on-sale');
       const stock = skuButton.data('stock');
       const discountedPrice = skuButton.data("discount-price")
       currentSelectedSkuId = skuButton.data("id");
 
       const listPriceElement = $('#listPrice');
 
-      if (discount > 0) {
+      if (onSale) {
         listPriceElement.addClass("strikethrough")
         listPriceElement.text('Giá gốc: '+formatCurrency(price));
         $('#finalPrice').text(formatCurrency(discountedPrice));

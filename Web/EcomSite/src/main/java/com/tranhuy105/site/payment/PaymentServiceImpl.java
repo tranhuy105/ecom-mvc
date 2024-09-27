@@ -60,7 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         try {
-            boolean isSuccessful = paymentClient.isPaymentSuccessful(response.getStatus());
+            boolean isSuccessful = paymentClient.isPaymentSuccessful(response.getStatusCode());
             OrderStatusHistory history = new OrderStatusHistory();
             history.setOrder(order);
             if (isSuccessful) {
@@ -85,6 +85,12 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         return response;
+    }
+
+    @Override
+    public PaymentGatewayResponse parsePaymentResponse(Map<String, String> params, PaymentMethod paymentMethod) {
+        PaymentGatewayClient paymentClient = getPaymentClient(paymentMethod);
+        return paymentClient.parseCallback(params);
     }
 
 

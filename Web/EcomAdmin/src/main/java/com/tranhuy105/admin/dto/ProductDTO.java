@@ -4,6 +4,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class ProductDTO {
     private String fullDescription;
     private String createdAt;
     private String updatedAt;
+    private BigDecimal rating;
+    private Integer reviewsCount;
     private boolean enabled = true;
     private Integer categoryId;
     private Integer brandId;
@@ -33,6 +36,8 @@ public class ProductDTO {
     public String getSkusJson() {
         StringBuilder sb = new StringBuilder();
         sb.append("[");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
         boolean first = true;
         for (SkuDTO sku : skus) {
@@ -51,7 +56,26 @@ public class ProductDTO {
                     .append("\"length\":").append(sku.getLength()).append(",")
                     .append("\"width\":").append(sku.getWidth()).append(",")
                     .append("\"height\":").append(sku.getHeight()).append(",")
-                    .append("\"weight\":").append(sku.getWeight()).append(",")
+                    .append("\"weight\":").append(sku.getWeight()).append(",");
+
+            // Handle saleStart and saleEnd (null-safe)
+            sb.append("\"saleStart\":");
+            if (sku.getSaleStart() != null) {
+                sb.append("\"").append(sku.getSaleStart().format(formatter)).append("\"");
+            } else {
+                sb.append("null");
+            }
+
+            sb.append(",");
+
+            sb.append("\"saleEnd\":");
+            if (sku.getSaleEnd() != null) {
+                sb.append("\"").append(sku.getSaleEnd().format(formatter)).append("\"");
+            } else {
+                sb.append("null");
+            }
+
+            sb.append(",")
                     .append("\"productId\":").append(sku.getProductId())
                     .append("}");
         }
