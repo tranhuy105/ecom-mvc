@@ -77,8 +77,6 @@ public class ReviewRepositoryTest {
         order.setShippingAmount(BigDecimal.valueOf(20.00));
         order.setFinalAmount(BigDecimal.valueOf(220.00));
         order.setStatus(OrderStatus.PENDING);
-        order.setPaymentStatus(PaymentStatus.PENDING);
-        order.setShippingStatus(ShippingStatus.PENDING);
         order.setReservationExpiry(LocalDateTime.now().plusDays(1));
         order.setShippingAddress(customer.getAddresses().stream().findFirst().orElseThrow());
         order = orderRepository.save(order);

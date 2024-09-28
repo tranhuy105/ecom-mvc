@@ -24,14 +24,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VNPayClient implements PaymentGatewayClient {
     private static final String VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    private static final String VNPAY_RETURN_URL = "http://localhost:80/site/payment/vnpay/callback";
+    private static final String VNPAY_RETURN_URL = "http://localhost:8000/site/payment/vnpay/callback";
     @Value("${payment.vnpay.tmn}")
     private String VNPAY_TMN_CODE;
     @Value("${payment.vnpay.secret}")
     private String VNPAY_HASH_SECRET;
 
     @Override
-    public String createPaymentURL(Order order, HttpServletRequest request) {
+    public String createPaymentURL(Order order, String userIp) {
         Map<String, String> vnpParams = new HashMap<>();
         vnpParams.put("vnp_Version", "2.1.0");
         vnpParams.put("vnp_Command", "pay");
@@ -43,7 +43,7 @@ public class VNPayClient implements PaymentGatewayClient {
         vnpParams.put("vnp_OrderType", "other");
         vnpParams.put("vnp_Locale", "vn");
         vnpParams.put("vnp_ReturnUrl", VNPAY_RETURN_URL);
-        vnpParams.put("vnp_IpAddr", request.getRemoteAddr());
+        vnpParams.put("vnp_IpAddr", userIp);
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");

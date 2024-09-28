@@ -38,7 +38,9 @@ public class PaymentController {
     @GetMapping("/vnpay/callback")
     public String handleVNPayCallback(@RequestParam Map<String, String> params, Model model) {
         try {
-            PaymentGatewayResponse response = paymentService.parsePaymentResponse(params, PaymentMethod.VNPAY);
+//            PaymentGatewayResponse response = paymentService.parsePaymentResponse(params, PaymentMethod.VNPAY);
+            PaymentGatewayResponse response = paymentService.handlePaymentCallback(params, PaymentMethod.VNPAY);
+
             return handlePaymentResponse(response, model);
         } catch (IllegalArgumentException exception) {
             model.addAttribute("message", exception.getMessage());

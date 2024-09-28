@@ -73,8 +73,6 @@ class OrderRepositoryTest {
         testOrder.setShippingAmount(BigDecimal.valueOf(20.00));
         testOrder.setFinalAmount(BigDecimal.valueOf(220.00));
         testOrder.setStatus(OrderStatus.PENDING);
-        testOrder.setPaymentStatus(PaymentStatus.PENDING);
-        testOrder.setShippingStatus(ShippingStatus.PENDING);
         testOrder.setReservationExpiry(LocalDateTime.now().plusDays(1));
 
         orderRepository.save(testOrder);

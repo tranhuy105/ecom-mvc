@@ -6,6 +6,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
@@ -24,5 +26,10 @@ public class GlobalExceptionHandler {
     public String handleBadRequest(Model model) {
         model.addAttribute("status", 400);
         return "error";
+    }
+
+    @ExceptionHandler({AsyncRequestNotUsableException.class, AsyncRequestTimeoutException.class})
+    public void handleSseClientException(Exception exception) {
+        log.debug(exception.getMessage());
     }
 }

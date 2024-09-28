@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface PaymentService {
     @Transactional
-    String initiatePayment(Order order, PaymentMethod paymentMethod, HttpServletRequest request) throws PaymentException;
+    String initiatePayment(Order order, PaymentMethod paymentMethod, String userIp) throws PaymentException;
 
     @Transactional
     PaymentGatewayResponse handlePaymentCallback(Map<String, String> params, PaymentMethod paymentMethod);

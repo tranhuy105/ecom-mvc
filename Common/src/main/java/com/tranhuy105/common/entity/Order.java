@@ -1,8 +1,6 @@
 package com.tranhuy105.common.entity;
 
 import com.tranhuy105.common.constant.OrderStatus;
-import com.tranhuy105.common.constant.PaymentStatus;
-import com.tranhuy105.common.constant.ShippingStatus;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -46,14 +44,6 @@ public class Order {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
-
-    @Column(name = "payment_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
-
-    @Column(name = "shipping_status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private ShippingStatus shippingStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipping_address_id", nullable = false)

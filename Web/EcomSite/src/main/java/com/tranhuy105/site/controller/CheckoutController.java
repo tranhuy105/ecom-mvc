@@ -8,6 +8,7 @@ import com.tranhuy105.site.payment.PaymentService;
 import com.tranhuy105.site.service.AddressService;
 import com.tranhuy105.site.service.CustomerService;
 import com.tranhuy105.site.service.ShoppingCartService;
+import com.tranhuy105.site.service.SseService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Comparator;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,7 +34,6 @@ public class CheckoutController {
     private final CustomerService customerService;
     private final ShoppingCartService cartService;
     private final OrderService orderService;
-    private final PaymentService paymentService;
     private final AddressService addressService;
 
     @GetMapping("/review")
@@ -66,22 +69,18 @@ public class CheckoutController {
         }
 
         if (!PaymentMethod.COD.equals(selectedPaymentMethod)) {
-            Order order = orderService.createOrder(customer.getId(), shippingAddressId);
+            Order order = orderService.createOrder(customer.getId(), shippingAddressId, selectedPaymentMethod, request);
             if (order == null) {
                 model.addAttribute("pageTitle", "Order Not Found.");
                 model.addAttribute("message", "System can not process your order confirmation request.");
                 return "message";
             }
-            try {
-                String paymentUrl = paymentService.initiatePayment(order, selectedPaymentMethod, request);
-                return "redirect:" + paymentUrl;
-            } catch (PaymentException | IllegalArgumentException e) {
-                redirectAttributes.addFlashAttribute("message", e.getMessage());
-                return "redirect:/checkout/review";
-            }
+
+            // return the waiting page;
+            return "/payment/pending";
         } else {
             try {
-                Order codOrder = orderService.createCodOrder(customer.getId(), shippingAddressId);
+                Order codOrder = orderService.createOrder(customer.getId(), shippingAddressId, PaymentMethod.COD, request);
                 redirectAttributes.addFlashAttribute("order", codOrder);
                 redirectAttributes.addFlashAttribute("customer", customer);
                 return "redirect:/orders/cod-success";

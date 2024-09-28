@@ -24,9 +24,7 @@ public class OrderDetailDTO {
     private BigDecimal discountAmount;
     private BigDecimal finalAmount;
     private BigDecimal shippingAmount;
-    private String shippingStatus;
     private String orderStatus;
-    private String paymentStatus;
     private List<OrderItemDTO> items;
     private List<OrderHistoryDTO> history;
     private PaymentDTO payment;

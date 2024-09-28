@@ -61,7 +61,7 @@ public class ProductController {
             @RequestParam(value = "b", required = false) Integer brandId,
             @RequestParam(value = "min_price", required = false) @DecimalMin("0.0") BigDecimal minPrice,
             @RequestParam(value = "max_price", required = false) @DecimalMin("0.0") BigDecimal maxPrice,
-            @RequestParam(value = "sort", required = false, defaultValue = "name") @Pattern(regexp = "name|price|created_at|rating") String sort,
+            @RequestParam(value = "sort", required = false, defaultValue = "name") @Pattern(regexp = "name|price|updated_at|rating") String sort,
             @RequestParam(value = "price_range", required = false) String priceRange,
             @RequestParam(value = "sort_direction", required = false, defaultValue = "asc") @Pattern(regexp = "asc|desc") String sortDirection
     ) {

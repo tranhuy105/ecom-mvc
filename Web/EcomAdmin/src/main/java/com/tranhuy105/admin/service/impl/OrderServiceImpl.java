@@ -58,28 +58,8 @@ public class OrderServiceImpl implements OrderService {
         statusHistory.setStatus(newStatus.name());
         order.getStatusHistory().add(statusHistory);
 
-        switch (newStatus) {
-            case CANCELED:
-                order.setPaymentStatus(PaymentStatus.FAILED);
-                order.getPayment().setStatus(PaymentStatus.FAILED);
-                order.setShippingStatus(ShippingStatus.CANCELED);
-                break;
-
-            case DELIVERED:
-                order.setShippingStatus(ShippingStatus.DELIVERED);
-                order.setPaymentStatus(PaymentStatus.PAID);
-                break;
-
-            case PREPARING:
-                order.setShippingStatus(ShippingStatus.PENDING);
-                break;
-
-            case IN_TRANSIT:
-                order.setShippingStatus(ShippingStatus.IN_TRANSIT);
-                break;
-
-            default:
-                break;
+        if (newStatus == OrderStatus.CANCELED) {
+            order.getPayment().setStatus(PaymentStatus.FAILED);
         }
 
         orderRepository.save(order);
@@ -103,7 +83,6 @@ public class OrderServiceImpl implements OrderService {
             order.setShippingOrderCode(response.getData().getOrder_code());
             order.setExpectedDeliveryTime(response.getData().getExpected_delivery_time());
             order.setShippingAmount(new BigDecimal(response.getData().getTotal_fee()));
-            order.setShippingStatus(ShippingStatus.IN_TRANSIT);
             updateOrderStatus(order, OrderStatus.PREPARING);
             return response.getData();
         } else {
@@ -193,7 +172,7 @@ public class OrderServiceImpl implements OrderService {
     private GhnOrderRequest buildGhnOrderRequest(Order order, String wardCode, Integer districtId) {
         GhnOrderRequest request = new GhnOrderRequest();
 
-        request.setPayment_type_id(PaymentStatus.PAID.equals(order.getPaymentStatus()) ? 1 : 2);
+        request.setPayment_type_id(2);
         request.setFrom_name("Trần Huy 105 Shop");
         request.setFrom_phone("0342880966");
         request.setFrom_address("Dia Chi Cua Toi Test");

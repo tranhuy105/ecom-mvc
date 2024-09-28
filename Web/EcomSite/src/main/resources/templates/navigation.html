@@ -39,15 +39,25 @@
                         </li>
                     </th:block>
                     <th:block sec:authorize="isAuthenticated()">
+
+
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/customer}"><span class="fas fa-user">&nbsp;</span>[[${#authentication.principal.fullName}]]</a>
                         </li>
+
                         <li class="nav-item">
-                            <a class="nav-link" href="javascript: document.logoutForm.submit()"><span class="fas fa-sign-out-alt">&nbsp;</span>Đăng xuất</a>
+                            <a class="nav-link position-relative" href="#">
+                                <span class="fas fa-bell fa-x"></span>
+                                <span id="notificationCount" class="badge badge-danger">0</span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript: document.logoutForm.submit()"><span class="fas fa-sign-out-alt"></span></a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" th:href="@{/customer/cart}">
-                                <span class="fas fa-shopping-cart"></span> Giỏ hàng
+                                <span class="fas fa-shopping-cart"></span>
                             </a>
                         </li>
                     </th:block>

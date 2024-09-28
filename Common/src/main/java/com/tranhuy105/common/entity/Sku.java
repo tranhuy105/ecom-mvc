@@ -48,13 +48,25 @@ public class Sku {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
+    public BigDecimal getDiscountPercent() {
+        if (isOnSale()) {
+            return this.discountPercent;
+        } else {
+            return BigDecimal.ZERO;
+        }
+    }
+
     public BigDecimal getDiscountedPrice() {
         if (price == null || discountPercent == null) {
             return BigDecimal.ZERO;
         }
 
-        BigDecimal discountAmount = price.multiply(discountPercent).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
-        return price.subtract(discountAmount);
+        if (isOnSale()) {
+            BigDecimal discountAmount = price.multiply(discountPercent).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
+            return price.subtract(discountAmount);
+        } else {
+            return price;
+        }
     }
 
     public boolean isOnSale() {

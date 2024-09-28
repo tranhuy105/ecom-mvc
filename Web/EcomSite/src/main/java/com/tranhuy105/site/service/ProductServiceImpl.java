@@ -127,7 +127,7 @@ public class ProductServiceImpl implements ProductService{
     private Comparator<Product> getComparator(String sort, String sortDirection) {
         Comparator<Product> comparator = switch (sort) {
             case "price" -> Comparator.comparing(Product::getDiscountedPrice);
-            case "created_at" -> Comparator.comparing(Product::getCreatedAt);
+            case "updated_at" -> Comparator.comparing(Product::getUpdatedAt);
             case "rating" -> Comparator.comparing(Product::getRating);
             default -> Comparator.comparing(Product::getName);
         };

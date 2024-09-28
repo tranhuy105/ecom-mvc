@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="~{fragments :: page_head(${'Redirecting'})}"></head>
+<body>
+<div th:replace="~{navigation :: navbar}"></div>
+<div class="container-fluid content">
+
+    <div class="modal fade" id="redirect-modal" tabindex="-1" role="dialog" aria-labelledby="redirect-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="redirect-modal-label">Redirecting to Payment Gateway</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Please wait while we redirect you to the payment gateway...</p>
+                    <div class="text-center">
+                        <button id="open-payment-btn" class="btn btn-primary" style="display: none;">Proceed to Payment</button>
+                        <i id="spinner" class="fas fa-spinner fa-spin fa-3x" style="display: none;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div th:replace="~{navigation :: footer}"></div>
+
+</body>
+<script>
+    const contextPath = '[[@{/}]]'
+    $(document).ready(function() {
+        $("#redirect-modal").modal({
+            backdrop: 'static',
+            keyboard: false
+        }).modal('show');
+
+        if ($('#notificationCount').length > 0) {
+            let eventSource;
+            let paymentWindow = null;
+
+            function startSSE() {
+                eventSource = new EventSource(contextPath + "sse/connect");
+
+                eventSource.addEventListener("notification", function (event) {
+                    const notificationCount = $("#notificationCount");
+                    let currentCount = parseInt(notificationCount.text(), 10);
+                    notificationCount.text(currentCount + 1);
+
+                    $("#notificationBell").addClass("new-notification");
+                });
+
+                eventSource.addEventListener("payment-initiated-ok", function (event) {
+                    const paymentUrl = event.data;
+                    console.log("Payment URL received:", paymentUrl);
+
+                    const paymentBtn = $("#open-payment-btn");
+                    paymentBtn.show();
+                    $("#spinner").hide();
+
+                    paymentBtn.off("click").on("click", function() {
+                        const width = 600;
+                        const height = 800;
+                        const left = (screen.width / 2) - (width / 2);
+                        const top = (screen.height / 2) - (height / 2);
+
+                        paymentWindow = window.open(paymentUrl, "_blank", `width=${width},height=${height},scrollbars=yes,resizable=yes,top=${top},left=${left}`);
+                        $(this).hide();
+                        $("#spinner").show();
+                    });
+                });
+
+                eventSource.addEventListener("payment-complete", function (event) {
+                    const orderNumber = event.data;
+
+                    if (paymentWindow && !paymentWindow.closed) {
+                        paymentWindow.close()
+                        paymentWindow = null;
+                    }
+
+                    window.location.href = `${contextPath}orders/${orderNumber}`;
+                });
+
+                eventSource.onopen = function () {
+                    console.log("subscribe to event stream..")
+                }
+                eventSource.onerror = function () {
+                    console.error("SSE connection error. Reconnecting...");
+                    eventSource.close();
+                    setTimeout(startSSE, 500);
+                };
+            }
+
+            startSSE();
+
+            window.addEventListener('beforeunload', function(event) {
+                if (eventSource) {
+                    console.log("Closing EventSource before page unload.");
+                    eventSource.close();
+                }
+            });
+        }
+    });
+
+</script>
+</html>

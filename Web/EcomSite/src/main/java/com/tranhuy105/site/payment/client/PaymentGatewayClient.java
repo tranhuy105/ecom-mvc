@@ -7,7 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 public interface PaymentGatewayClient {
-    String createPaymentURL(Order order, HttpServletRequest request);
+    String createPaymentURL(Order order, String userIp);
     PaymentGatewayResponse parseCallback(Map<String, String> parameters);
     boolean isPaymentSuccessful(String status);
 }

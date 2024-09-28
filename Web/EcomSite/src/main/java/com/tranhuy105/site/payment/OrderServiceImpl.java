@@ -1,22 +1,26 @@
 package com.tranhuy105.site.payment;
 
 import com.tranhuy105.common.constant.OrderStatus;
-import com.tranhuy105.common.constant.PaymentStatus;
-import com.tranhuy105.common.constant.ShippingStatus;
+import com.tranhuy105.common.constant.PaymentMethod;
 import com.tranhuy105.common.entity.*;
 import com.tranhuy105.site.dto.*;
+import com.tranhuy105.site.event.OrderCancelledEvent;
+import com.tranhuy105.site.event.OrderCreatedEvent;
 import com.tranhuy105.site.exception.NotFoundException;
 import com.tranhuy105.site.repository.OrderItemRepository;
 import com.tranhuy105.site.repository.OrderRepository;
 import com.tranhuy105.site.repository.CustomerRepository;
-import com.tranhuy105.site.repository.SkuRepository;
 import com.tranhuy105.site.service.ShoppingCartService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -25,6 +29,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,53 +37,23 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CustomerRepository customerRepository;
     private final ShoppingCartService cartService;
-    private final SkuRepository skuRepository;
     private final OrderItemRepository orderItemRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final ShoppingCartService shoppingCartService;
+
 
     @Transactional
-    public Order createOrder(Integer customerId, Integer shippingAddressId) {
+    @Override
+    public Order createOrder(Integer customerId, Integer shippingAddressId, PaymentMethod paymentMethod, HttpServletRequest request) {
         Customer customer = validateCustomer(customerId);
+        String customerIp = request.getRemoteAddr();
         Address shippingAddress = validateShippingAddress(customer, shippingAddressId);
         ShoppingCart cart = validateCart(customerId);
         Order order = buildOrder(customer, shippingAddress, cart);
-        reserveOrder(order);
         order.setReservationExpiry(LocalDateTime.now().plusMinutes(15));
-        updateOrderStatus(order, OrderStatus.PENDING);
-        return orderRepository.save(order);
-    }
-
-    private void reserveOrder(Order order) {
-        for (OrderItem orderItem : order.getOrderItems()) {
-            Sku sku = orderItem.getSku();
-            int newQuantity = sku.getStockQuantity() - orderItem.getQuantity();
-
-            if (newQuantity < 0) {
-                throw new IllegalArgumentException("Not enough stock for SKU: " + sku.getSkuCode());
-            }
-
-            sku.setStockQuantity(newQuantity);
-            skuRepository.save(sku);
-        }
-    }
-
-    @Override
-    @Transactional
-    public Order createCodOrder(Integer customerId, Integer shippingAddressId) {
-        Customer customer = validateCustomer(customerId);
-        Address shippingAddress = validateShippingAddress(customer, shippingAddressId);
-        ShoppingCart cart = validateCart(customer.getId());
-        for (CartItem cartItem : cart.getCartItems()) {
-            if (!cartItem.getSku().getProduct().isSupportCod()) {
-                throw new IllegalArgumentException("This product dont support COD method");
-            }
-        }
-        Order order = buildOrder(customer, shippingAddress, cart);
-        reserveOrder(order);
-        order.setReservationExpiry(LocalDateTime.now().plusDays(3));
-        updateOrderStatus(order, OrderStatus.PENDING);
-        Order savedOrder = orderRepository.save(order);
-        cartService.clearShoppingCart(customer.getId());
-        return savedOrder;
+        order = updateOrderStatus(order, OrderStatus.PENDING);
+        eventPublisher.publishEvent(new OrderCreatedEvent(order, paymentMethod, customerIp));
+        return order;
     }
 
     @Override
@@ -90,37 +65,54 @@ public class OrderServiceImpl implements OrderService {
             throw new AccessDeniedException("You dont have the permission to perform this action");
         }
 
-        if (order.getPaymentStatus().equals(PaymentStatus.PAID)) {
-            throw new IllegalArgumentException("You can not cancel an paid order, please contact the support team if need more assistant");
-        }
-
         if (order.getStatus().equals(OrderStatus.PENDING)
                 || order.getStatus().equals(OrderStatus.CONFIRMED)) {
-            updateOrderStatus(order, OrderStatus.CANCELED);
-            if (!order.getStatus().equals(OrderStatus.EXPIRED)) {
-                order = orderRepository.lazyFetchItem(order);
-                if (order == null) {
-                    throw new RuntimeException("Hmm this shouldn't happening");
-                }
-                releaseStock(order);
-            }
-            orderRepository.save(order);
+            order = updateOrderStatus(order, OrderStatus.CANCELED);
+            eventPublisher.publishEvent(new OrderCancelledEvent(order));
         } else {
             throw new IllegalArgumentException("You can not cancel order at this stage");
         }
     }
 
     @Override
-    public void updateOrderStatus(Order order, OrderStatus newStatus) {
+    public Order updateOrderStatus(Order order, OrderStatus newStatus) {
+        boolean statusChanged = !newStatus.equals(order.getStatus());
+
         order.setStatus(newStatus);
-        OrderStatusHistory history = new OrderStatusHistory();
-        history.setOrder(order);
-        history.setStatus(newStatus.name());
-        order.getStatusHistory().add(history);
+
+        if (statusChanged) {
+            OrderStatusHistory history = new OrderStatusHistory();
+            history.setOrder(order);
+            history.setStatus(newStatus.name());
+            order.getStatusHistory().add(history);
+        }
+
+        return orderRepository.save(order);
+    }
+
+
+    @Transactional
+    @Override
+    public void confirmOrder(Order order) {
+        updateOrderStatus(order, OrderStatus.CONFIRMED);
+        shoppingCartService.clearShoppingCart(order.getCustomer().getId());
+    }
+
+    @Transactional
+    @Override
+    public void cancelOrder(Order order) {
+        order = updateOrderStatus(order, OrderStatus.CANCELED);
+        eventPublisher.publishEvent(new OrderCancelledEvent(order));
+    }
+
+    @Override
+    public Order findOrderByOrderNumber(String orderNumber) {
+        return orderRepository.findByOrderNumberWithPayment(orderNumber).orElse(null);
     }
 
     @Override
     public List<OrderDTO> findOrderByCustomerId(Integer customerId) {
+        // TODO: make the pagination and sort & filterable
         return orderRepository.findOrderDTOsByCustomerId(customerId);
     }
 
@@ -146,9 +138,7 @@ public class OrderServiceImpl implements OrderService {
         orderDetailDTO.setTotalAmount(order.getTotalAmount());
         orderDetailDTO.setDiscountAmount(order.getDiscountAmount());
         orderDetailDTO.setFinalAmount(order.getFinalAmount());
-        orderDetailDTO.setShippingStatus(order.getShippingStatus().name());
         orderDetailDTO.setOrderStatus(order.getStatus().name());
-        orderDetailDTO.setPaymentStatus(order.getPaymentStatus().name());
         orderDetailDTO.setItems(orderItems);
 
         PaymentDTO paymentDTO = order.getPayment() != null ? new PaymentDTO(
@@ -175,6 +165,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
 
+
+
+    // --- PRIVATE HELPER METHOD ----
     private Customer validateCustomer(Integer customerId) {
         Customer customer = customerRepository.findByIdWithAddress(customerId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid customer ID"));
@@ -206,8 +199,6 @@ public class OrderServiceImpl implements OrderService {
         order.setOrderNumber(UUID.randomUUID().toString());
         order.setCustomer(customer);
         order.setShippingAddress(shippingAddress);
-        order.setPaymentStatus(PaymentStatus.PENDING);
-        order.setShippingStatus(ShippingStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
 
         BigDecimal totalAmount = BigDecimal.ZERO;
@@ -250,25 +241,5 @@ public class OrderServiceImpl implements OrderService {
         orderItem.setDiscountPercent(sku.getDiscountPercent());
         orderItem.setTotalAmount(itemTotal);
         return orderItem;
-    }
-
-    @Scheduled(initialDelay = 300000, fixedRate = 300000)
-    @Transactional
-    public void releaseExpiredReservations() {
-        List<Order> expiredOrders = orderRepository.findExpiredOrders(LocalDateTime.now());
-
-        for (Order expiredOrder : expiredOrders) {
-            releaseStock(expiredOrder);
-            updateOrderStatus(expiredOrder, OrderStatus.EXPIRED);
-            orderRepository.save(expiredOrder);
-        }
-    }
-
-    private void releaseStock(Order order) {
-        for (OrderItem orderItem : order.getOrderItems()) {
-            Sku sku = orderItem.getSku();
-            sku.setStockQuantity(sku.getStockQuantity() + orderItem.getQuantity());
-            skuRepository.save(sku);
-        }
     }
 }
