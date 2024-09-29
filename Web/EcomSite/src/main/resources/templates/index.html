@@ -465,49 +465,5 @@
 <div th:replace="~{navigation :: footer}"></div>
 </body>
 <script th:src="@{/js/search.js}"></script>
-<script>
-    $(document).ready(function() {
-        // Only start SSE if the user is authenticated
-        if ($('#notificationCount').length > 0) {
-            let eventSource;
-
-            function startSSE() {
-                eventSource = new EventSource("/site/sse/connect");
-
-                // Listen for notification events
-                eventSource.addEventListener("notification", function(event) {
-                    const notificationCount = $("#notificationCount");
-                    let currentCount = parseInt(notificationCount.text(), 10);
-                    notificationCount.text(currentCount + 1);
-
-                    // Optionally, you could add some visual effect for notifications, like a flash
-                    $("#notificationBell").addClass("new-notification"); // Add a class for styling new notifications
-                });
-
-                eventSource.onopen = function () {
-                    console.log('connection is established');
-                };
-
-                // Handle SSE connection errors
-                eventSource.onerror = function() {
-                    console.error("SSE connection error. Reconnecting...");
-                    eventSource.close();
-                    setTimeout(startSSE, 3000); // Attempt to reconnect after 3 seconds
-                };
-            }
-
-            startSSE();
-
-            window.onunload = function () {
-                if (eventSource) {
-                    eventSource.close();
-                }
-
-                console.log("DISCONNECT!");
-            }
-        }
-    });
-
-
-</script>
+<script th:src="@{/js/notification.js}"></script>
 </html>

@@ -277,10 +277,66 @@ body {
     background-color: #ff3e3e;
     color: white;
     border-radius: 50%;
-    padding: 5px 8px;
+    padding: 4px 5px;
     font-size: 12px;
     position: absolute;
-    top: -2px;
+    top: -8px;
     right: -8px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3); /* Add some shadow */
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+}
+
+#notificationBell .badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 0.8rem;
+}
+
+.dropdown-menu {
+    max-height: 400px;
+    overflow-y: auto;
+    width: 300px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+
+#notificationList li {
+    padding: 10px;
+    border-bottom: 1px solid #eaeaea;
+    font-size: 0.9rem;
+}
+
+#notificationList li:last-child {
+    border-bottom: none;
+}
+
+#notificationList p {
+    margin: 0;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+#notificationList .timestamp {
+    font-size: 0.8rem;
+    color: #888;
+    display: block;
+    margin-top: 4px;
+}
+
+.new-notification {
+    color: #ff0000;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
 }

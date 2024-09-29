@@ -1,13 +1,11 @@
 package com.tranhuy105.site.service;
 
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,7 +17,12 @@ public class SseServiceImpl implements SseService {
 
     @Override
     public SseEmitter createConnection(String customerId) {
-        log.debug("NEW CONNECTION FROM "+customerId);
+        SseEmitter oldEmitter = emitters.get(customerId);
+        if (oldEmitter != null) {
+            return oldEmitter;
+        }
+
+        log.debug("New connection for customer {}",customerId);
         SseEmitter emitter = new SseEmitter(900000L);
         emitters.put(customerId, emitter);
         emitter.onCompletion(() -> emitters.remove(customerId));
