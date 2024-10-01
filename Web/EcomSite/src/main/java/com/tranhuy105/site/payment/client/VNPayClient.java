@@ -3,7 +3,6 @@ package com.tranhuy105.site.payment.client;
 import com.tranhuy105.common.entity.Order;
 import com.tranhuy105.site.dto.PaymentGatewayResponse;
 import com.tranhuy105.site.exception.PaymentException;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -31,15 +30,15 @@ public class VNPayClient implements PaymentGatewayClient {
     private String VNPAY_HASH_SECRET;
 
     @Override
-    public String createPaymentURL(Order order, String userIp) {
+    public String createPaymentURL(Order order, String userIp, String transactionId) {
         Map<String, String> vnpParams = new HashMap<>();
         vnpParams.put("vnp_Version", "2.1.0");
         vnpParams.put("vnp_Command", "pay");
         vnpParams.put("vnp_TmnCode", VNPAY_TMN_CODE);
         vnpParams.put("vnp_Amount", String.valueOf(order.getFinalAmount().multiply(BigDecimal.valueOf(100)).intValue()));
         vnpParams.put("vnp_CurrCode", "VND");
-        vnpParams.put("vnp_TxnRef", order.getOrderNumber());
-        vnpParams.put("vnp_OrderInfo", "Order payment: " + order.getOrderNumber());
+        vnpParams.put("vnp_TxnRef", transactionId);
+        vnpParams.put("vnp_OrderInfo", order.getOrderNumber());
         vnpParams.put("vnp_OrderType", "other");
         vnpParams.put("vnp_Locale", "vn");
         vnpParams.put("vnp_ReturnUrl", VNPAY_RETURN_URL);
@@ -78,7 +77,7 @@ public class VNPayClient implements PaymentGatewayClient {
         // Continue processing if the signature is valid
         String status = parameters.get("vnp_ResponseCode");
         String transactionId = parameters.get("vnp_TransactionNo");
-        String orderNumber = parameters.get("vnp_TxnRef");
+        String orderNumber = parameters.get("vnp_OrderInfo");
         String amount = parameters.get("vnp_Amount");
         Integer amountInt = null;
         try {

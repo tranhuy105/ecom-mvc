@@ -22,19 +22,13 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "o.totalAmount as totalAmount, " +
             "o.finalAmount as finalAmount, " +
             "o.status as status, " +
-            "o.shippingStatus as shippingStatus, " +
-            "o.paymentStatus as paymentStatus," +
             "o.createdAt as createdAt " +
             "FROM Order o WHERE " +
             "(:orderStatus IS NULL OR o.status = :orderStatus) AND " +
-            "(:shippingStatus IS NULL OR o.shippingStatus = :shippingStatus) AND " +
-            "(:paymentStatus IS NULL OR o.paymentStatus = :paymentStatus) AND " +
             "(:startDate IS NULL OR o.createdAt >= :startDate) AND " +
             "(:endDate IS NULL OR o.createdAt <= :endDate) AND " +
             "(:search IS NULL OR o.orderNumber LIKE %:search%)")
     Page<OrderOverviewDTO> searchOrders(@Param("orderStatus") OrderStatus orderStatus,
-                                        @Param("shippingStatus") ShippingStatus shippingStatus,
-                                        @Param("paymentStatus") PaymentStatus paymentStatus,
                                         @Param("startDate") LocalDateTime startDate,
                                         @Param("endDate") LocalDateTime endDate,
                                         @Param("search") String search,

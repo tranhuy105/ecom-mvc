@@ -2,24 +2,20 @@ package com.tranhuy105.site.event;
 
 import com.tranhuy105.common.constant.OrderStatus;
 import com.tranhuy105.common.constant.PaymentMethod;
-import com.tranhuy105.common.constant.PaymentStatus;
 import com.tranhuy105.common.entity.Order;
-import com.tranhuy105.common.entity.Payment;
 import com.tranhuy105.site.exception.StockUnavailableException;
 import com.tranhuy105.site.payment.OrderService;
 import com.tranhuy105.site.payment.PaymentService;
 import com.tranhuy105.site.payment.StockService;
+import com.tranhuy105.site.service.SchedulerService;
 import com.tranhuy105.site.service.ShoppingCartService;
 import com.tranhuy105.site.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
+import org.quartz.SchedulerException;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Service
@@ -30,13 +26,21 @@ public class OrderEventListener {
     private final PaymentService paymentService;
     private final ShoppingCartService shoppingCartService;
     private final SseService sseService;
+    private final SchedulerService schedulerService;
 
     @EventListener
-    @Async
     public void handleOrderCancelled(OrderCancelledEvent event) {
         Order order = event.order();
         stockService.releaseStock(order);
         log.info("Stock released for cancelled order {}", order.getOrderNumber());
+    }
+
+    @EventListener
+    @Async
+    public void handleOrderCancelledSchedule(OrderCancelledEvent event) {
+        Order order = event.order();
+        schedulerService.cancelPaymentExpiryJob(order.getId());
+        schedulerService.cancelOrderExpirationJob(order.getOrderNumber());
     }
 
     @Async
@@ -51,13 +55,10 @@ public class OrderEventListener {
                 shoppingCartService.clearShoppingCart(order.getCustomer().getId());
             } else {
                 String paymentUrl = paymentService.initiatePayment(order, paymentMethod, event.userIp());
-                // TODO: FIRE AN SSE
-                log.info(order.getCustomer().getId().toString());
-                log.info(paymentUrl);
-                log.info("about to send an event");
+                schedulerService.scheduleOrderExpiration(order);
 
+                // TODO: FIRE AN SSE
                 Thread.sleep(3000);
-                log.info("SENT EVENT");
                 sseService.sendEvent(order.getCustomer().getId().toString(), "payment-initiated-ok", paymentUrl);
             }
         } catch (StockUnavailableException e) {

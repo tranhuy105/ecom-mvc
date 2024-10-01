@@ -7,6 +7,7 @@ import com.tranhuy105.site.dto.*;
 import com.tranhuy105.site.event.OrderCancelledEvent;
 import com.tranhuy105.site.event.OrderCreatedEvent;
 import com.tranhuy105.site.exception.NotFoundException;
+import com.tranhuy105.site.exception.OrderNotFoundException;
 import com.tranhuy105.site.repository.OrderItemRepository;
 import com.tranhuy105.site.repository.OrderRepository;
 import com.tranhuy105.site.repository.CustomerRepository;
@@ -59,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancelOrder(Integer customerId, String orderNumber) {
         Order order = orderRepository.findByOrderNumber(orderNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+                .orElseThrow(() -> new OrderNotFoundException(orderNumber));
 
         if (!order.getCustomer().getId().equals(customerId)) {
             throw new AccessDeniedException("You dont have the permission to perform this action");
@@ -85,9 +86,11 @@ public class OrderServiceImpl implements OrderService {
             history.setOrder(order);
             history.setStatus(newStatus.name());
             order.getStatusHistory().add(history);
+
+            return orderRepository.save(order);
         }
 
-        return orderRepository.save(order);
+        return order;
     }
 
 
@@ -118,53 +121,26 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDetailDTO findOrderDetailByOrderNumber(Integer customerId, String orderNumber) {
-        Order order = orderRepository.findOrderDetail(orderNumber).orElseThrow(
-                () -> new NotFoundException("Order Not Found")
-        );
+        Order order = validateAndFindOrder(customerId, orderNumber);
+        List<OrderItemDTO> orderItems = findOrderItems(order, customerId);
+        PaymentDTO paymentDTO = mapPaymentInfo(order);
+        List<OrderHistoryDTO> historyDTOs = mapOrderHistory(order);
 
-        if (!order.getCustomer().getId().equals(customerId)) {
-            throw new AccessDeniedException("You dont have permission to view this content");
-        }
-
-        List<OrderItemDTO> orderItems = orderItemRepository.findFullByOrderId(order.getId(), customerId);
-
-        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
-        orderDetailDTO.setShippingOrderCode(order.getShippingOrderCode());
-        orderDetailDTO.setExpectedDeliveryTime(order.getExpectedDeliveryTime());
-        orderDetailDTO.setOrderNumber(order.getOrderNumber());
-        orderDetailDTO.setCreatedAt(order.getCreatedAt());
-        orderDetailDTO.setShippingAmount(order.getShippingAmount());
-        orderDetailDTO.setShippingAddress(order.getShippingAddress().toString());
-        orderDetailDTO.setTotalAmount(order.getTotalAmount());
-        orderDetailDTO.setDiscountAmount(order.getDiscountAmount());
-        orderDetailDTO.setFinalAmount(order.getFinalAmount());
-        orderDetailDTO.setOrderStatus(order.getStatus().name());
-        orderDetailDTO.setItems(orderItems);
-
-        PaymentDTO paymentDTO = order.getPayment() != null ? new PaymentDTO(
-                order.getPayment().getPaymentMethod(),
-                order.getPayment().getAmount(),
-                order.getPayment().getPaymentDate(),
-                order.getPayment().getStatus().name(),
-                order.getPayment().getTransactionId()
-        ) : null;
-
-        List<OrderHistoryDTO> historyDTOs = order.getStatusHistory().stream()
-                .map(history -> new OrderHistoryDTO(
-                        history.getId(),
-                        history.getStatus(),
-                        history.getChangedAt()
-                ))
-                .sorted(Comparator.comparing(OrderHistoryDTO::getChangedAt))
-                .toList();
-
-        orderDetailDTO.setPayment(paymentDTO);
-        orderDetailDTO.setHistory(historyDTOs);
-
-        return orderDetailDTO;
+        return mapToOrderDetailDTO(order, orderItems, paymentDTO, historyDTOs);
     }
 
+    @Override
+    @Transactional
+    public void expireOrder(String orderNumber) {
+        Order order = orderRepository.findByOrderNumber(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException(orderNumber));
 
+        if (order.getStatus() == OrderStatus.PENDING) {
+            order = updateOrderStatus(order, OrderStatus.EXPIRED);
+            eventPublisher.publishEvent(new OrderCancelledEvent(order));
+            log.info("Order {} has been expired due to timeout.", orderNumber);
+        }
+    }
 
 
     // --- PRIVATE HELPER METHOD ----
@@ -174,6 +150,10 @@ public class OrderServiceImpl implements OrderService {
 
         if (customer.getPhoneNumber() == null) {
             throw new IllegalArgumentException("Customer Must Registered A Phone Number Before Placing Orders.");
+        }
+
+        if (customer.getAddresses().isEmpty()) {
+            throw new IllegalArgumentException("Customer must have at least one address line to place an order");
         }
 
         return customer;
@@ -241,5 +221,64 @@ public class OrderServiceImpl implements OrderService {
         orderItem.setDiscountPercent(sku.getDiscountPercent());
         orderItem.setTotalAmount(itemTotal);
         return orderItem;
+    }
+
+    private Order validateAndFindOrder(Integer customerId, String orderNumber) {
+        Order order = orderRepository.findOrderDetail(orderNumber)
+                .orElseThrow(() -> new OrderNotFoundException(orderNumber));
+
+        if (!order.getCustomer().getId().equals(customerId)) {
+            throw new AccessDeniedException("You don't have permission to view this content");
+        }
+
+        return order;
+    }
+
+    private List<OrderItemDTO> findOrderItems(Order order, Integer customerId) {
+        return orderItemRepository.findFullByOrderId(order.getId(), customerId);
+    }
+
+    private PaymentDTO mapPaymentInfo(Order order) {
+        Payment payment = order.getPayment();
+
+        return payment != null ? new PaymentDTO(
+                payment.getPaymentMethod(),
+                payment.getAmount(),
+                payment.getPaymentDate(),
+                payment.getStatus().name(),
+                payment.getTransactionId()
+        ) : null;
+    }
+
+    private List<OrderHistoryDTO> mapOrderHistory(Order order) {
+        return order.getStatusHistory().stream()
+                .map(history -> new OrderHistoryDTO(
+                        history.getId(),
+                        history.getStatus(),
+                        history.getChangedAt()
+                ))
+                .sorted(Comparator.comparing(OrderHistoryDTO::getChangedAt))
+                .toList();
+    }
+
+    private OrderDetailDTO mapToOrderDetailDTO(Order order, List<OrderItemDTO> orderItems,
+                                               PaymentDTO paymentDTO, List<OrderHistoryDTO> historyDTOs) {
+        OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+
+        orderDetailDTO.setShippingOrderCode(order.getShippingOrderCode());
+        orderDetailDTO.setExpectedDeliveryTime(order.getExpectedDeliveryTime());
+        orderDetailDTO.setOrderNumber(order.getOrderNumber());
+        orderDetailDTO.setCreatedAt(order.getCreatedAt());
+        orderDetailDTO.setShippingAmount(order.getShippingAmount());
+        orderDetailDTO.setShippingAddress(order.getShippingAddress().toString());
+        orderDetailDTO.setTotalAmount(order.getTotalAmount());
+        orderDetailDTO.setDiscountAmount(order.getDiscountAmount());
+        orderDetailDTO.setFinalAmount(order.getFinalAmount());
+        orderDetailDTO.setOrderStatus(order.getStatus().name());
+        orderDetailDTO.setItems(orderItems);
+        orderDetailDTO.setPayment(paymentDTO);
+        orderDetailDTO.setHistory(historyDTOs);
+
+        return orderDetailDTO;
     }
 }

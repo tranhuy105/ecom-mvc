@@ -47,10 +47,13 @@ public class SseServiceImpl implements SseService {
                 emitter.send(SseEmitter.event()
                         .name(eventName)
                         .data(data));
+                log.debug("Sent SSE event {}", eventName);
+            } catch (IllegalStateException e) {
+                log.warn("Attempted to send event '{}' to closed connection for customer {}: {}", eventName, customerId, e.getMessage());
+                emitter.completeWithError(e);
             } catch (Exception e) {
                 log.debug("Client {} disconnected while sending {} event: {}", customerId, eventName, e.getMessage());
                 emitter.completeWithError(e);
-                emitters.remove(customerId);
             }
         } else {
             log.debug("No active connection for customer: " + customerId);

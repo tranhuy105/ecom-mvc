@@ -31,4 +31,5 @@ public interface OrderService {
 
     OrderDetailDTO findOrderDetailByOrderNumber(Integer customerId, String orderNumber);
 
+    void expireOrder(String orderNumber);
 }

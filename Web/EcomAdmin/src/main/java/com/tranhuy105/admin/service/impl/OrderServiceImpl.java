@@ -130,8 +130,6 @@ public class OrderServiceImpl implements OrderService {
 
         return orderRepository.searchOrders(
                 orderStatus != null ? OrderStatus.valueOf(orderStatus) : null,
-                shippingStatus != null ? ShippingStatus.valueOf(shippingStatus) : null,
-                paymentStatus != null ? PaymentStatus.valueOf(paymentStatus) : null,
                 startDate, endDate, search, pageable);
     }
 

@@ -25,29 +25,6 @@
         </div>
 
         <div class="col-md-2 mb-2">
-            <label for="shippingStatus" class="form-label">Shipping Status</label>
-            <select id="shippingStatus" class="form-control" name="shippingStatus">
-                <option value="" th:selected="${#strings.isEmpty(shippingStatus)}">All Shipping Statuses</option>
-                <option th:each="status : ${T(com.tranhuy105.common.constant.ShippingStatus).values()}"
-                        th:value="${status.name()}"
-                        th:text="${status.name()}"
-                        th:selected="${status.name() == shippingStatus}">Shipping Status</option>
-            </select>
-        </div>
-
-        <div class="col-md-2 mb-2">
-            <label for="paymentStatus" class="form-label">Payment Status</label>
-            <select id="paymentStatus" class="form-control" name="paymentStatus">
-                <option value="" th:selected="${#strings.isEmpty(paymentStatus)}">All Payment Statuses</option>
-                <option th:each="status : ${T(com.tranhuy105.common.constant.PaymentStatus).values()}"
-                        th:value="${status.name()}"
-                        th:text="${status.name()}"
-                        th:selected="${status.name() == paymentStatus}">Payment Status</option>
-            </select>
-        </div>
-        <div class="col-md-2"></div>
-
-        <div class="col-md-2 mb-2">
             <label for="startDate" class="form-label">Start Date</label>
             <input type="date" id="startDate" class="form-control" name="startDate" th:value="${#dates.format(startDate, 'yyyy-MM-dd')}">
         </div>

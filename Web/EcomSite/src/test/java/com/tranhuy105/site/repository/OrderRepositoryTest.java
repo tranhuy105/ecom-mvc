@@ -1,8 +1,6 @@
 package com.tranhuy105.site.repository;
 
 import com.tranhuy105.common.constant.OrderStatus;
-import com.tranhuy105.common.constant.PaymentStatus;
-import com.tranhuy105.common.constant.ShippingStatus;
 import com.tranhuy105.common.entity.Address;
 import com.tranhuy105.common.entity.Country;
 import com.tranhuy105.common.entity.Customer;

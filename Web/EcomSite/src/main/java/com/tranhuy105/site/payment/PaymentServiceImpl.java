@@ -5,12 +5,10 @@ import com.tranhuy105.common.constant.PaymentStatus;
 import com.tranhuy105.common.entity.Order;
 import com.tranhuy105.common.entity.Payment;
 import com.tranhuy105.site.dto.PaymentGatewayResponse;
-import com.tranhuy105.site.exception.OrderNotFoundException;
-import com.tranhuy105.site.exception.PaymentAlreadyProcessedException;
-import com.tranhuy105.site.exception.PaymentException;
-import com.tranhuy105.site.exception.PaymentNotFoundException;
+import com.tranhuy105.site.exception.*;
 import com.tranhuy105.site.payment.client.PaymentGatewayClient;
 import com.tranhuy105.site.repository.PaymentRepository;
+import com.tranhuy105.site.service.SchedulerService;
 import com.tranhuy105.site.service.SseService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -29,22 +28,36 @@ public class PaymentServiceImpl implements PaymentService {
     private final OrderService orderService;
     private final PaymentRepository paymentRepository;
     private final SseService sseService;
+    private final SchedulerService schedulerService;
 
     @Override
     @Transactional
     public String initiatePayment(Order order, PaymentMethod paymentMethod, String userIP) throws PaymentException {
         PaymentGatewayClient paymentClient = getPaymentClient(paymentMethod);
-        String paymentUrl = paymentClient.createPaymentURL(order, userIP);
+        Payment payment = order.getPayment();
 
-        Payment payment = Payment.builder()
-                .order(order)
-                .amount(order.getFinalAmount())
-                .paymentMethod(paymentMethod.toString())
-                .status(PaymentStatus.PENDING)
-                .build();
+        String uniqueTxnRef = order.getOrderNumber() + "-" + UUID.randomUUID().toString().substring(0, 8);
+        checkPaymentRetryEligibility(payment);
+
+        if (payment == null) {
+            // No previous payment exists, so create a new one
+            payment = Payment.builder()
+                    .order(order)
+                    .amount(order.getFinalAmount())
+                    .paymentMethod(paymentMethod.toString())
+                    .status(PaymentStatus.PENDING)
+                    .transactionId(uniqueTxnRef)
+                    .build();
+        } else if (payment.getStatus() == PaymentStatus.PENDING) {
+            return paymentClient.createPaymentURL(order, userIP, payment.getTransactionId());
+        } else {
+            payment.setTransactionId(uniqueTxnRef);
+            payment.setStatus(PaymentStatus.PENDING);
+        }
+
         paymentRepository.save(payment);
-
-        return paymentUrl;
+        schedulerService.schedulePaymentExpiryJob(order.getId(), 15);
+        return paymentClient.createPaymentURL(order, userIP, uniqueTxnRef);
     }
 
     @Override
@@ -110,17 +123,25 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         boolean isSuccessful = paymentClient.isPaymentSuccessful(response.getStatusCode());
-        payment.setTransactionId(response.getTransactionId());
 
-        if (isSuccessful) {
-            handlePaymentSuccess(order);
-            response.setSuccess(true);
-        } else {
-            handlePaymentFailure(order);
-            response.setSuccess(false);
+        try {
+            if (isSuccessful) {
+                handlePaymentSuccess(order);
+                response.setSuccess(true);
+            } else {
+                handlePaymentFailure(order);
+                response.setSuccess(false);
+            }
+        } catch (Exception e) {
+            log.error("Error processing payment for order {}: {}", order.getOrderNumber(), e.getMessage());
+            throw e;
         }
 
-        sseService.sendEvent(order.getCustomer().getId().toString(), "payment-complete", order.getOrderNumber());
+        try {
+            sseService.sendEvent(order.getCustomer().getId().toString(), "payment-complete", order.getOrderNumber());
+        } catch (Exception e) {
+            log.error("Error sending SSE event for order {}: {}", order.getOrderNumber(), e.getMessage());
+        }
     }
 
     private void handlePaymentSuccess(Order order) {
@@ -128,6 +149,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStatus(PaymentStatus.PAID);
         payment.setPaymentDate(LocalDateTime.now());
         paymentRepository.saveAndFlush(payment);
+
+        schedulerService.cancelPaymentExpiryJob(order.getId());
+        schedulerService.cancelOrderExpirationJob(order.getOrderNumber());
 
         orderService.confirmOrder(order);
         log.info("Payment for order {} was successful. Transaction ID: {}", order.getOrderNumber(), payment.getTransactionId());
@@ -137,10 +161,20 @@ public class PaymentServiceImpl implements PaymentService {
     private void handlePaymentFailure(Order order) {
         Payment payment = order.getPayment();
         payment.setStatus(PaymentStatus.FAILED);
-        payment.setTransactionId(null);
-        paymentRepository.saveAndFlush(payment);
-
-        orderService.cancelOrder(order);
+        paymentRepository.save(payment);
         log.warn("Payment for order {} failed. Payment marked as FAILED.", order.getOrderNumber());
+
+        schedulerService.cancelPaymentExpiryJob(order.getId());
     }
+
+    private void checkPaymentRetryEligibility(Payment payment) throws PaymentRetryNotAllowedException {
+        if (payment == null) {
+            return;
+        }
+
+        if (payment.getStatus() != PaymentStatus.FAILED && payment.getStatus() != PaymentStatus.EXPIRED && payment.getStatus() != PaymentStatus.PENDING) {
+            throw new PaymentRetryNotAllowedException("Cannot retry payment. The payment is not failed or expired or in pending state.");
+        }
+    }
+
 }
