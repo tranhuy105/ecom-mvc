@@ -1,166 +1,182 @@
-# E-Commerce Platform (Still In Development)
+# E-Commerce Platform
 
-## Overview
+### Overview
 
-This E-Commerce Platform is a comprehensive online shopping solution designed for individuals and small distributors to sell their products efficiently with fully COD support. With the premise of design for small distributors, utilizing MVC architecture, the system is easy to deploy within a single JAR file, offering cost-effective management and scalability. 
+This E-Commerce Platform is a comprehensive online shopping solution designed for individuals and small distributors to sell their products efficiently with fully COD support. With the premise of design for small distributors, utilizing MVC architecture, the system is easy to deploy within a single application, offering cost-effective management and scalability. 
 
-The platform integrates with Giao Hàng Nhanh (GHN), Vietnam's leading domestic shipping service, and supports various payment methods, including PayPal and VNPay (domestic).
+---
 
-## System Architecture
+## 1. Tech Stack
 
-- **MVC Architecture**: 
-  - **Model**: Manages data and business logic.
-  - **View**: Handles the presentation layer for both customers and admins.
-  - **Controller**: Manages user interactions and updates the model and view.
+- **Backend**: Java (Spring Boot MVC)
+- **Frontend**: Thymeleaf, HTML, CSS, Bootstrap
+- **Database**: MySQL (hosted on AWS RDS)
+- **Third-Party Integrations**: 
+  - VNPay for online payments
+  - GHN for shipping
+- **Containerization**: Docker
+- **Hosting**: AWS (EC2, S3, RDS)
+- **Proxy & SSL**: Nginx for reverse proxy and SSL termination
 
-- **Frontend**:
-  - **Bootstrap**: Provides a responsive and modern user interface with its powerful grid system. Ensure to work smoothly even on phone.
-  - **jQuery**: Enhances user experience with AJAX for dynamic content updates without full page reload.
-
-- **Backend**:
-  - **Java and Spring Framework**: Handles core business logic, data access, and external service integrations.
-  - **APIs**: Integrates with GHN for shipping and PayPal/VNPay for payments.
-
-- **Database**:
-  - **MySQL**: Stores product, order, and customer information.
-
-#### Database Schema
-
-The database schema for the platform is designed to efficiently handle product management, order processing, and customer data. You can check the migration details (still updating) in the Flyway migration folder:
-
-- **Flyway Migrations**: [Flyway Migration Scripts](./Common/src/main/resources/db/migration)
-
-#### Demo Video
-
-To get a better understanding of how the platform works, watch the following demo video: **update soon**
+---
 
 
 
+## 2. Architecture
 
-## Key Features
+The system comprises two separate applications: **Public Site** and **Admin Panel**.
 
-## Shipping Integration with GHN
+- The **Public Site** allows users to browse products, place orders, and complete payments.
+- The **Admin Panel** handles order confirmation (COD), shipment initiation, and order status management via GHN.
 
-- **GHN (Giao Hàng Nhanh)** is Vietnam's leading domestic shipping service. GHN provides comprehensive shipping solutions, including fast and reliable delivery services. The platform integrates with GHN to offer seamless shipping management for orders.
-
-- **Order and Shipping Workflow**:
-  - **Order Creation**: Admins initiate shipping orders through GHN’s API directly from the admin interface.
-  - **Label Printing**: Shipping labels are generated and printed in A5 format. The system provides all necessary details, including tracking codes and shipment information.
-  - **Applying Labels**: The printed labels must be affixed to the packages. Salers then have to bring the labeled packages to a GHN post office.
-  - **Real-Time Updates** (currently in development): Integration with GHN’s webhook system  provide real-time updates and notifications for order shipping status changes, enhancing the shipping and delivery process.
-
-## Moderator Features Behind The Scene To Manage The System
-
-### Order & Shipping Workflow Management
-
-1. **Order Management**
-   - **Order Confirmation**:
-     
-     - Admins can review and confirm incoming orders from the dashboard.
-     - Update the order status to `CONFIRMED`.
-   - **Order Preparation**:
-     
-     - **Prepare for Shipping**: Generate shipping requests to GHN.
-     - **Update Shipping Information**: Input shipping details including ward code and district ID.
-   - **Order Shipping**:
-     
-     - **Ship Orders**: Update the status to `IN_TRANSIT` and record GHN shipping codes.
-     - **Generate Shipping Labels**: Print A5 labels with shipping details and barcodes.
-   - **Order Delivery**:
-     
-     - **Mark as Delivered**: Update status to `DELIVERED` and set payment status to `PAID`.
-
-2. **Shipping Integration**
-   - **GHN API Integration**:
-     
-     - **Create Shipping Orders**: Interface with GHN’s API to create and manage shipping orders.
-     - **Generate Shipping Labels**: Print labels with essential delivery information using GHN’s API.
-     - **Track Shipments**: Monitor shipping progress and update order status.
-   - **Domestic Address Management**:
-     
-     - **Fetch Districts and Wards**: Retrieve data from GHN’s API for accurate shipping.
-     - **Manage Shipping Details**: Update shipping details as needed.
-
-3. **Sales Management** (In development)
-   - **Sales Promotions**:
-     
-     - **Create and Manage Sales**: Set up and manage discounts and special offers.
-     - **Apply Promotions**: Apply sales promotions to products or categories.
-   - **Track Sales Performance**:
-     
-     - **Review Sales Data**: Access and analyze sales reports.
-     - **Analyze Trends**: Adjust marketing strategies based on sales trends.
-
-4. **User Management**
-   - **Role Management**:
-     
-     - **Create and Manage User Accounts**: Admins can create and manage user accounts.
-     - **Assign Roles**: Manage access and permissions by assigning roles.
-   - **Access Control**:
-     
-     - **Control Access**: Securely manage access to various parts of the admin interface.
-    
-### Product And Inventory Management
-
-1. **Product Updates**
-   - **Add New Products**:
-     - **Product Information**: Admins can add new products by entering detailed information including product name, description, price, and images.
-     - **SKU Management**: Define unique SKU codes for each product to ensure accurate tracking and inventory management. (SHIRT-XL-BLUE, SHIRT-XXL-WHITE, etc..) Each sku should has its own price and stock quantity.
-     - **Categories and Brands**: Assign products to appropriate categories and brands for better organization and searchability.
-
-   - **Edit Existing Products**:
-     - **Update Product Details**:
-       
-       - **Modify Information**: Admins can update product information such as name, description, price, and other attributes.
-       - **Change Images**: Upload or replace product images as needed to reflect the latest visual representation of the product.
-       - **Adjust SKUs**: Update SKU codes if necessary, ensuring that all changes are reflected in the inventory system.
-
-   - **Manage Stock Levels**:
-     - **Update Stock Quantities**: Adjust the stock levels for products based on inventory changes, such as new stock arrivals or sales.
-     - **Track Inventory**: Monitor and manage inventory levels to ensure accurate stock information and avoid over-selling or stockouts.
-
-   - **Manage Categories and Brands**:
-     - **Update Categories**: Add, edit, or remove product categories to keep the catalog organized and relevant.
-     - **Manage Brands**: Update brand information and associate products with appropriate brands to enhance brand visibility and searchability.
-
-   - **Product Visibility and Availability**:
-     - **Set Product Status**: Enable or disable products as needed to control their visibility on the front-end, such as marking products as out of stock or discontinued.
-     - **Manage Product Variants**: Handle different product variants, such as sizes or colors, by updating their availability and pricing.
+Both apps connect to a shared **MySQL database**.
 
 
-### Customer And Viewer Features In The Main Site
 
-1. **Product Search and Filtering**
-   - **Search**: Customers can search for products by name with instant results.
-   - **Filtering**:
-     
-     - **Brand**: Filter products by brand.
-     - **Category**: Browse by product categories.
-     - **Price Range**: Set a price range to find products within budget.
+---
 
-2. **Product Listings and Order Creation**
-   - **Product Listings**:
-     
-     - View products with details including name, price, and description.
-     - Access detailed product pages with high-quality images and full descriptions.
-   - **Order Creation**:
-     
-     - **Add to Cart**: Easily add products to the shopping cart.
-     - **View Cart**: Review and modify cart contents.
-     - **Checkout**: Seamless checkout with options for shipping and payment.
-     - **Order Confirmation**: Receive immediate order confirmation via email.
-    
+## 3. Robust Payment Flow
 
-## API Integration
+The payment process in this project is integrated with VNPay, with options for COD (Cash on Delivery) or online payment. Here’s the detailed flow:
 
-1. **GHN API**:
-   - **Create Shipping Orders**: Create and manage shipping orders through GHN’s API.
-   - **Generate Shipping Labels**: Generate and print labels for shipments.
-   - **Fetch District and Ward Information**: Retrieve district and ward data.
+### Payment Flow Breakdown
 
-2. **Payment Gateways**:
-   - **PayPal**: Securely process international payments.
-   - **VNPay**: Handle local transactions efficiently.
+1. **User Browsing Public Site**:
+   - Users browse the site, adding products to their cart and proceeding to checkout.
 
-3. **Email Notifications**:
-   - **SMTP Integration**: Send confirmation emails for account creation and order updates as well as sale promotion via Google Gmail SMTP.
+2. **Place Order & Save to Database**:
+   - When the order is placed, order details are saved in the database, and an `OrderCreatedEvent` is fired.
+
+3. **Order Created Listener**:
+   - **For COD**:
+     - The admin manually confirms the order via the admin panel.
+     - The order status remains pending until admin confirmation.
+   - **For Online Payment**:
+     - The payment service initiates the VNPay payment.
+     - The system sets a 15-minute expiration time for the payment.
+     - The user is redirected to VNPay's payment gateway to complete the payment.
+
+4. **VNPay Interaction**:
+   - The user interacts with VNPay to complete the payment.
+   - VNPay processes the payment and returns a status (success, failure, or pending).
+
+5. **Post Payment**:
+   - **If Payment is Successful**:
+     - The order status is updated to confirmed without admin intervention.
+     - Payment and order expiration schedules are canceled.
+     - The order moves to the shipping lifecycle.
+   - **If Payment Fails or Expires**:
+     - The user can retry the payment, which restarts the VNPay redirection flow.
+
+6. **Shipping Lifecycle**:
+   - For confirmed orders, shipping is delegated to the **GHN API** via the admin panel.
+   - The admin initiates the shipping process.
+   - The order status is updated based on GHN webhook callbacks that handle delivery updates.
+
+### Diagram
+
+![Payment Flow](https://github.com/user-attachments/assets/da786a97-74c8-4b94-ae4a-e2b27f723e06)
+
+### Payment Retry Logic
+
+- If a payment fails or expires, the user is provided with an option to retry. 
+- This creates a new VNPay transaction and redirects the user back to the VNPay payment gateway for another attempt.
+  
+### Refund Mechanism
+
+- Refunds are initiated when a user cancels a paid order.
+- A refund request is sent to VNPay through the refund API, and VNPay processes and returns a refund status that updates the order in the database.
+
+### Security Considerations
+
+- **Checksum Validation**: All requests to and from VNPay are validated using a secure checksum.
+- **Secure Hashing**: HMAC-SHA512 is used to generate secure hash values for all VNPay communications.
+- **Sensitive Data Handling**: Sensitive data, such as transaction details, are securely handled and stored according to best practices.
+
+---
+
+## 4. Deployment
+
+This section outlines the deployment process for the public site, focusing on AWS, Docker, and Jenkins for CI/CD. This setup is design for small distributors and individual, providing a reliable, scalable, and cost-effective solution without the complexity of larger enterprise-level deployments.
+
+### 4.1 CI/CD Pipeline
+
+The public site deployment process is fully automated using Jenkins with the following pipeline:
+
+- **Build**: The public site is packaged into a Docker image.
+- **Testing**: Automated unit tests are run, and the deployment is stopped if any tests fail.
+- **Push Docker Image**: The Docker image is pushed to a container registry (e.g., Docker Hub).
+- **Deploy to AWS**: The new Docker image is deployed to an EC2 instance by SSH-ing into the server, pulling the latest Docker image, and replacing the old container to ensure zero-downtime updates.
+
+### 4.2 Cloud Services
+
+The project utilizes the following AWS services:
+
+- **EC2**: Hosts the public site inside a Docker container.
+- **RDS (MySQL)**: Stores order data, payments, and user information.
+- **S3**: Handles storage for static assets like product images.
+
+### 4.3 Docker Containerization
+
+The public site is containerized using Docker, providing consistency across environments and simplifying the deployment process. The Docker image contains all necessary components, including dependencies and application code.
+
+### 4.4 SSL and Nginx Configuration
+
+**Nginx** is used for reverse proxying and SSL termination, ensuring secure communication between users and the server. 
+
+- **SSL Certificates**: Managed using **Let’s Encrypt** via **Certbot**, ensuring secure communication over HTTPS.
+- **Reverse Proxy**: Nginx routes incoming traffic to the appropriate Docker container while handling SSL termination.
+
+
+---
+
+## 5. Business Logic Overview
+
+This section provides an overview of how the application handles key business functionalities, enabling both users and admins to interact with the system seamlessly.
+
+### 5.1 User Interactions
+
+#### Product Browsing & Detail View
+- Users can browse products through various categories and use search filters to find specific items.
+- Each product page provides detailed information, including descriptions, pricing, discounts, and customer reviews.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/40228ad3-ff10-4bd9-8e33-32dfb07fa46f" alt="Product Browsing and Detail View"/>
+</div>
+
+#### Cart & Checkout
+- Users can add products to their cart, update quantities, and proceed to checkout.
+
+![image](https://github.com/user-attachments/assets/f2307e50-8ac8-4fb7-99e2-4d8031fdaa52)
+
+#### Order Tracking
+- After placing an order, users can track their order status in real-time, whether it's in **processing**, **shipping**, or **delivered** stages.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/790b66a6-f1c4-4516-a2e1-17ac744eb725" alt="Order Tracking"/>
+</div>
+
+### 5.2 Admin Interactions
+
+#### SKU Management
+- Admins have full control over managing **product SKUs**, including creating, updating, or disabling products.
+- SKUs are linked with inventory management, ensuring that stock levels are updated as orders are processed.
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/e75b9e05-5e12-4174-a9a5-a35df33332f6" alt="SKU mangement"/>
+</div>
+
+#### Order Management
+- Admins can view and manage all orders, with functionality to confirm COD orders and initiate shipping.
+
+#### Shipping & Integration with GHN
+- Admins handle shipping orders through GHN. The admin panel is integrated with GHN's API for automated shipping label generation and tracking updates.
+- Shipping status updates from GHN are automatically reflected in the system via webhook callbacks.
+  
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b944770c-4bd7-42cd-a2fc-205e691f7210" alt="Shipping & Integration with GHN"/>
+</div>
+
+
+
+
