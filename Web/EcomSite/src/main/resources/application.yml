@@ -39,6 +39,8 @@ payment:
   vnpay:
     tmn: ${VNPAY_TMN_CODE:N/a}
     secret: ${VNPAY_SECRET:N/a}
+    url: ${VNPAY_URL:https://sandbox.vnpayment.vn/paymentv2/vpcpay.html}
+    return-url: ${VNPAY_RETURN_URL:http://localhost:8000/site/payment/vnpay/callback}
 
 logging:
   level:

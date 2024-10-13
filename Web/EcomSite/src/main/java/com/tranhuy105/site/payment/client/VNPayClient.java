@@ -22,8 +22,10 @@ import java.util.stream.Collectors;
 @Component("VNPAY")
 @RequiredArgsConstructor
 public class VNPayClient implements PaymentGatewayClient {
-    private static final String VNPAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    private static final String VNPAY_RETURN_URL = "http://localhost:8000/site/payment/vnpay/callback";
+    @Value("${payment.vnpay.url}")
+    private static String VNPAY_URL;
+    @Value("${payment.vnpay.return-url}")
+    private static String VNPAY_RETURN_URL;
     @Value("${payment.vnpay.tmn}")
     private String VNPAY_TMN_CODE;
     @Value("${payment.vnpay.secret}")

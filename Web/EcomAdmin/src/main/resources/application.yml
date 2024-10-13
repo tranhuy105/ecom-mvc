@@ -32,4 +32,4 @@ ghn:
   api:
     token: ${GHN_TOKEN}
     shopId: ${GHN_SHOP_ID}
-    url: https://dev-online-gateway.ghn.vn/shiip/public-api/v2
+    url: ${GHN_API_URL:https://dev-online-gateway.ghn.vn/shiip/public-api/v2}

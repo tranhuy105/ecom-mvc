@@ -1,0 +1,24 @@
+services:
+  ecom-admin:
+    image: tranhuy105/ecommerce-admin:latest
+    container_name: ecom-admin
+    env_file:
+      - staging.env
+    ports:
+      - "8080:8080"
+    networks:
+      - mynetwork
+
+  ecom-site:
+    image: tranhuy105/ecommerce-site:latest
+    container_name: ecom-site
+    env_file:
+      - staging.env
+    ports:
+      - "8000:8000"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    external: true

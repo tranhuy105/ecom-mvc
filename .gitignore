@@ -6,6 +6,7 @@ user-avatars
 category-images
 brand_logos
 product-images
+staging.env
 
 ### IntelliJ IDEA ###
 .idea
