@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -19,11 +21,12 @@ public class SseServiceImpl implements SseService {
     public SseEmitter createConnection(String customerId) {
         SseEmitter oldEmitter = emitters.get(customerId);
         if (oldEmitter != null) {
-            return oldEmitter;
+            log.debug("Closing existing connection for customer {}", customerId);
+            oldEmitter.complete();
         }
 
         log.debug("New connection for customer {}",customerId);
-        SseEmitter emitter = new SseEmitter(900000L);
+        SseEmitter emitter = new SseEmitter(90000L);
         emitters.put(customerId, emitter);
         emitter.onCompletion(() -> emitters.remove(customerId));
         emitter.onTimeout(() -> {
@@ -73,13 +76,18 @@ public class SseServiceImpl implements SseService {
     public void shutdown() {
         log.info("Shutting down and closing all active SSE connections...");
         emitters.forEach((customerId, emitter) -> {
-            try {
-                emitter.complete();
-                log.info("Closed SSE connection for customer {}", customerId);
-            } catch (Exception e) {
-                emitter.completeWithError(e);
-                log.warn("Error while closing SSE connection for customer {}: {}", customerId, e.getMessage());
-            }
+            CompletableFuture.runAsync(() -> {
+                        try {
+                            emitter.complete();
+                            log.info("Closed SSE connection for customer {}", customerId);
+                        } catch (Exception e) {
+                            log.warn("Error while closing SSE connection for customer {}: {}", customerId, e.getMessage());
+                        }
+                    }).orTimeout(5, TimeUnit.SECONDS)
+                    .exceptionally(ex -> {
+                        log.warn("Failed to close SSE connection for customer {}: {}", customerId, ex.getMessage());
+                        return null;
+                    });
         });
         emitters.clear();
     }

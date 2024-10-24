@@ -57,7 +57,7 @@ public interface OrderRepository extends JpaRepository<Order, Integer> {
             "FROM orders o " +
             "JOIN order_items oi ON o.id = oi.order_id " +
             "JOIN skus s ON oi.sku_id = s.id " +
-            "WHERE o.payment_status = 'PAID' AND o.created_at BETWEEN :startDate AND :endDate " +
+            "WHERE o.status = 'DELIVERED' AND o.created_at BETWEEN :startDate AND :endDate " +
             "GROUP BY DATE(o.created_at) ", nativeQuery = true)
     List<Object[]> getSalesReportByDateRange(LocalDateTime startDate,LocalDateTime endDate);
 }

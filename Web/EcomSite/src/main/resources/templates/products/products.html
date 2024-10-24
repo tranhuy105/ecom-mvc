@@ -58,10 +58,6 @@
               <input class="form-check-input" type="radio" name="price_range" id="priceRange500000-1000000" value="500000-1000000" th:checked="${priceRange == '500000-1000000'}">
               <label class="form-check-label" for="priceRange500000-1000000">Từ 500,000 đến 1,000,000 VND</label>
             </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="price_range" id="priceRange1000000" value="1000000" th:checked="${priceRange == '1000000'}">
-              <label class="form-check-label" for="priceRange1000000">Trên 1,000,000 VND</label>
-            </div>
           </div>
 
           <div class="mb-3">
@@ -186,7 +182,7 @@
   }
 </script>
 <script th:src="@{/js/pagination.js}"></script>
-<script th:src="@{/js/search.js}"></script>
-<script th:src="@{/js/notification.js}"></script>
+<div th:replace="~{navigation :: scripts}"></div>
+
 </body>
 </html>

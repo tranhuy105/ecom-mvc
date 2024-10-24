@@ -242,5 +242,10 @@
         </div>
     </div>
 </div>
+
+<div th:fragment="scripts">
+    <script th:src="@{/js/search.js}"></script>
+    <script sec:authorize="isAuthenticated()" th:src="@{/js/notification.js}"></script>
+</div>
 </body>
 </html>

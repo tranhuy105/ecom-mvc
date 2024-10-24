@@ -3,6 +3,8 @@ $(document).ready(function() {
         e.stopPropagation();
     });
 
+    let consecutiveErrors = 0;
+    const maxErrors = 3;
     const notificationCountElement = $('#notificationCount');
     const notificationListElement = $('#notificationList');
     const notificationBell = $('#notificationBell');
@@ -84,12 +86,19 @@ $(document).ready(function() {
 
         eventSource.onopen = function() {
             console.log('SSE connection established');
+            consecutiveErrors = 0;
         };
 
         eventSource.onerror = function() {
             console.error("SSE connection error. Reconnecting...");
+            consecutiveErrors++;
             eventSource.close();
-            setTimeout(startSSE, 500);
+
+            if (consecutiveErrors < maxErrors) {
+                setTimeout(startSSE, 1000);
+            } else {
+                console.warn("Maximum reconnection attempts reached. Stopping SSE attempts.");
+            }
         };
     }
 

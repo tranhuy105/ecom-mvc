@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VNPayClient implements PaymentGatewayClient {
     @Value("${payment.vnpay.url}")
-    private static String VNPAY_URL;
+    private String VNPAY_URL;
     @Value("${payment.vnpay.return-url}")
-    private static String VNPAY_RETURN_URL;
+    private String VNPAY_RETURN_URL;
     @Value("${payment.vnpay.tmn}")
     private String VNPAY_TMN_CODE;
     @Value("${payment.vnpay.secret}")
