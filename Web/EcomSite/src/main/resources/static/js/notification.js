@@ -102,7 +102,7 @@ $(document).ready(function() {
         };
     }
 
-    startSSE();
+    // startSSE();
     window.onunload = function() {
         if (eventSource) {
             eventSource.close();

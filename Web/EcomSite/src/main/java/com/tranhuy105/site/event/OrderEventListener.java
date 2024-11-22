@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 public class OrderEventListener {
     private final StockService stockService;
     private final OrderService orderService;
-    private final PaymentService paymentService;
     private final ShoppingCartService shoppingCartService;
     private final SseService sseService;
     private final SchedulerService schedulerService;
@@ -54,18 +53,11 @@ public class OrderEventListener {
             if (paymentMethod.equals(PaymentMethod.COD)) {
                 shoppingCartService.clearShoppingCart(order.getCustomer().getId());
             } else {
-                String paymentUrl = paymentService.initiatePayment(order, paymentMethod, event.userIp());
                 schedulerService.scheduleOrderExpiration(order);
-
-                // TODO: FIRE AN SSE
-                Thread.sleep(3000);
-                sseService.sendEvent(order.getCustomer().getId().toString(), "payment-initiated-ok", paymentUrl);
             }
         } catch (StockUnavailableException e) {
             log.error("Failed to reserve stock for order {}", order.getOrderNumber(), e);
             orderService.updateOrderStatus(order, OrderStatus.CANCELED);
-        } catch (InterruptedException e) {
-            log.error("Thread interrupted while waiting to send SSE event", e);
         }
     }
 }

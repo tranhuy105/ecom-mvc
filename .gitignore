@@ -8,6 +8,9 @@ brand_logos
 product-images
 staging.env
 
+IaC/*
+!IaC/*.tf
+
 ### IntelliJ IDEA ###
 .idea
 .idea/modules.xml

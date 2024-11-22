@@ -35,6 +35,7 @@ public class CheckoutController {
     private final ShoppingCartService cartService;
     private final OrderService orderService;
     private final AddressService addressService;
+    private final PaymentService paymentService;
 
     @GetMapping("/review")
     public String reviewOrder(Model model, Authentication authentication) {
@@ -69,15 +70,24 @@ public class CheckoutController {
         }
 
         if (!PaymentMethod.COD.equals(selectedPaymentMethod)) {
-            Order order = orderService.createOrder(customer.getId(), shippingAddressId, selectedPaymentMethod, request);
-            if (order == null) {
-                model.addAttribute("pageTitle", "Order Not Found.");
-                model.addAttribute("message", "System can not process your order confirmation request.");
-                return "message";
-            }
+            try {
+                Order order = orderService.createOrder(customer.getId(), shippingAddressId, selectedPaymentMethod, request);
+                if (order == null) {
+                    model.addAttribute("pageTitle", "Order Not Found.");
+                    model.addAttribute("message", "System can not process your order confirmation request.");
+                    return "message";
+                }
 
-            // return the waiting page;
-            return "/payment/pending";
+                String paymentUrl = paymentService.initiatePayment(order, selectedPaymentMethod, request.getRemoteAddr());
+                return "redirect:" + paymentUrl;
+            } catch (IllegalArgumentException | PaymentException exception) {
+                redirectAttributes.addFlashAttribute("message", exception.getMessage());
+                return "redirect:/checkout/review";
+            } catch (Exception exception) {
+                log.error("Lỗi xảy ra khi thực hiện yêu cầu", exception);
+                redirectAttributes.addFlashAttribute("message", "Có lỗi xảy ra khi xử lí yêu cầu của bạn. vui lòng thử lại sau.");
+                return "redirect:/checkout/review";
+            }
         } else {
             try {
                 Order codOrder = orderService.createOrder(customer.getId(), shippingAddressId, PaymentMethod.COD, request);

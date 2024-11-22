@@ -98,7 +98,7 @@
                         </div>
                     </div>
 
-                    <div th:if="${orderDetail.payment != null
+                    <div th:if="${orderDetail.payment != null && orderDetail.orderStatus != 'CANCELED'
                             && (orderDetail.payment.status == 'PENDING'
                             || orderDetail.payment.status == 'FAILED'
                             || orderDetail.payment.status == 'EXPIRED')}"

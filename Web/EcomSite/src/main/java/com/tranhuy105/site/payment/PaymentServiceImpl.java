@@ -137,11 +137,11 @@ public class PaymentServiceImpl implements PaymentService {
             throw e;
         }
 
-        try {
-            sseService.sendEvent(order.getCustomer().getId().toString(), "payment-complete", order.getOrderNumber());
-        } catch (Exception e) {
-            log.error("Error sending SSE event for order {}: {}", order.getOrderNumber(), e.getMessage());
-        }
+//        try {
+//            sseService.sendEvent(order.getCustomer().getId().toString(), "payment-complete", order.getOrderNumber());
+//        } catch (Exception e) {
+//            log.error("Error sending SSE event for order {}: {}", order.getOrderNumber(), e.getMessage());
+//        }
     }
 
     private void handlePaymentSuccess(Order order) {
