@@ -16,7 +16,7 @@ This E-Commerce Platform is a comprehensive online shopping solution designed fo
   - GHN for shipping
 - **Containerization**: Docker
 - **Hosting**: AWS (EC2, S3, RDS)
-- **Proxy & SSL**: Nginx for reverse proxy and SSL termination
+- **Infrastructure Provisioning**: Terraform
 
 ---
 
@@ -95,37 +95,51 @@ The payment process in this project is integrated with VNPay, with options for C
 
 ---
 
-## 4. Deployment
+# 4. Deployment
 
-This section outlines the deployment process for the public site, focusing on AWS, Docker, and Jenkins for CI/CD. This setup is design for small distributors and individual, providing a reliable, scalable, and cost-effective solution without the complexity of larger enterprise-level deployments.
+This section outlines the deployment process for the public site using Terraform for infrastructure provisioning, Docker for containerization, and AWS for hosting. This setup is designed for small distributors and individuals, providing a reliable, scalable, and cost-effective solution.
 
-### 4.1 CI/CD Pipeline
+## 4.1 Infrastructure Provisioning with Terraform
 
-The public site deployment process is fully automated using Jenkins with the following pipeline:
+Terraform is used to define and provision the cloud infrastructure. Key components include:
 
-- **Build**: The public site is packaged into a Docker image.
-- **Testing**: Automated unit tests are run, and the deployment is stopped if any tests fail.
-- **Push Docker Image**: The Docker image is pushed to a container registry (e.g., Docker Hub).
-- **Deploy to AWS**: The new Docker image is deployed to an EC2 instance by SSH-ing into the server, pulling the latest Docker image, and replacing the old container to ensure zero-downtime updates.
+- **Networking**: A VPC with public and private subnets is configured for the application and database.
+- **Compute**: EC2 instances are provisioned to host the public site and admin panel.
+- **Database**: An RDS MySQL instance is set up with a dedicated DB subnet group.
+- **Storage**: An S3 bucket is created for storing static assets with versioning and encryption enabled.
+- **Security**: Security groups control inbound and outbound traffic for EC2 and RDS.
 
-### 4.2 Cloud Services
+## 4.2 Cloud Services
 
 The project utilizes the following AWS services:
 
-- **EC2**: Hosts the public site inside a Docker container.
+- **EC2**: Hosts the public and admin sites inside Docker containers.
 - **RDS (MySQL)**: Stores order data, payments, and user information.
-- **S3**: Handles storage for static assets like product images.
+- **S3**: Handles storage for static assets such as product images.
 
-### 4.3 Docker Containerization
+## 4.3 Docker Containerization
 
-The public site is containerized using Docker, providing consistency across environments and simplifying the deployment process. The Docker image contains all necessary components, including dependencies and application code.
+The public and admin sites are containerized using Docker, ensuring consistency across development and production environments. Docker images include all necessary components, such as dependencies and application code.
 
-### 4.4 SSL and Nginx Configuration
+## 4.4 Deployment Workflow
 
-**Nginx** is used for reverse proxying and SSL termination, ensuring secure communication between users and the server. 
+1. **Infrastructure Setup**:
+   - Use Terraform to provision the necessary AWS resources, including VPC, subnets, EC2 instances, RDS database, and S3 bucket.
+   - Run `terraform init`, `terraform plan`, and `terraform apply` to create or update the infrastructure.
 
-- **SSL Certificates**: Managed using **Let’s Encrypt** via **Certbot**, ensuring secure communication over HTTPS.
-- **Reverse Proxy**: Nginx routes incoming traffic to the appropriate Docker container while handling SSL termination.
+2. **Application Deployment**:
+   - Build Docker images for the public and admin sites.
+   - SSH into the provisioned EC2 instances and deploy the Docker containers by pulling the images from the container registry.
+
+3. **Static Asset Management**:
+   - Upload static assets such as product images to the S3 bucket using the AWS CLI or an SDK.
+
+4. **Database Configuration**:
+   - Configure the RDS MySQL instance with the necessary database schema and credentials.
+
+---
+
+![AWS (2019) horizontal framework](https://github.com/user-attachments/assets/feb0063c-bb55-43be-8685-62f44758d0e4)
 
 
 ---
